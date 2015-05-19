@@ -1,0 +1,120 @@
+--
+SELECT * FROM SourcePups201Hydrant
+SELECT * FROM SourcePups201Valve
+
+SELECT * FROM SourceWicm210ObjectBuilding
+SELECT * FROM SourceWicm210ObjectEquipment
+SELECT * FROM SourceWicm210ObjectProject
+SELECT * FROM SourceWicm210ObjectVehicle
+
+SELECT * FROM SourceWicm212ObjectExtensionEquipment
+SELECT * FROM SourceWicm212ObjectExtensionProject
+
+SELECT * FROM SourceWicm213Notepad
+SELECT * FROM SourceWicm215BillOfMaterials
+SELECT * FROM SourceWicm220PartsHeader
+SELECT * FROM SourceWicm221PartsDetail
+SELECT * FROM SourceWicm222PartNotepad
+SELECT * FROM SourceWicm223PartsHistory
+
+SELECT * FROM SourceWicm230TableLookupAssetClass
+SELECT * FROM SourceWicm230TableLookupAssetType
+SELECT * FROM SourceWicm230TableLookupEmployeeRates
+SELECT * FROM SourceWicm230TableLookupLocation
+SELECT * FROM SourceWicm230TableLookupMaintenanceSchedules
+SELECT * FROM SourceWicm230TableLookupPartCategory
+SELECT * FROM SourceWicm230TableLookupScheduleCycle
+SELECT * FROM SourceWicm230TableLookupToolIDs
+SELECT * FROM SourceWicm230TableLookupWorkOrderStageFacilities
+
+SELECT * FROM SourceWicm240Audit
+
+SELECT * FROM SourceWicm250WorkOrderHeaderAdmin
+SELECT * FROM SourceWicm250WorkOrderHeaderPlant
+SELECT * FROM SourceWicm250WorkOrderHeaderProjects
+SELECT * FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair
+SELECT * FROM SourceWicm250WorkOrderHeaderWaterQualityControl
+
+SELECT * FROM SourceWicm251WorkOrderDetailChlorination
+SELECT * FROM SourceWicm251WorkOrderDetailChlorinationPoints
+SELECT * FROM SourceWicm251WorkOrderDetailInitialFlushing
+SELECT * FROM SourceWicm251WorkOrderDetailLaborCharges
+SELECT * FROM SourceWicm251WorkOrderDetailMaterialEstimates
+SELECT * FROM SourceWicm251WorkOrderDetailParts
+SELECT * FROM SourceWicm251WorkOrderDetailPressureTests
+SELECT * FROM SourceWicm251WorkOrderDetailSoilSampling
+SELECT * FROM SourceWicm251WorkOrderDetailSublets
+SELECT * FROM SourceWicm251WorkOrderDetailTools
+
+SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
+SELECT * FROM [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1Contd
+SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOTapsSoilSampling
+SELECT * FROM [SourceWicm253WorkOrderExtensionNSI(X2)Repair(X6)ApplicantPermitMeter]
+SELECT * FROM [SourceWicm253WorkOrderExtensionPlantWOCloseComments1-5]
+SELECT * FROM SourceWicm253WorkOrderExtensionPlantWOConditionCalibrationMeasures
+SELECT * FROM [SourceWicm253WorkOrderExtensionPlantWOJobPlans1-5]
+
+SELECT * FROM SourceWicm258WaterQualityCount
+SELECT * FROM SourceWicm280PickTicketHeader
+SELECT * FROM SourceWicm281PickTicketDetail
+SELECT * FROM SourceWicm285Procure
+SELECT * FROM SourceWicm300CcpHeader
+SELECT * FROM SourceWicm301CcpComments
+SELECT * FROM SourceWicm305CcpDetail
+SELECT * FROM SourceWicm305CcpDetailComments
+SELECT * FROM SourceWicm310Vendor
+SELECT * FROM SourceWicm315PartsToOrder
+SELECT * FROM SourceWicm320Shopped
+SELECT * FROM SourceWicm325BuyerShipTo
+SELECT * FROM SourceWicm330POHeader
+SELECT * FROM SourceWicm335PODetail
+
+DROP TABLE SourcePups201Hydrant
+DROP TABLE SourcePups201Valve
+DROP TABLE SourceWicm210ObjectBuilding
+DROP TABLE SourceWicm210ObjectEquipment
+DROP TABLE SourceWicm210ObjectProject
+DROP TABLE SourceWicm210ObjectVehicle
+DROP TABLE SourceWicm212ObjectExtensionEquipment
+DROP TABLE SourceWicm212ObjectExtensionProject
+DROP TABLE SourceWicm213Notepad
+DROP TABLE SourceWicm215BillOfMaterials
+DROP TABLE SourceWicm220PartsHeader
+DROP TABLE SourceWicm221PartsDetail
+DROP TABLE SourceWicm222PartNotepad
+DROP TABLE SourceWicm223PartsHistory
+DROP TABLE SourceWicm230TableLookup
+DROP TABLE SourceWicm240Audit
+DROP TABLE SourceWicm250WorkOrderHeaderAdmin
+DROP TABLE SourceWicm251WorkOrderDetailChlorination
+DROP TABLE SourceWicm251WorkOrderDetailChlorinationPoints
+DROP TABLE SourceWicm251WorkOrderDetailInitialFlushing
+DROP TABLE SourceWicm251WorkOrderDetailLaborCharges
+DROP TABLE SourceWicm251WorkOrderDetailMaterialEstimates
+DROP TABLE SourceWicm251WorkOrderDetailParts
+DROP TABLE SourceWicm251WorkOrderDetailPressureTests
+DROP TABLE SourceWicm251WorkOrderDetailSoilSampling
+DROP TABLE SourceWicm251WorkOrderDetailSublets
+DROP TABLE SourceWicm251WorkOrderDetailTools
+
+DROP TABLE SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
+DROP TABLE [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+
+DROP TABLE SourceWicm280PickTicketHeader
+DROP TABLE SourceWicm281PickTicketDetail
+DROP TABLE SourceWicm285Procure
+DROP TABLE SourceWicm300CcpHeader
+DROP TABLE SourceWicm301CcpComments
+DROP TABLE SourceWicm305CcpDetailComments
+DROP TABLE SourceWicm305CcpDetail
+DROP TABLE SourceWicm310Vendor
+DROP TABLE SourceWicm315PartsToOrder
+DROP TABLE SourceWicm320Shopped
+DROP TABLE SourceWicm325BuyerShipTo
+DROP TABLE SourceWicm330POHeader
+DROP TABLE SourceWicm335PODetail
+DROP TABLE SourceWicm250WorkOrderHeaderPlant
+DROP TABLE SourceWicm250WorkOrderHeaderProjects
+DROP TABLE SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair
+DROP TABLE SourceWicm250WorkOrderHeaderWaterQualityControl
