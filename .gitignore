@@ -45,4 +45,5 @@ Temporary Items
 # Exclude auto generated files
 [Bb]in/
 .suo
+.user
 
