@@ -1,26 +1,28 @@
 -- TransformPart
 WITH Parts AS (
 	SELECT
-		'2077' [Control], '302:2' [Part ID], '302:4' [Part Suffix], '303:2' [Keyword],
-		'303:4' [Short Description], '303:6' [Prod. Category], '303:9' [Part Classification],
-		'303:15' [Tire], '303:17' [Core], '303:19' [Controlled Substance], 
-		'303:29' [ItemFabricatedWithoutCore], '303:26' [Path and File Name],
-		'303:27' [File Description], '304:2' [Long Description],
-		'304:35' [PurchasingDefaultAccountID], CAST('310:1' AS NTEXT) [Comments],
-		'2449:2' [MarkupPercentage], '2449:3' [NoMarkupOnPart], '2449:6' [MarkupCapAmount],
-		'303:12' [VRMS Code], '304:16' [ExcludeFromInvLists]
-	UNION ALL
-	SELECT
-		'[i]', CAST(PartID AS VARCHAR), CAST(PartSuffix AS VARCHAR),
-		Keyword, ShortDescription, CAST(ProductCategoryID AS VARCHAR),
-		PartClassificationID, Tire, Core, [ControlledSubstance],
-		ItemFabricatedWithoutCore, PathAndFileName,
-		FileDescription, LongDescription,
-		PurchasingDefaultAccountID, TP.Comments [Comments],
-		CAST(MarkupPercentage AS VARCHAR), NoMarkupOnPart,
-		CAST(MarkupCapAmount AS VARCHAR), VRMSCode,
+		'[i]' AS [Control], 
+		CAST(PartID AS VARCHAR) [Part ID], 
+		CAST(PartSuffix AS VARCHAR) [Part Suffix],
+		Keyword [Keyword], 
+		ShortDescription [Short Description], 
+		CAST(ProductCategoryID AS VARCHAR) [Prod. Category],
+		PartClassificationID [Part Classification], 
+		Tire, 
+		Core, 
+		ControlledSubstance [Controlled Substance],
+		ItemFabricatedWithoutCore, 
+		PathAndFileName [Path and File Name],
+		FileDescription [File Description], 
+		LongDescription [Long Description],
+		PurchasingDefaultAccountID, 
+		Comments,
+		CAST(MarkupPercentage AS VARCHAR) MarkupPercentage, 
+		NoMarkupOnPart,
+		CAST(MarkupCapAmount AS VARCHAR) MarkupCapAmount, 
+		VRMSCode,
 		ExcludeFromInvLists
-	FROM TargetPart TP
+	FROM TargetPart
 )
 SELECT * FROM Parts P
 ORDER BY DATALENGTH(P.Comments) DESC
