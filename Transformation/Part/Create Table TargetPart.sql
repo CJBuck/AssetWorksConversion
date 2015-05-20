@@ -34,7 +34,7 @@ CREATE TABLE [dbo].[TargetPart](
 	[FileDescription] [varchar](60) NULL,
 	[LongDescription] [varchar](240) NULL,
 	[PurchasingDefaultAccountID] [varchar](30) NULL,
-	[Comments] [ntext] NULL,
+	[Comments] [varchar](8000) NULL,
 	[MarkupPercentage] [decimal](22, 1) NULL,
 	[NoMarkupOnPart] [char](1) NULL,
 	[MarkupCapAmount] [decimal](22, 2) NULL,
