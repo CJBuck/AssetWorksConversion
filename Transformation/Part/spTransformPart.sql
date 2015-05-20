@@ -3,7 +3,7 @@
 -- Create Date:	01/30/2014
 -- Description: Creates/modifies the spTransformPart stored procedure.  Populates
 --		the TransformPart, TransformPartAdjustment, TransformPartLocation, and
---		and TransformPartLocationBin tables.
+--		TransformPartLocationBin tables.
 -- ===============================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
