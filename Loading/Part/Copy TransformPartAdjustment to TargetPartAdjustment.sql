@@ -1,4 +1,3 @@
-INSERT INTO TransformPartAdjustment
+INSERT INTO TargetPartAdjustment
 SELECT *
 FROM TransformPartAdjustment
-
