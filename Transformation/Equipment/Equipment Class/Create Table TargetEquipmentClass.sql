@@ -34,13 +34,14 @@ CREATE TABLE [dbo].[TargetEquipmentClass](
 		[PMServicesInOneCycle] [int] NULL,
 		[PMQuantityOfTimeUnits] [int] NULL,
 		[PMTimeUnit] [varchar] (15) NULL,
+		[MeterSoonDue] [varchar] (25) NULL,
 		[ClassPMCycles] [varchar] (25) NULL,
 		[PMDetails] [varchar] (25) NULL,
 		[IndividualPM] [varchar] (25) NULL,
-		[ValueDepreciation ID] [varchar] (8) NULL,
+		[ValueDepreciationID] [varchar] (8) NULL,
 		[MeterTypes] [char] (1) NOT NULL,
 		[Maintenance] [char] (1) NOT NULL,
-		[PM Program] [char] (1) NOT NULL,
+		[PMProgram] [char] (1) NOT NULL,
 		[Standards] [char] (1) NOT NULL,
 		[RentalRates] [char] (1) NOT NULL,
 		[Resources] [char] (1) NOT NULL,
@@ -49,36 +50,3 @@ CREATE TABLE [dbo].[TargetEquipmentClass](
 ) ON [PRIMARY]
 
 GO
-
-INSERT INTO TargetEquipmentClass
-SELECT DISTINCT
-	ec.[Control] [Control],
-	ec.EquipmentClassID [EquipmentClassID],
-	ec.[Description] [Description],
-	ec.ClassType [ClassType],
-	ec.OverheadAmount [OverheadAmount],
-	ec.Meter1Type [Meter1Type],
-	ec.Meter2Type [Meter2Type],
-	ec.Meter1EditRange [Meter1EditRange],
-	ec.Meter2EditRange [Meter2EditRange],
-	ec.Meter1MaxValue,
-	ec.Meter2MaxValue,
-	ec.ComebackRange [ComebackRange],
-	ec.PMSoonDue [PMSoonDue],
-	ec.PMFuelQuantityOverride [PMFuelQuantityOverride],
-	ec.PMServicesInOneCycle [PMServicesInOneCycle],
-	ec.PMQuantityOfTimeUnits [PMQuantityOfTimeUnits],
-	ec.PMTimeUnit [PMTimeUnit],
-	ec.[ClassPMCycles],
-	ec.[PMDetails],
-	ec.[IndividualPM],
-	ec.[ValueDepreciation ID] [ValueDepreciationID],
-	ec.MeterTypes [MeterTypes],
-	ec.Maintenance [Maintenance],
-	ec.[PM Program] [PMProgram],
-	ec.Standards [Standards],
-	ec.RentalRates [RentalRates],
-	ec.Resources [Resources],
-	ec.[Source] [Source],
-	GETDATE()
-FROM TransformEquipmentClass ec
