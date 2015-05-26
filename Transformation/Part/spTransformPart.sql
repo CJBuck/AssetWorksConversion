@@ -1,6 +1,9 @@
 -- ===============================================================================
 -- Created By:	Chris Buck
--- Create Date:	01/30/2014
+-- Create Date:	01/30/2015
+-- Update:  05/22/2015 - added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
+--                     - added truncation of loading tables to ensure procedure is idempotent 
+--
 -- Description: Creates/modifies the spTransformPart stored procedure.  Populates
 --		the TransformPart, TransformPartAdjustment, TransformPartLocation, and
 --		TransformPartLocationBin tables.
@@ -128,6 +131,7 @@ BEGIN
 	WHERE ProductCategoryID = '7950'
 		
 	-- Copy #StagingParts to TransformPart
+	TRUNCATE TABLE TransformPart;
 	INSERT INTO TransformPart
 	SELECT * FROM #StagingParts
 		
@@ -233,14 +237,18 @@ BEGIN
 	WHERE LEN(SPL.PartID) >= 4
 		
 	-- Copy #StagingParts to TransformPart
+	TRUNCATE TABLE TransformPartLocation;
 	INSERT INTO TransformPartLocation
 	SELECT * FROM #StagingPartLocation;
 
 	-- Part Location Bin
+	TRUNCATE TABLE TransformPartLocationBin;
+
 	WITH BinsPivot AS (
 		SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
 			xls.[Bin1] [BinID],
+			'STOREROOM' [LocationId], --As of 05/22/2015 all defined bins are @ storeroom location
 			'Y' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -249,6 +257,7 @@ BEGIN
 		SELECT
 			LTRIM(RTRIM(xls.[PartNo])),
 			xls.[Bin2] [BinID],
+			'STOREROOM' [LocationId],
 			'N' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -257,6 +266,7 @@ BEGIN
 			SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
 			xls.[Bin3] [BinID],
+			'STOREROOM' [LocationId],
 			'N' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -269,6 +279,7 @@ BEGIN
 	ORDER BY PartID
 
 	-- Part Adjustment
+	TRUNCATE TABLE TransformPartAdjustment;
 	INSERT INTO TransformPartAdjustment
 	SELECT
 		LTRIM(RTRIM(PH.PART_NO)) [PartID],
@@ -280,7 +291,7 @@ BEGIN
 		PH.PART_COST [UnitPrice]
 	FROM SourceWicm220PartsHeader PH
 		INNER JOIN ShawnsXLS xls ON LTRIM(RTRIM(PH.PART_NO)) = LTRIM(RTRIM(xls.[PartNo]))
-		INNER JOIN TransformPartManufacturerLookup tpm ON xls.[NewMfg] = tpm.SourceValue
+		--INNER JOIN TransformPartManufacturerLookup tpm ON xls.[NewMfg] = tpm.SourceValue
 	WHERE PH.PART_NO IN (SELECT PartID FROM TransformPart)
 END
 

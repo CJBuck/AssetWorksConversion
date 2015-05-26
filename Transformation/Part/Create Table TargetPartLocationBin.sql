@@ -22,6 +22,7 @@ GO
 CREATE TABLE [dbo].[TargetPartLocationBin](
 	[PartID] [varchar](22) NOT NULL,
 	[BinID] [varchar] (20) NOT NULL,
+	LocationId varchar(10) NOT NULL,
 	[PrimaryBin] [char] (1) NOT NULL,
 	[NewBin] [char] (1) NOT NULL
 ) ON [PRIMARY]
