@@ -46,7 +46,7 @@ INSERT INTO TransformEquipmentType
 SELECT DISTINCT
 	'[i]' [Control],
 	vlv.EquipmentType [Equipment Type],
-	vlv.[Description] [Description],
+	LEFT(vlv.[Description], 30) [Description],
 	NULL [Year],
 	'' [ManufacturerID],
 	'' [ModelID],
@@ -190,8 +190,8 @@ FROM TransformEquipmentVehicleValueEquipmentType vet
 INSERT INTO TransformEquipmentType
 SELECT DISTINCT
 	'[i]' [Control],
-	asv.[Equipment Type] [EquipmentType],
-	asv.[Description] [Description],
+	LEFT(asv.[Equipment Type], 30) [EquipmentType],
+	LEFT(asv.[Description], 50) [Description],
 	NULL [Year],
 	'' [ManufacturerID],
 	'' [ModelID],
@@ -199,13 +199,13 @@ SELECT DISTINCT
 	'' [LocationID],
 	'' [EquipmentClassID],
 	'Y' [Active],
-	ISNULL(asv.[Minimum life months], NULL) [MinimumLifeMonths],
-	ISNULL(asv.[Expected life months], NULL) [ExpectedLifeMonths],
-	ISNULL(asv.[Manufacturer life months], NULL) [ManufcturerLifeMonths],
-	ISNULL(asv.[Expected replacement cost], NULL) [ExpectedReplacementCost],
-	ISNULL(asv.[Expected rehab cycle months], NULL) [ExpectedRehabCycleMonths],
-	ISNULL(asv.[Inflation factor], NULL) [InflationFactor],
+	ISNULL(CAST(asv.[Minimum life months] AS INT), NULL) [MinimumLifeMonths],
+	ISNULL(CAST(asv.[Expected life months] AS INT), NULL) [ExpectedLifeMonths],
+	ISNULL(CAST(asv.[Manufacturer life months] AS INT), NULL) [ManufcturerLifeMonths],
+	NULL [ExpectedReplacementCost],
+	ISNULL(CAST(asv.[Expected rehab cycle months] AS INT), NULL) [ExpectedRehabCycleMonths],
+	NULL [InflationFactor],
 	'' [Comments],
-	asv.[Source] [Source],
+	LEFT(asv.[Source], 25) [Source],
 	GETDATE() [CreateDt]
 FROM TransformEquipmentTypeAdditionalStableValues asv
