@@ -227,16 +227,15 @@ BEGIN
 	FROM SourceWicm210ObjectVehicle OV
 	WHERE
 		(OV.[OBJECT_ID] IN (SELECT WICM_OBJID FROM TransformEquipmentVehicleValueVehicleDetails))
+		AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
+			'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
+			'006673', '006674', '006675'))
 
 	-- Vehicle specific updates
 	UPDATE #Vehicles
 	SET
 		AssetType = 'ASSET',
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
-		Maintenance = LEFT(ISNULL(LTRIM(RTRIM(vehdet.AW_EQUIP_CLASS)), ''), 30),
-		Standards = LEFT(ISNULL(LTRIM(RTRIM(vehdet.AW_EQUIP_CLASS)), ''), 30),
-		RentalRates = LEFT(ISNULL(LTRIM(RTRIM(vehdet.AW_EQUIP_CLASS)), ''), 30),
-		Resources = LEFT(ISNULL(LTRIM(RTRIM(vehdet.AW_EQUIP_CLASS)), ''), 30),
 		AssetCategoryID =
 			CASE
 				WHEN LTRIM(RTRIM(vehdet.AW_CATID)) = 'CONSTRUCTION EQUIPMENT' THEN 'EQUIPMENT'
@@ -283,8 +282,24 @@ BEGIN
 				ELSE 'NO METER'
 			END,
 		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
+		MaxMeter1Value =
+			CASE
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Miles' THEN '999999'
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Hours' THEN '99999'
+				ELSE NULL
+			END,
 		Meter2Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10),
-		PMProgram = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+		MaxMeter2Value =
+			CASE
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Miles' THEN '999999'
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Hours' THEN '99999'
+				ELSE NULL
+			END,
+		PMProgram = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
+		Maintenance = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
+		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
+		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
+		Resources = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
 	FROM #Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
@@ -300,6 +315,34 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
+				
+	-- EquipmentClass specific updates
+	UPDATE #Vehicles
+	SET
+		MeterTypesClass = 'PICKUP 1/2 TON 4X4',
+		Maintenance = 'PICKUP 1/2 TON 4X4',
+		Standards = 'PICKUP 1/2 TON 4X4',
+		RentalRates = 'PICKUP 1/2 TON 4X4',
+		Resources = 'PICKUP 1/2 TON 4X4'
+	WHERE [Object_ID] = '006656'
+
+	UPDATE #Vehicles
+	SET
+		MeterTypesClass = 'PICKUP COMPACT 4X4',
+		Maintenance = 'PICKUP COMPACT 4X4',
+		Standards = 'PICKUP COMPACT 4X4',
+		RentalRates = 'PICKUP COMPACT 4X4',
+		Resources = 'PICKUP COMPACT 4X4'
+	WHERE [Object_ID] = '006533'
+
+	UPDATE #Vehicles
+	SET
+		MeterTypesClass = 'PICKUP 1/2 TON EXT CAB 4X4',
+		Maintenance = 'PICKUP 1/2 TON EXT CAB 4X4',
+		Standards = 'PICKUP 1/2 TON EXT CAB 4X4',
+		RentalRates = 'PICKUP 1/2 TON EXT CAB 4X4',
+		Resources = 'PICKUP 1/2 TON EXT CAB 4X4'
+	WHERE [Object_ID] IN ('006657', '006565', '006572', '006573', '006678')
 
 	INSERT INTO TransformEquipment
 	SELECT

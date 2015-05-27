@@ -138,7 +138,7 @@ BEGIN
 		'OWNED' [Ownership]
 	FROM SourceWicm210ObjectVehicle OV
 	WHERE
-		(OV.[OBJECT_ID] IN (SELECT WICM_OBJID FROM TransformEquipmentVehicleValueSpecialEquipmentDetails))
+		(OV.[OBJECT_ID] NOT IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
 		AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
 			'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
 			'006673', '006674', '006675'))
@@ -197,7 +197,7 @@ BEGIN
 		Maintenance = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
-		Resources = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
+		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
 	FROM #Components vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
@@ -213,6 +213,16 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
+				
+	-- Meter Types Class
+	UPDATE #Components
+	SET MeterTypesClass = 
+		CASE
+			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
+			ELSE 'NO METER'
+		END
+	FROM #Components C
+		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON C.Maintenance = mtc.EquipmentClassID
 
 	INSERT INTO TransformComponent
 	SELECT
