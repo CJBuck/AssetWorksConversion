@@ -3,6 +3,9 @@
 -- Create Date:	04/09/2015
 -- Description: Creates/modifies the spCreateTargetEquipmentManufacturerModel stored
 --				procedure.
+-- Updated: 05/28/2015 (Gerald Davis)
+--			Changed output to reflect final export structure to prevent transform being spread
+--			across SSIS package and SQL Server
 -- =====================================================================================
 
 IF OBJECT_ID('spCreateTargetEquipmentManufacturerModel') IS NULL
@@ -25,24 +28,20 @@ BEGIN
 
 	/****** Create the table ******/
 	CREATE TABLE [dbo].[TargetEquipmentManufacturerModel](
-		[Control] [varchar](10) NOT NULL,
-		[CleansedManufacturerID] [varchar](15) NOT NULL,
-		[SourceModelID] [varchar](100) NOT NULL,
-		[CleansedModelID] [varchar](15) NOT NULL,
-		[ModelName] [varchar](30) NOT NULL,
-		[Source] [varchar](50) NOT NULL,
-		[CreateDt] [datetime] NOT NULL
+		[Control] varchar(255) NOT NULL,
+		[ManufacturerID] varchar(255) NOT NULL,
+		[ModelID] varchar(15) NOT NULL,
+		[ModelName] varchar(30) NOT NULL,
+		[Active] char(1) NOT NULL
 	) ON [PRIMARY]
 	
 	INSERT INTO TargetEquipmentManufacturerModel
-	SELECT
+	SELECT DISTINCT
 		TEMM.[Control],
 		TEMM.CleansedManufacturerID,
-		TEMM.SourceModelID,
 		TEMM.CleansedModelID,
 		TEMM.ModelName,
-		TEMM.[Source],
-		GETDATE()
+		'Y'
 	FROM TransformEquipmentManufacturerModel TEMM
-	ORDER BY TEMM.CleansedModelID, TEMM.[Source]
+	ORDER BY TEMM.CleansedModelID
 END
