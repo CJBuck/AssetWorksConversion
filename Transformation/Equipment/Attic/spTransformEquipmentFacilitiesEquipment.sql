@@ -152,7 +152,7 @@ DECLARE
 	SELECT
 		LTRIM(RTRIM(OE.[OBJECT_ID])) [Object_ID],
 		'[i]' [Control],
-		'EQP' + '' [EquipmentID],	-- Open issue
+		'EQP' + '' [EquipmentID],
 		'STATIONARY' [AssetType],
 		ISNULL(LTRIM(RTRIM(OE.OB_EQUIP_D)), '') [Description],
 		ISNULL(LTRIM(RTRIM(OE.[OBJECT_ID])), '') [AssetNumber],
@@ -255,7 +255,16 @@ DECLARE
 			ELSE NULL
 		END [ActualDeliveryDate],
 		CASE
-			WHEN ISDATE(OE.DATE_INSTALL) = 1 THEN CAST(OE.DATE_INSTALL AS DATETIME)
+			-- Install Dt before Acq Date
+			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
+				AND (OE.DATE_INSTALL < OE.ACQ_DATE) THEN NULL
+			-- Install Dt after Acq Date
+			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
+				AND (OE.DATE_INSTALL > OE.ACQ_DATE) THEN CAST(OE.DATE_INSTALL AS DATETIME)
+			-- Install Dt blank, NULL, or not a date
+			WHEN (ISDATE(OE.DATE_INSTALL) = 0) 
+				OR (ISNULL(OE.DATE_INSTALL, '') = '')
+				OR (ISNULL(OE.ACQ_DATE, '') = '') THEN NULL
 			ELSE NULL
 		END [ActualInServiceDate],
 		ISNULL(OE.ADDON_COST, NULL) [OriginalCost],
@@ -303,41 +312,16 @@ DECLARE
 		OE.[STATUS] = 'A' AND LTRIM(RTRIM(OE.[CLASS])) NOT IN ('JAPS', 'LHPL', 'RDGDMT')
 		
 	-- (FAC_MODEL <> 'NA') EquipmentType, ManufacturerID, ModelID, Maintenance,
-	-- PMProgram, RentalRates, Resources
+	-- PMProgram, Standards, Resources
 	UPDATE #StagingEquip
 	SET
-		EquipmentType =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
+		EquipmentType = LTRIM(RTRIM(modid.ModelName)),
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
 		ModelID = ISNULL(modid.CleansedModelID, ''),
-		Maintenance =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		PMProgram =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		Standards =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		Resources =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END
+		Maintenance = LTRIM(RTRIM(modid.ModelName)),
+		PMProgram = LTRIM(RTRIM(modid.ModelName)),
+		Standards = LTRIM(RTRIM(modid.ModelName)),
+		Resources = LTRIM(RTRIM(modid.ModelName))
 	FROM #StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
@@ -347,43 +331,20 @@ DECLARE
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
 				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+	WHERE
+		LTRIM(RTRIM(oe.FAC_MODEL)) <> 'NA'
 
 	-- (FAC_MODEL = 'NA') EquipmentType, ManufacturerID, ModelID,
-	-- Maintenance, PMProgram, RentalRates, Resources
+	-- Maintenance, PMProgram, Standards, Resources
 	UPDATE #StagingEquip
 	SET
-		EquipmentType =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN et.[EquipType]
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
+		EquipmentType = et.[EquipType],
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
 		ModelID = ISNULL(modid.CleansedModelID, ''),
-		Maintenance =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN et.[EquipType]
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		PMProgram =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN et.[EquipType]
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		Standards =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN ''
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END,
-		Resources =
-			CASE
-				WHEN ISNULL(LTRIM(RTRIM(OE.FAC_MODEL)), '')
-					IN ('NA', '', 'N/A', 'UNKNOWN') THEN et.[EquipType]
-				ELSE LTRIM(RTRIM(modid.ModelName)) 
-			END
+		Maintenance = et.[EquipType],
+		PMProgram = et.[EquipType],
+		Standards = et.[EquipType],
+		Resources = et.[EquipType]
 	FROM #StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentFacilitiesEquipmentValueEquipmentType et
@@ -395,6 +356,23 @@ DECLARE
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
 				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+	WHERE
+		LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
+		
+	-- (FAC_MODEL = 'NA') and not in TransformEquipmentFacilitiesEquipmentValueEquipmentType
+	UPDATE #StagingEquip
+	SET
+		EquipmentType = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
+		Maintenance = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
+		PMProgram = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
+		Standards = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
+		Resources = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE))
+	FROM #StagingEquip FAC
+		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
+	WHERE
+		FAC.[Object_ID] NOT IN (SELECT [OBJECT_ID] FROM TransformEquipmentFacilitiesEquipmentValueEquipmentType)
+		AND LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
+		AND FAC.EquipmentType = ''
 
 	-- Condition Rating				
 	UPDATE #StagingEquip
@@ -444,7 +422,7 @@ DECLARE
 					SP.[AssetNumber],
 					CASE
 						WHEN SP.[SerialNumber] IN ('', 'NA', 'N/A')
-							THEN 'EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7)
+							THEN 'NSN: ' + ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 						ELSE SP.[SerialNumber]
 					END [SerialNumber],
 					SP.[EquipmentType],
@@ -545,7 +523,7 @@ DECLARE
 					SP.[AssetNumber],
 					CASE
 						WHEN SP.[SerialNumber] IN ('', 'NA', 'N/A')
-							THEN 'EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7)
+							THEN 'NSN: ' + ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 						ELSE SP.[SerialNumber]
 					END [SerialNumber],
 					SP.[EquipmentType],
@@ -640,6 +618,20 @@ DECLARE
 	CLOSE Facilities_Cursor;
 	DEALLOCATE Facilities_Cursor;
 
+	-- Handling of duplicate SerialNumbers
+	SELECT FRE.SerialNumber, COUNT(FRE.SerialNumber) [DupeCount]
+	INTO #DuplicateSerialNos
+	FROM #FinalResultSet FRE
+	GROUP BY FRE.SerialNumber
+	ORDER BY COUNT(FRE.SerialNumber) DESC
+
+	UPDATE #FinalResultSet
+	SET SerialNumber = 'NSN: ' + FRE.EquipmentID
+	FROM #FinalResultSet FRE
+	WHERE FRE.SerialNumber IN (
+		SELECT SerialNumber FROM #DuplicateSerialNos WHERE [DupeCount] > 1
+		)
+
 	INSERT INTO TransformEquipment
 	SELECT
 		[Control],
@@ -706,3 +698,5 @@ IF OBJECT_ID('tempdb..#FinalResultSet') IS NOT NULL
 	DROP TABLE #FinalResultSet
 IF OBJECT_ID('tempdb..#StationLocationLkUp') IS NOT NULL
 	DROP TABLE #StationLocationLkUp
+IF OBJECT_ID('tempdb..#DuplicateSerialNos') IS NOT NULL
+	DROP TABLE #DuplicateSerialNos

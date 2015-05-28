@@ -14,27 +14,121 @@ GO
 ALTER PROCEDURE dbo.spTransformEquipmentDistributionValve
 AS
 BEGIN
-	INSERT INTO TransformEquipment
+	CREATE TABLE #Valves(
+		[Valve_No] [varchar] (6) NOT NULL,
+		[Control] [varchar] (10) NOT NULL,
+		[EquipmentID] [varchar](20) NOT NULL,
+		[AssetType] [varchar](20) NULL,
+		[Description] [varchar](40) NULL,
+		[AssetNumber] [varchar](20) NULL,
+		[SerialNumber] [varchar](50) NULL,
+		[EquipmentType] [varchar](30) NULL,
+		[PMProgramType] [varchar](10) NULL,
+		[AssetPhotoFilePath] [varchar](255) NULL,
+		[AssetPhotoFileDescription] [varchar](60) NULL,
+		[ModelYear] [int] NULL,
+		[ManufacturerID] [varchar](15) NULL,
+		[ModelID] [varchar](15) NULL,
+		[MeterTypesClass] [varchar](30) NULL,
+		[Meter1Type] [varchar](10) NULL,
+		[Meter2Type] [varchar](10) NULL,
+		[Meter1AtDelivery] [int] NULL,
+		[Meter2AtDelivery] [int] NULL,
+		[LatestMeter1Reading] [int] NULL,
+		[LatestMeter2Reading] [int] NULL,
+		[MaxMeter1Value] [int] NULL,
+		[MaxMeter2Value] [int] NULL,
+		[Maintenance] [varchar](30) NULL,
+		[PMProgram] [varchar](30) NULL,
+		[Standards] [varchar](30) NULL,
+		[RentalRates] [varchar](30) NULL,
+		[Resources] [varchar](30) NULL,
+		[AssetCategoryID] [varchar](15) NULL,
+		[AssignedPM] [varchar](10) NULL,
+		[AssignedRepair] [varchar](10) NULL,
+		[StoredLocation] [varchar](10) NULL,
+		[StationLocation] [varchar](10) NULL,
+		[Jurisdiction] [varchar](2) NULL,
+		[PreferredPMShift] [varchar](10) NULL,
+		[VehicleLocation] [varchar](20) NULL,
+		[BuildingLocation] [varchar](20) NULL,
+		[OtherLocation] [varchar](20) NULL,
+		[DepartmentID] [varchar](10) NULL,
+		[DeptToNotifyForPM] [varchar](10) NULL,
+		[CompanyID] [varchar](10) NULL,
+		[AccountIDAssignmentWO] [varchar](10) NULL,
+		[AccountIDLaborPosting] [varchar](10) NULL,
+		[AccountIDPartIssues] [varchar](10) NULL,
+		[AccountIDCommercialWork] [varchar](10) NULL,
+		[AccountIDFuelTickets] [varchar](10) NULL,
+		[AccountIDUsageTickets] [varchar](10) NULL,
+		[EquipmentStatus] [varchar](10) NULL,
+		[LifeCycleStatusCodeID] [varchar](2) NULL,
+		[ConditionRating] [varchar](20) NULL,
+		[StatusCodes] [varchar](6) NULL,
+		[WorkOrders] [char](1) NULL,
+		[UsageTickets] [char](1) NULL,
+		[FuelTickets] [char](1) NULL,
+		[Comments] [varchar](1200) NULL,
+		[DefaultWOPriorityID] [varchar](2) NULL,
+		[ActualDeliveryDate] [datetime] NULL,
+		[ActualInServiceDate] [datetime] NULL,
+		[OriginalCost] [decimal](22, 2) NULL,
+		[DepreciationMethod] [varchar](25) NULL,
+		[LifeMonths] [int] NULL,
+		[MonthsRemaining] [decimal](22, 2) NULL,
+		[Ownership] [varchar](8) NULL,
+		[VendorID] [varchar](15) NULL,
+		[ExpirationDate] [datetime] NULL,
+		[Meter1Expiration] [int] NULL,
+		[Meter2Expiration] [int] NULL,
+		[Deductible] [decimal](22, 2) NULL,
+		[WarrantyType] [varchar](60) NULL,
+		[Comments2] [varchar](60) NULL,
+		[EstimatedReplacementMonth] [int] NULL,
+		[EstimatedReplacementYear] [int] NULL,
+		[EstimatedReplacementCost] [decimal](22, 2) NULL,
+		[Latitude] [varchar](10) NULL,
+		[Longitude] [varchar](10) NULL,
+		[NextPMServiceNumber] [int] NULL,
+		[NextPMDueDate] [datetime] NULL,
+		[IndividualPMService] [varchar](12) NULL,
+		[IndividualPMDateNextDue] [datetime] NULL,
+		[IndividualPMNumberofTimeUnits] [int] NULL,
+		[IndividualPMTimeUnit] [varchar](10) NULL,
+		[PlannedRetirementDate] [datetime] NULL,
+		[RetirementDate] [datetime] NULL,
+		[DispositionDate] [datetime] NULL,
+		[GrossSalePrice] [decimal](22, 2) NULL,
+		[DisposalReason] [varchar](30) NULL,
+		[DisposalMethod] [varchar](20) NULL,
+		[DisposalAuthority] [varchar](6) NULL,
+		[DisposalComments] [varchar](60) NULL
+	)
+
+	INSERT INTO #Valves
 	SELECT
-		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(VALVE_NO)), 7) [EquipmentID],
+		LTRIM(RTRIM(SPV.[VALVE_NO])) [Valve_No],
+		'[i]' [Control],
+		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [EquipmentID],
 		'STATIONARY' [AssetType],
 		LEFT((LTRIM(RTRIM(STREET_NAME)) + ' (' + 
 			LTRIM(RTRIM(XSTREET_NAME)) + '-' + 
 			LTRIM(RTRIM(TO_STREET)) + ')'), 40) [Description],
 		'' [AssetNumber],	-- Open Issue: populate from "Source Water Isolation Valve 
 							-- Spreadsheet" - Chris Basford.
-		'' [SerialNumber],
-		ISNULL(lkup.EquipmentType, '') [EquipmentType],
+		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [SerialNumber],
+		'' [EquipmentType],
 		'CLASS' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		CASE
-			WHEN ISDATE(SET_DATE) = 1 THEN YEAR(CAST(SET_DATE AS DATETIME))
+			WHEN ISDATE(SPV.SET_DATE) = 1 THEN YEAR(CAST(SPV.SET_DATE AS DATETIME))
 			ELSE NULL
 		END AS [ModelYear],
-		ISNULL(manid.TargetValue, '') [ManufacturerID],
+		'' [ManufacturerID],
 		'GENERIC VALVE' [ModelID],
-		'NO METER' [MeterTypesClass],
+		'DMT' [MeterTypesClass],
 		'' [Meter1Type],
 		'' [Meter2Type],
 		NULL [Meter1AtDelivery],
@@ -43,46 +137,38 @@ BEGIN
 		NULL [LatestMeter2Reading],
 		NULL [MaxMeter1Value],
 		NULL [MaxMeter2Value],
-		CASE (ISNULL(aci.AssetCategoryID, ''))
-			WHEN 'VALVE AIR' THEN 'DVL AIR RELEASE'
-			WHEN 'VALVE BLF' THEN 'DVL BLOWOFF'
-			WHEN 'VALVE ISO' THEN 'DVL ISOLATION'
-			WHEN 'VALVE REQ' THEN 'DVL REGULATING'
-		END [Maintenance],
+		'' [Maintenance],
 		CASE
 			WHEN SPV.VALVE_NO <> '017850' AND SPV.VLV_FUNCTION = '01'
 				AND SPV.VLV_SYSTEM = 'T' AND SPV.MAP_PAGE = 'TRN' THEN 'DPM VALVE TRANSMISSION'
 			WHEN SPV.VALVE_NO <> '017850' AND SPV.VLV_FUNCTION = '05'
-				AND SPV.VLV_SYSTEM = 'T' THEN 'DPM VALVE AIR RELEASE'
+				AND SPV.VLV_SYSTEM = 'T' THEN 'DPM AIR REL DIST'
 			WHEN SPV.VALVE_NO <> '017850' AND SPV.VLV_FUNCTION = '01'
-				AND SPV.VLV_SYSTEM = 'R' THEN 'DPM VALVE SOURCE WTR TRN'
+				AND SPV.VLV_SYSTEM = 'R' THEN 'DPM VALVE SOURCE WTR'
 			WHEN SPV.VALVE_NO <> '017850' AND SPV.VLV_FUNCTION = '05'
-				AND SPV.VLV_SYSTEM = 'R' THEN 'DPM VALVE SOURCE WTR AIR REL'
+				AND SPV.VLV_SYSTEM = 'R' THEN 'DPM AIR REL SOURCE WTR'
 			WHEN SPV.VALVE_NO = '017850' THEN 'DPM VALVE REGULATING'
-			ELSE 'NOT APPLICABLE'
+			ELSE 'DNA'
 		END [PMProgram],
-		CASE (ISNULL(aci.AssetCategoryID, ''))
-			WHEN 'VALVE AIR' THEN 'DVL AIR RELEASE'
-			WHEN 'VALVE BLF' THEN 'DVL BLOWOFF'
-			WHEN 'VALVE ISO' THEN 'DVL ISOLATION'
-			WHEN 'VALVE REQ' THEN 'DVL REGULATING'
-		END [Standards],
-		'NOT APPLICABLE' [RentalRates],
-		CASE (ISNULL(aci.AssetCategoryID, ''))
-			WHEN 'VALVE AIR' THEN 'DVL AIR RELEASE'
-			WHEN 'VALVE BLF' THEN 'DVL BLOWOFF'
-			WHEN 'VALVE ISO' THEN 'DVL ISOLATION'
-			WHEN 'VALVE REQ' THEN 'DVL REGULATING'
-		END [Resources],
-		ISNULL(aci.AssetCategoryID, '') [AssetCategoryID],
-		'VLV GROUP' AssignedPM,
-		'VLV GROUP' AssignedRepair,
+		'' [Standards],
+		'DNA' [RentalRates],
+		'' [Resources],
+		'VALVE' AssetCategoryID,
+		'D-HYD VAL' AssignedPM,
+		'D-REPAIR' AssignedRepair,
 		'' [StoredLocation],
-		LEFT((LTRIM(RTRIM(LOC_FEET)) + ' ' + 
-			LTRIM(RTRIM(LOC_DIR)) + ' ' + 
-			LTRIM(RTRIM(LOC_FROM))), 10) [StationLocation],	-- Verify requirement.
+		CASE LTRIM(RTRIM(SPV.JURIS))
+			WHEN 'H' THEN 'JURIS HP'
+			WHEN 'J' THEN 'JURIS JC'
+			WHEN 'K' THEN 'JURIS NK'
+			WHEN 'N' THEN 'JURIS NN'
+			WHEN 'P' THEN 'JURIS PQ'
+			WHEN 'W' THEN 'JURIS WB'
+			WHEN 'Y' THEN 'JURIS YC'
+			ELSE ''
+		END [StationLocation],
 		'' [Jurisdiction],
-		'M-F' [PreferredPMShift],	-- Open issue:  default value from AssetWorks?
+		'DAY' [PreferredPMShift],	-- Open issue:  default value from AssetWorks?
 		'' [VehicleLocation],
 		'' [BuildingLocation],
 		'' [OtherLocation],
@@ -95,7 +181,7 @@ BEGIN
 		'' [AccountIDCommercialWork],	-- Open issue
 		'' [AccountIDFuelTickets],		-- Open issue
 		'' [AccountIDUsageTickets],		-- Open issue
-		'' [EquipmentStatus],
+		'IN SERVICE' [EquipmentStatus],
 		CASE
 			WHEN SPV.[STATUS] = 'A' THEN 'A'
 			WHEN SPV.[STATUS] = 'I' THEN 'PI'
@@ -145,38 +231,195 @@ BEGIN
 		'' [DisposalAuthority],
 		'' [DisposalComments]
 	FROM SourcePups201Valve SPV
-		INNER JOIN TransformEquipmentDistributionValveValueEquipmentType lkup
-			ON SPV.VLV_FUNCTION = lkup.VLV_FUNCTION AND SPV.VLV_TYPE = lkup.VLV_TYPE
-		INNER JOIN TransformEquipmentDistributionValveValueAssetCategoryID aci
-			ON SPV.VLV_FUNCTION = aci.VLV_FUNCTION
+	WHERE
+		(SPV.[STATUS] = 'A')
+		OR ((SPV.[STATUS] = 'I') AND 
+			(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
+		OR (
+			(SPV.BYPASS_CD = 'Y')
+			AND (
+				(SPV.[STATUS] = 'A')
+				OR ((SPV.[STATUS] = 'I') AND 
+					(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
+				)
+			)
+			
+	-- EquipmentType
+	UPDATE #Valves
+	SET 
+		EquipmentType =
+			CASE
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'BALL' AND VLV_SIZE < 16 THEN 'DVL ISO BALL SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'BUTTERFLY' AND VLV_SIZE >= 16 THEN 'DVL ISO BUTTERFLY LARGE DIA'
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'BUTTERFLY' AND VLV_SIZE < 16 THEN 'DVL ISO BUTTERFLY SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'GATE' AND VLV_SIZE >= 16 THEN 'DVL ISO GATE LARGE DIA'
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'UNKNOWN' AND VLV_SIZE >= 16 THEN 'DVL ISO GATE LARGE DIA'
+				WHEN SPV.VLV_FUNCTION = '01' AND SPV.VLV_TYPE = 'GATE' AND VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '03' AND SPV.VLV_TYPE = 'GATE' AND VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '03' AND SPV.VLV_TYPE = 'UNKNOWN' AND VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '04' AND SPV.VLV_MAKE NOT LIKE 'GIL%' AND VLV_SIZE = '02' THEN 'DBF CHECK/GATE'
+				WHEN SPV.VLV_FUNCTION = '04' AND SPV.VLV_MAKE LIKE 'GIL%' AND VLV_SIZE = '02' THEN 'DBF FLSH HYD'
+				WHEN SPV.VLV_FUNCTION = '04' AND VLV_SIZE > '02' THEN 'DBF DRAIN'
+				WHEN SPV.VLV_FUNCTION = '05' AND SPV.VLV_TYPE = 'AIR RELEAS' THEN 'DAR AIR RELEASE AUTO'
+				WHEN SPV.VLV_FUNCTION = '05' AND SPV.VLV_TYPE IN ('GATE', 'MANUAL', 'UNKNOWN') THEN 'DAR AIR RELEASE MANUAL'
+				WHEN SPV.VLV_FUNCTION = '05' AND SPV.VLV_TYPE = 'COMBINATIO' THEN 'DAR COMBINATION'
+				WHEN SPV.VLV_FUNCTION = '06' AND SPV.VLV_TYPE IN ('GATE', 'UNKNOWN') AND SPV.VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '07' AND SPV.VLV_TYPE = 'CHECK' AND SPV.VALVE_NO NOT IN ('028539', '028540') THEN 'DVL REG CHECK'
+				WHEN SPV.VLV_FUNCTION = '07' AND SPV.VLV_TYPE = 'PRV' AND SPV.VALVE_NO NOT IN ('028539', '028540') THEN 'DVL REG PRV'
+				WHEN SPV.VLV_FUNCTION = '07' AND SPV.VALVE_NO IN ('028539', '028540') THEN 'DVL REG SURGE'
+				WHEN SPV.VLV_FUNCTION = '08' AND SPV.VLV_TYPE IN ('BUTTERFLY', 'GATE') AND SPV.VLV_SIZE >= 16 THEN 'DVL ISO BUTTERFLY LARGE DIA'
+				WHEN SPV.VLV_FUNCTION = '08' AND SPV.VLV_TYPE = 'BUTTERFLY' AND SPV.VLV_SIZE < 16 THEN 'DVL ISO BUTTERFLY SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '08' AND SPV.VLV_TYPE IN ('BUTTERFLY', 'GATE', 'UNKNOWN') AND SPV.VLV_SIZE < 16 THEN 'DVL ISO ISO GATE SMALL DIA'
+				WHEN SPV.VLV_FUNCTION = '10' AND SPV.VLV_TYPE IN ('GATE', 'UNKNOWN') AND SPV.VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
+				ELSE ''
+			END
+	FROM #Valves vlvs
+		INNER JOIN SourcePups201Valve spv ON vlvs.Valve_No = spv.VALVE_NO
+
+	-- Maintenance, Standards, Resources, and AssetCategoryID
+	UPDATE #Valves
+	SET
+		Maintenance =
+			CASE 
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
+				ELSE 'DMAINT VALVE'
+			END,
+		Standards =
+			CASE 
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
+				ELSE 'DMAINT VALVE'
+			END,
+		Resources = 
+			CASE 
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
+				ELSE 'DMAINT VALVE'
+			END,
+		AssetCategoryID =
+			CASE
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'AIR RELEASE'
+				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'BLOWOFF'
+				ELSE 'VALVE'
+			END
+	FROM #Valves vlvs
+
+	-- ManufacturerID
+	UPDATE #Valves
+	SET
+		ManufacturerID = ISNULL(manid.TargetValue, '')
+	FROM #Valves vlvs
+		INNER JOIN SourcePups201Valve spv ON vlvs.Valve_No = spv.VALVE_NO
 		-- ManufacturerID Cleansing
 		INNER JOIN TransformEquipmentManufacturer manid
-			ON LEFT(LTRIM(RTRIM(SPV.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
+			ON LEFT(LTRIM(RTRIM(spv.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
 				AND manid.[Source] LIKE '%Valves%'
-	WHERE
-		(SPV.[STATUS] = 'A')
-		--OR (SPV.[STATUS] = 'I'
-		--		AND SPV.VALVE_SEQ# = '00'
-		--		AND SPV.REMARK2 LIKE 'Proposed%')
 
+	-- Move data from the temp table to TransformEquipment.
+	INSERT INTO TransformEquipment
+	SELECT
+		[Control],
+		EquipmentID,
+		[AssetType],
+		[Description],
+		[AssetNumber],
+		[SerialNumber],
+		[EquipmentType],
+		[PMProgramType],
+		[AssetPhotoFilePath],
+		[AssetPhotoFileDescription],
+		[ModelYear],
+		[ManufacturerID],
+		[ModelID],
+		[MeterTypesClass],
+		[Meter1Type],
+		[Meter2Type],
+		[Meter1AtDelivery],
+		[Meter2AtDelivery],
+		[LatestMeter1Reading],
+		[LatestMeter2Reading],
+		[MaxMeter1Value],
+		[MaxMeter2Value],
+		[Maintenance],
+		[PMProgram],
+		[Standards],
+		[RentalRates],
+		[Resources],
+		[AssetCategoryID],
+		[AssignedPM],
+		[AssignedRepair],
+		[StoredLocation],
+		[StationLocation],
+		[Jurisdiction],
+		[PreferredPMShift],
+		[VehicleLocation],
+		[BuildingLocation],
+		[OtherLocation],
+		[DepartmentID],
+		[DeptToNotifyForPM],
+		[CompanyID] [varchar],
+		[AccountIDAssignmentWO],
+		[AccountIDLaborPosting],
+		[AccountIDPartIssues],
+		[AccountIDCommercialWork],
+		[AccountIDFuelTickets],
+		[AccountIDUsageTickets],
+		[EquipmentStatus],
+		[LifeCycleStatusCodeID],
+		[ConditionRating],
+		[StatusCodes],
+		[WorkOrders],
+		[UsageTickets],
+		[FuelTickets],
+		[Comments],
+		[DefaultWOPriorityID],
+		[ActualDeliveryDate],
+		[ActualInServiceDate],
+		[OriginalCost],
+		[DepreciationMethod],
+		[LifeMonths],
+		[MonthsRemaining],
+		[Ownership],
+		[VendorID],
+		[ExpirationDate],
+		[Meter1Expiration],
+		[Meter2Expiration],
+		[Deductible],
+		[WarrantyType],
+		[Comments2],
+		[EstimatedReplacementMonth],
+		[EstimatedReplacementYear],
+		[EstimatedReplacementCost],
+		[Latitude],
+		[Longitude],
+		[NextPMServiceNumber],
+		[NextPMDueDate],
+		[IndividualPMService],
+		[IndividualPMDateNextDue],
+		[IndividualPMNumberofTimeUnits],
+		[IndividualPMTimeUnit],
+		[PlannedRetirementDate],
+		[RetirementDate],
+		[DispositionDate],
+		[GrossSalePrice],
+		[DisposalReason],
+		[DisposalMethod],
+		[DisposalAuthority],
+		[DisposalComments]
+	FROM #Valves vehs
+	ORDER BY vehs.EquipmentID
+
+	-- Vehicles to the crosswalk table.
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
-		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(VALVE_NO)), 7) [EquipmentID],
+		vehs.EquipmentID [EquipmentID],
 		'SourcePups201Valve' [Source],
 		'VALVE_NO' [LegacyIDSource],
-		SPV.VALVE_NO [LegacyID]
-	FROM SourcePups201Valve SPV
-		INNER JOIN TransformEquipmentDistributionValveValueEquipmentType lkup
-			ON SPV.VLV_FUNCTION = lkup.VLV_FUNCTION AND SPV.VLV_TYPE = lkup.VLV_TYPE
-		INNER JOIN TransformEquipmentDistributionValveValueAssetCategoryID aci
-			ON SPV.VLV_FUNCTION = aci.VLV_FUNCTION
-		INNER JOIN TransformEquipmentManufacturer manid
-			ON LEFT(LTRIM(RTRIM(SPV.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
-				AND manid.[Source] LIKE '%Valves%'
-	WHERE
-		(SPV.[STATUS] = 'A')
-		OR (SPV.[STATUS] = 'I'
-				AND SPV.VALVE_SEQ# = '00'
-				AND SPV.REMARK2 LIKE 'Proposed%')
+		vehs.Valve_No [LegacyID]
+	FROM #Valves vehs
 END
-GO
+
+-- Clean up
+IF OBJECT_ID('tempdb..#Valves') IS NOT NULL
+	DROP TABLE #Valves

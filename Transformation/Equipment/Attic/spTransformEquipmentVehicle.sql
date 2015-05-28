@@ -108,9 +108,9 @@ BEGIN
 	INSERT INTO #Vehicles
 	SELECT
 		LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
-		'[i]' [Control],
+		'[u:1]' [Control],
 		'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR) [EquipmentID],
-		'' [AssetType],
+		'ASSET' [AssetType],
 		LTRIM(RTRIM(OV.VEH_DESC)) [Description],
 		'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR) [AssetNumber],
 		CASE
@@ -226,7 +226,7 @@ BEGIN
 		'' [DisposalComments]
 	FROM SourceWicm210ObjectVehicle OV
 	WHERE
-		(OV.[OBJECT_ID] IN (SELECT WICM_OBJID FROM TransformEquipmentVehicleValueVehicleDetails))
+		(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
 		AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
 			'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
 			'006673', '006674', '006675'))
@@ -234,7 +234,6 @@ BEGIN
 	-- Vehicle specific updates
 	UPDATE #Vehicles
 	SET
-		AssetType = 'ASSET',
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
 		AssetCategoryID =
 			CASE
@@ -251,11 +250,24 @@ BEGIN
 		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
-	-- Update all the other AssetTypes not previously assigned.
-	-- Spec: 3.b.iii
+	-- Updates from the Special Equipment spreadsheet
 	UPDATE #Vehicles
-	SET AssetType = 'ASSET'
-	WHERE ISNULL(AssetType, '') = ''
+	SET
+		ModelYear = LTRIM(RTRIM(sedet.AW_YEAR)),
+		AssetCategoryID =
+			CASE
+				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'CONSTRUCTION EQUIPMENT' THEN 'EQUIPMENT'
+				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'TRAILERS' THEN 'TRAILER'
+				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'VEHICLES' THEN 'VEHICLE'
+			END,
+		AssignedPM = 'VEH SHOP',
+		AssignedRepair = 'VEH SHOP',
+		StationLocation = sedet.AW_LOCATION,
+		DepartmentID = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10),
+		DeptToNotifyForPM = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10)
+	FROM #Vehicles OV
+		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails sedet
+			ON OV.[Object_ID] = sedet.[WICM_OBJID]
 
 	-- ManufacturerID & ModelID Cleansing
 	UPDATE #Vehicles
@@ -276,11 +288,6 @@ BEGIN
 	UPDATE #Vehicles
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
-		MeterTypesClass = 
-			CASE
-				WHEN tec.MeterTypes = 'Y' THEN LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
-				ELSE 'NO METER'
-			END,
 		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
 		MaxMeter1Value =
 			CASE
@@ -299,7 +306,7 @@ BEGIN
 		Maintenance = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
-		Resources = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
+		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
 	FROM #Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
@@ -316,32 +323,36 @@ BEGIN
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
 				
+	-- Meter Types Class
+	UPDATE #Vehicles
+	SET MeterTypesClass = 
+		CASE
+			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
+			ELSE 'NO METER'
+		END
+	FROM #Vehicles V
+		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON V.Maintenance = mtc.EquipmentClassID
+				
 	-- EquipmentClass specific updates
 	UPDATE #Vehicles
 	SET
-		MeterTypesClass = 'PICKUP 1/2 TON 4X4',
 		Maintenance = 'PICKUP 1/2 TON 4X4',
 		Standards = 'PICKUP 1/2 TON 4X4',
-		RentalRates = 'PICKUP 1/2 TON 4X4',
-		Resources = 'PICKUP 1/2 TON 4X4'
+		RentalRates = 'PICKUP 1/2 TON 4X4'
 	WHERE [Object_ID] = '006656'
 
 	UPDATE #Vehicles
 	SET
-		MeterTypesClass = 'PICKUP COMPACT 4X4',
 		Maintenance = 'PICKUP COMPACT 4X4',
 		Standards = 'PICKUP COMPACT 4X4',
-		RentalRates = 'PICKUP COMPACT 4X4',
-		Resources = 'PICKUP COMPACT 4X4'
+		RentalRates = 'PICKUP COMPACT 4X4'
 	WHERE [Object_ID] = '006533'
 
 	UPDATE #Vehicles
 	SET
-		MeterTypesClass = 'PICKUP 1/2 TON EXT CAB 4X4',
 		Maintenance = 'PICKUP 1/2 TON EXT CAB 4X4',
 		Standards = 'PICKUP 1/2 TON EXT CAB 4X4',
-		RentalRates = 'PICKUP 1/2 TON EXT CAB 4X4',
-		Resources = 'PICKUP 1/2 TON EXT CAB 4X4'
+		RentalRates = 'PICKUP 1/2 TON EXT CAB 4X4'
 	WHERE [Object_ID] IN ('006657', '006565', '006572', '006573', '006678')
 
 	INSERT INTO TransformEquipment

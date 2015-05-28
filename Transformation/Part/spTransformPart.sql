@@ -86,8 +86,6 @@ BEGIN
 		END [VRMSCode],
 		'' [ExcludeFromInvLists]
 	FROM SourceWicm220PartsHeader PH
-	WHERE
-		PH.[STATUS] = 'A'
 
 	-- Updates from Shawns XLS.
 	UPDATE #StagingParts
@@ -236,7 +234,7 @@ BEGIN
 		INNER JOIN TransformPartManufacturerLookup tpml ON xls.NewMfg = tpml.SourceValue
 	WHERE LEN(SPL.PartID) >= 4
 		
-	-- Copy #StagingParts to TransformPart
+	-- Copy #StagingPartsLocation to TransformPartLocation
 	TRUNCATE TABLE TransformPartLocation;
 	INSERT INTO TransformPartLocation
 	SELECT * FROM #StagingPartLocation;
