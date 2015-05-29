@@ -1,13 +1,13 @@
--- ===============================================================================
+-- =================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
 -- Update:  05/22/2015 - added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
---                     - added truncation of loading tables to ensure procedure is idempotent 
+--                     - added truncation of loading tables to ensure procedure is idempotent
 --
 -- Description: Creates/modifies the spTransformPart stored procedure.  Populates
 --		the TransformPart, TransformPartAdjustment, TransformPartLocation, and
 --		TransformPartLocationBin tables.
--- ===============================================================================
+-- =================================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.

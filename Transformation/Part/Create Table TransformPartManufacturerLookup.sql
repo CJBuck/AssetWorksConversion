@@ -23,3 +23,10 @@ CREATE TABLE [dbo].[TransformPartManufacturerLookup](
 ) ON [PRIMARY]
 
 GO
+
+INSERT INTO TransformPartManufacturerLookup
+SELECT 
+	LEFT(LTRIM(RTRIM(SourceValue)), 30),
+	LEFT(LTRIM(RTRIM(TargetValue)), 15),
+	GETDATE()
+FROM Staging_PartManufacturerLookup

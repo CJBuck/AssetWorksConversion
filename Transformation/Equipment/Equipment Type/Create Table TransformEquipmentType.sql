@@ -121,7 +121,7 @@ SELECT DISTINCT
 	LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30) [EquipmentType],
 	LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30) [Description],
 	NULL [Year],
-	LEFT(LTRIM(RTRIM(vet.HYD_MAKE)), 15) [ManufacturerID],
+	'' [ManufacturerID],
 	'' [ModelID],
 	'' [DepartmentID],
 	'' [LocationID],
