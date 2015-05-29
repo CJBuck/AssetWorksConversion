@@ -1,15 +1,15 @@
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetPartLocation]    Script Date: 03/17/2015 09:50:45 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TargetPartLocation]') AND type in (N'U'))
-DROP TABLE [dbo].[TargetPartLocation]
+/****** Object:  Table [dbo].[TransformPartLocation]    Script Date: 03/17/2015 09:50:45 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TransformPartLocation]') AND type in (N'U'))
+DROP TABLE [dbo].[TransformPartLocation]
 GO
 
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetPartLocation]    Script Date: 03/17/2015 09:50:45 ******/
+/****** Object:  Table [dbo].[TransformPartLocation]    Script Date: 03/17/2015 09:50:45 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -19,7 +19,7 @@ GO
 SET ANSI_PADDING ON
 GO
 
-CREATE TABLE [dbo].[TargetPartLocation](
+CREATE TABLE [dbo].[TransformPartLocation](
 	[PartID] [varchar](22) NOT NULL,
 	[PartSuffix] [int] NOT NULL,
 	[InventoryLocation] [varchar] (10) NOT NULL,
