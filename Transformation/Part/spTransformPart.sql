@@ -242,11 +242,12 @@ BEGIN
 	-- Part Location Bin
 	TRUNCATE TABLE TransformPartLocationBin;
 
+	--Insert Loc60 Bins
 	WITH BinsPivot AS (
 		SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
-			xls.[Bin1] [BinID],
 			'STOREROOM' [LocationId], --As of 05/22/2015 all defined bins are @ storeroom location
+			xls.[Bin1] [BinID],
 			'Y' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -275,6 +276,10 @@ BEGIN
 	FROM BinsPivot
 	WHERE PartID IN (SELECT PartID FROM TransformPart)
 	ORDER BY PartID
+
+	--Insert non60Bins
+
+
 
 	-- Part Adjustment
 	TRUNCATE TABLE TransformPartAdjustment;
