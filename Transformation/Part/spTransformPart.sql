@@ -287,8 +287,41 @@ BEGIN
 	WHERE PartID IN (SELECT PartID FROM TransformPart)
 	ORDER BY PartID
 
-	--Insert non60Bins
+	--Insert non60Bins into TransformPartLocationBin
+	INSERT INTO [dbo].[TransformPartLocationBin]
+	(
+		PartID,
+		LocationId,
+		BinID,
+		PrimaryBin,
+		NewBin)
+	SELECT
+		non60Parts.PART_NO AS PartId,
+		ISNULL(loc.AW_InventoryLocation,'') AS LocationId,
+		non60Parts.PL_LOC AS BinId,
+		non60Parts.PrimaryBin AS PrimaryBin,
+		'N' AS NewBin
+	FROM
+	(
+	  SELECT PART_NO, LOCATION , PL_LOC1 AS PL_LOC, 'Y' AS PrimaryBin
+	  FROM dbo.SourceWicm221PartsDetail
+	  WHERE PL_LOC1 IS NOT NULL AND PL_LOC1 != '' AND LOCATION != '60'
 
+	  UNION 
+
+	  SELECT PART_NO, LOCATION , PL_LOC2 AS PL_LOC, 'N' AS PrimaryBin
+	  FROM dbo.SourceWicm221PartsDetail
+	  WHERE PL_LOC2 IS NOT NULL AND PL_LOC2 != '' AND LOCATION != '60'
+
+	  UNION 
+
+	  SELECT PART_NO, LOCATION , PL_LOC3 AS PL_LOC, 'N' AS PrimaryBin
+	  FROM dbo.SourceWicm221PartsDetail
+	  WHERE PL_LOC3 IS NOT NULL AND PL_LOC3 != '' AND LOCATION != '60'
+	)
+	AS non60Parts
+	LEFT JOIN dbo.TransformPartInventoryLocationLookup loc
+		ON non60Parts.LOCATION = loc.WICM_Location
 
 
 	-- Part Adjustment
