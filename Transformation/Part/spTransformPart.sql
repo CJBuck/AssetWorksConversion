@@ -4,6 +4,8 @@
 -- Breaking Updates:  
 --		05/22/2015 (Gerald Davis) - Added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
 --								  - Added truncation of loading tables to ensure procedure is idempotent
+--		06/01/2015 (Gerald Davis) - Remapped obsolete ProductCategoryIds(7536 -> 7530, 7542 -> 7541)
+-- 
 -- Description: Creates/modifies the spTransformPart stored procedure.  Populates
 --		the TransformPart, TransformPartAdjustment, TransformPartLocation, and
 --		TransformPartLocationBin tables.
@@ -123,6 +125,14 @@ BEGIN
 	FROM #StagingParts SP
 		INNER JOIN ShawnsXLS xls ON SP.PartID = xls.PartNo
 	
+	-- Remap obsolete ProductCategoryID (see email 06/01/2015 "FW: Product Category 7536 and 7542")
+	UPDATE #StagingParts
+	SET ProductCategoryID = CASE ProductCategoryId WHEN 7536 THEN 7530
+								 WHEN 7542 THEN 7541
+								 ELSE ProductCategoryID
+						    END
+
+
 	-- Set the ExcludeFromInvLists based on ProductCategoryID
 	UPDATE #StagingParts
 	SET ExcludeFromInvLists = 'Y'
