@@ -1,9 +1,9 @@
 -- =================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
--- Update:  05/22/2015 - added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
---                     - added truncation of loading tables to ensure procedure is idempotent
---
+-- Breaking Updates:  
+--		05/22/2015 (Gerald Davis) - Added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
+--								  - Added truncation of loading tables to ensure procedure is idempotent
 -- Description: Creates/modifies the spTransformPart stored procedure.  Populates
 --		the TransformPart, TransformPartAdjustment, TransformPartLocation, and
 --		TransformPartLocationBin tables.
@@ -160,7 +160,7 @@ BEGIN
 		0 [PartSuffix],
 		LTRIM(RTRIM(PD.LOCATION)) [InventoryLocationID],	-- Park the PD location here.
 		'' [UnitOfMeasure],
-		'[335:35;Bin;1:1]' [BinID],
+		'[335:35;Bin;1-2:1-2]' [BinID],
 		'APRIL' [InventoryMonth],
 		CASE
 			WHEN LEN(SP.PartID) = 3 THEN 'STOCKED'
@@ -242,7 +242,7 @@ BEGIN
 	-- Part Location Bin
 	TRUNCATE TABLE TransformPartLocationBin;
 
-	--Insert Loc60 Bins
+	--Insert Loc60 ('STOREROOM') Bins into TransformPartLocationBin
 	WITH BinsPivot AS (
 		SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
@@ -294,7 +294,7 @@ BEGIN
 		PH.PART_COST [UnitPrice]
 	FROM SourceWicm220PartsHeader PH
 		INNER JOIN ShawnsXLS xls ON LTRIM(RTRIM(PH.PART_NO)) = LTRIM(RTRIM(xls.[PartNo]))
-		--INNER JOIN TransformPartManufacturerLookup tpm ON xls.[NewMfg] = tpm.SourceValue
+		INNER JOIN TransformPartManufacturerLookup tpm ON xls.[NewMfg] = tpm.SourceValue
 	WHERE PH.PART_NO IN (SELECT PartID FROM TransformPart)
 END
 
