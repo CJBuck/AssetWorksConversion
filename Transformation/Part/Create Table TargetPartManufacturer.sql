@@ -27,15 +27,12 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[TargetPartManufacturer](
-	[Control] [varchar] (10) NOT NULL,
-	[ManufacturerID] [varchar](15) NOT NULL,
-	[ManufacturerName] [varchar](30) NOT NULL,
-	[PartCatalog] [char] (1) NULL,
-	[Active] [char] (1) NOT NULL,
-	[CreateDt] [datetime] NOT NULL
+	[Control] nvarchar(255) NOT NULL,
+	[PartManufacturerID] nvarchar(255) NOT NULL,
+	[Name] nvarchar(255) NOT NULL,
+	[PartCatalog] nvarchar(255) NULL,
+	[Active] nvarchar(255) NOT NULL
 ) ON [PRIMARY]
 
 GO
 
-ALTER TABLE [dbo].[TargetPartManufacturer] ADD  CONSTRAINT [DF_TargetPartManufacturer_CreateDt]  DEFAULT (getdate()) FOR [CreateDt]
-GO

@@ -147,7 +147,7 @@ BEGIN
 		[PartSuffix] [int] NOT NULL,
 		[InventoryLocation] [varchar](10) NULL,
 		[UnitOfMeasure] [varchar](10) NULL,
-		[Bins] [varchar](16) NULL,
+		[Bins] [varchar](255) NULL,
 		[InventoryMonth] [varchar](50) NULL,
 		[StockStatus] [varchar](30) NULL,
 		[Manufacturer] [varchar](15) NULL,
@@ -167,7 +167,7 @@ BEGIN
 	SELECT
 		SP.PartID [PartID],
 		0 [PartSuffix],
-		LTRIM(RTRIM(PD.LOCATION)) [InventoryLocationID],	-- Park the PD location here.
+		ISNULL(invLook.AW_InventoryLocation,'') AS InventoryLocationID,
 		'' [UnitOfMeasure],
 		'[335:35;Bin;1-2:1-2]' [BinID],
 		'APRIL' [InventoryMonth],
@@ -186,26 +186,16 @@ BEGIN
 		'REQUISITION' [DefaultReplenishmentGenerationType],
 		CASE
 			WHEN LTRIM(RTRIM(PD.LOCATION)) <> '60' THEN 'STOREROOM'
-			ELSE ''
+			ELSE NULL
 		END [SuppliedByLocationIfTransferRequest],
 		'' [Comments]
 	FROM SourceWicm221PartsDetail PD
 	INNER JOIN #StagingParts sp 
 		ON dbo.TRIM(PD.PART_NO) = sp.PartID
-		
-	-- *************************************************************************
-	-- InventoryLocation
-	UPDATE #StagingPartLocation
-	SET InventoryLocation = lkup.AW_InventoryLocation
-	FROM #StagingPartLocation SP
-		INNER JOIN TransformPartInventoryLocationLookup lkup ON SP.InventoryLocation = lkup.WICM_Location
-		
-	UPDATE #StagingPartLocation
-	SET InventoryLocation = ''
-	FROM #StagingPartLocation SP
-	WHERE SP.InventoryLocation NOT IN (
-		SELECT AW_InventoryLocation FROM TransformPartInventoryLocationLookup
-		)
+	LEFT JOIN TransformPartInventoryLocationLookup invLook
+		ON PD.LOCATION = invLook.WICM_Location
+	WHERE ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
+
 	-- *************************************************************************
 
 	-- UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo
@@ -233,15 +223,19 @@ BEGIN
 				ELSE ISNULL(LEFT(LTRIM(RTRIM(xls.NewMfgNo)), 22), '')
 			END
 	FROM #StagingPartLocation SPL
-		INNER JOIN SourceWicm220PartsHeader ph ON SPL.PartID = ph.PART_NO
-		INNER JOIN ShawnsXLS xls ON ph.PART_NO = xls.PartNo
+	INNER JOIN SourceWicm220PartsHeader ph 
+		ON SPL.PartID = ph.PART_NO
+	INNER JOIN ShawnsXLS xls 
+		ON ph.PART_NO = xls.PartNo
 
 	-- Cleanse Manaufacturer
 	UPDATE #StagingPartLocation
 	SET Manufacturer = tpml.TargetValue
 	FROM #StagingPartLocation SPL
-		INNER JOIN ShawnsXLS xls ON SPL.PartID = xls.PartNo
-		INNER JOIN TransformPartManufacturerLookup tpml ON xls.NewMfg = tpml.SourceValue
+	INNER JOIN ShawnsXLS xls 
+			ON SPL.PartID = xls.PartNo
+	INNER JOIN TransformPartManufacturerLookup tpml 
+		ON xls.NewMfg = tpml.SourceValue
 	WHERE LEN(SPL.PartID) >= 4
 		
 	-- Copy #StagingPartsLocation to TransformPartLocation
@@ -265,8 +259,8 @@ BEGIN
 		UNION ALL
 		SELECT
 			LTRIM(RTRIM(xls.[PartNo])),
-			xls.[Bin2] [BinID],
 			'STOREROOM' [LocationId],
+			xls.[Bin2] [BinID],
 			'N' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -274,8 +268,8 @@ BEGIN
 		UNION ALL
 			SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
-			xls.[Bin3] [BinID],
 			'STOREROOM' [LocationId],
+			xls.[Bin3] [BinID],
 			'N' [PrimaryBin],
 			'N' [NewBin]
 		FROM ShawnsXLS xls
@@ -284,7 +278,7 @@ BEGIN
 	INSERT INTO TransformPartLocationBin
 	SELECT *
 	FROM BinsPivot
-	WHERE PartID IN (SELECT PartID FROM TransformPart)
+	WHERE PartID IN (SELECT PartID FROM TransformPartLocation)
 	ORDER BY PartID
 
 	--Insert non60Bins into TransformPartLocationBin
@@ -294,7 +288,8 @@ BEGIN
 		LocationId,
 		BinID,
 		PrimaryBin,
-		NewBin)
+		NewBin
+	)
 	SELECT
 		non60Parts.PART_NO AS PartId,
 		ISNULL(invLook.AW_InventoryLocation,'') AS LocationId,
@@ -303,27 +298,27 @@ BEGIN
 		'N' AS NewBin
 	FROM
 	(
-	  SELECT pd.PART_NO, pd.LOCATION , PL_LOC1 AS PL_LOC, 'Y' AS PrimaryBin
-	  FROM dbo.SourceWicm220PartsHeader ph
-	  INNER JOIN dbo.SourceWicm221PartsDetail pd
+		SELECT pd.PART_NO, pd.LOCATION , PL_LOC1 AS PL_LOC, 'Y' AS PrimaryBin
+		FROM dbo.SourceWicm220PartsHeader ph
+		INNER JOIN dbo.SourceWicm221PartsDetail pd
 		ON ph.PART_No = pd.PART_NO
-	  WHERE PL_LOC1 IS NOT NULL AND PL_LOC1 != '' AND pd.LOCATION != '60'
+		WHERE PL_LOC1 IS NOT NULL AND PL_LOC1 != '' AND pd.LOCATION != '60'
 
-	  UNION 
+		UNION 
 
-	  SELECT pd.PART_NO, pd.LOCATION , PL_LOC2 AS PL_LOC, 'N' AS PrimaryBin
-	  FROM dbo.SourceWicm220PartsHeader ph
-	  INNER JOIN dbo.SourceWicm221PartsDetail pd
+		SELECT pd.PART_NO, pd.LOCATION , PL_LOC2 AS PL_LOC, 'N' AS PrimaryBin
+		FROM dbo.SourceWicm220PartsHeader ph
+		INNER JOIN dbo.SourceWicm221PartsDetail pd
 		ON ph.PART_No = pd.PART_NO
-	  WHERE PL_LOC2 IS NOT NULL AND PL_LOC2 != '' AND pd.LOCATION != '60'
+		WHERE PL_LOC2 IS NOT NULL AND PL_LOC2 != '' AND pd.LOCATION != '60'
 
-	  UNION 
+		UNION 
 
-	  SELECT pd.PART_NO, pd.LOCATION , PL_LOC3 AS PL_LOC, 'N' AS PrimaryBin
-	  FROM dbo.SourceWicm220PartsHeader ph
-	  INNER JOIN dbo.SourceWicm221PartsDetail pd
+		SELECT pd.PART_NO, pd.LOCATION , PL_LOC3 AS PL_LOC, 'N' AS PrimaryBin
+		FROM dbo.SourceWicm220PartsHeader ph
+		INNER JOIN dbo.SourceWicm221PartsDetail pd
 		ON ph.PART_No = pd.PART_NO
-	  WHERE PL_LOC3 IS NOT NULL AND PL_LOC3 != '' AND pd.LOCATION != '60'
+		WHERE PL_LOC3 IS NOT NULL AND PL_LOC3 != '' AND pd.LOCATION != '60'
 	)
 	AS non60Parts
 	LEFT JOIN dbo.TransformPartInventoryLocationLookup invLook
@@ -348,7 +343,7 @@ BEGIN
 		ON PD.LOCATION = invLook.WICM_Location
 	WHERE dbo.TRIM(PH.PART_NO) IN (SELECT PartID FROM TransformPart)
 	AND CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
-	AND ISNULL(invLook.IncludeInLoad,1) = 1
+	AND ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
 END
 
 -- Clean up
