@@ -37,7 +37,7 @@ BEGIN
 		OP.[OBJECT_ID] NOT IN ('FRST', 'OTHR', 'SAFE')
 		AND OP.LOCATION = '05'
 		AND LTRIM(RTRIM(OP.[CLASS])) NOT IN ('LHTP', 'WRKSTA')
-
+		
 	-- Populate a temp table with the ActualInServiceDate per spec.
 	SELECT DISTINCT
 		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) [OBJECT_ID],
@@ -61,7 +61,7 @@ BEGIN
 		AND LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) NOT IN (SELECT [OBJECT_ID] FROM #InSvcDate)
 		AND ((woifp.WORK_PEND_DT IS NULL) OR (LTRIM(RTRIM(woifp.WORK_PEND_DT)) = '0'))
 	-- *****
-
+	
 	CREATE TABLE #StagingProjects(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
@@ -215,7 +215,7 @@ BEGIN
 		'' [AccountIDCommercialWork],
 		'' [AccountIDFuelTickets],
 		'' [AccountIDUsageTickets],
-		'' [EquipmentStatus],
+		'IN SERVICE' [EquipmentStatus],
 		'A' [LifeCycleStatusCodeID],
 		'' [ConditionRating],
 		'' [StatusCodes],
@@ -264,6 +264,9 @@ BEGIN
 	FROM SourceWicm210ObjectProject OP
 	WHERE
 		LTRIM(RTRIM(OP.[OBJECT_ID])) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
+		
+	-- CjB 6/2/15:  special circumstance
+	DELETE #StagingProjects WHERE [Object_ID] = 'LCGR' AND StationLocation = ''
 
 	-- Asset Category :: Step 1
 	UPDATE #StagingProjects
@@ -387,7 +390,7 @@ BEGIN
 		'' [AccountIDCommercialWork],
 		'' [AccountIDFuelTickets],
 		'' [AccountIDUsageTickets],
-		'' [EquipmentStatus],
+		'IN SERVICE' [EquipmentStatus],
 		'A' [LifeCycleStatusCodeID],
 		'' [ConditionRating],
 		'' [StatusCodes],
@@ -467,13 +470,15 @@ BEGIN
 			FROM SourceWicm250WorkOrderHeaderAdmin
 			WHERE [OBJECT_ID] IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
 			) woa ON LTRIM(RTRIM(SP.[Object_ID])) = LTRIM(RTRIM(woa.[OBJECT_ID]))
-
-	UPDATE #StagingProjects
-	SET
-		ActualInServiceDate = aisd.ActualInServiceDate
-	FROM #StagingProjects SP
-		INNER JOIN #InSvcDate aisd ON SP.[Object_ID] = aisd.[OBJECT_ID]
-
+			
+	-- 6/2/2015 Temporary while logic is resolved with the business units.
+	--     Just commented out for now.
+	--UPDATE #StagingProjects
+	--SET
+	--	ActualInServiceDate = aisd.ActualInServiceDate
+	--FROM #StagingProjects SP
+	--	INNER JOIN #InSvcDate aisd ON SP.[Object_ID] = aisd.[OBJECT_ID]
+		
 	DECLARE Projects_Cursor CURSOR
 	FOR SELECT SP.RowNum [RowNum]
 	FROM #StagingProjects SP

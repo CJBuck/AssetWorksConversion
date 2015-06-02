@@ -244,6 +244,9 @@ BEGIN
 			ON manid.TargetValue = modid.CleansedManufacturerID
 				AND modid.SourceModelID = LTRIM(RTRIM(H.HYD_MAKE))
 				AND modid.[Source] = 'Hydrants'
+				
+	-- 6/2/2015 Temporary while logic is resolved with the business units.
+	UPDATE #Hydrants SET ActualInServiceDate = NULL
 
 	INSERT INTO TransformEquipment
 	SELECT
