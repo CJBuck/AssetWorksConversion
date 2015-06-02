@@ -265,9 +265,6 @@ BEGIN
 	WHERE
 		LTRIM(RTRIM(OP.[OBJECT_ID])) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
 		
-	-- CjB 6/2/15:  special circumstance
-	DELETE #StagingProjects WHERE [Object_ID] = 'LCGR' AND StationLocation = ''
-
 	-- Asset Category :: Step 1
 	UPDATE #StagingProjects
 	SET
@@ -705,8 +702,11 @@ BEGIN
 	CLOSE Projects_Cursor;
 	DEALLOCATE Projects_Cursor;
 
+	-- CjB 6/2/15:  special circumstance
+	DELETE #FinalResultSet WHERE AssetNumber = 'LCGR' AND StationLocation = ''
+
 	INSERT INTO TransformEquipment
-	SELECT * FROM #FinalResultSet
+	SELECT DISTINCT * FROM #FinalResultSet
 
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
