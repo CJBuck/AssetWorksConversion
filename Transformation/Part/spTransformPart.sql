@@ -232,7 +232,7 @@ BEGIN
 	UPDATE #StagingPartLocation
 	SET Manufacturer = tpml.TargetValue
 	FROM #StagingPartLocation SPL
-	INNER JOIN ShawnsXLS xls 
+	LEFT JOIN ShawnsXLS xls 
 			ON SPL.PartID = xls.PartNo
 	INNER JOIN TransformPartManufacturerLookup tpml 
 		ON xls.NewMfg = tpml.SourceValue
