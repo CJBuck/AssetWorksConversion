@@ -93,6 +93,8 @@ BEGIN
 
 	-- Updates from Shawns XLS.
 	UPDATE #StagingParts
+	-- Update chemical parts (not included in Shawns XLS)
+	UPDATE sp
 	SET
 		Keyword =
 			CASE
@@ -126,6 +128,30 @@ BEGIN
 			END
 	FROM #StagingParts SP
 		INNER JOIN ShawnsXLS xls ON SP.PartID = xls.PartNo
+		Keyword = 'CHEMICAL',
+		ShortDescription = dbo.TRIM(swph.PART_DESC),
+		ProductCategoryID = '7720',
+		PartClassificationID = 'ST',
+		LongDescription = dbo.TRIM(swph.PART_DESC),
+		VRMSCode = dbo.TRIM(swph.PART_GROUP)		
+	FROM #StagingParts sp
+	INNER JOIN dbo.SourceWicm220PartsHeader swph
+		ON sp.PartId = dbo.TRIM(swph.PART_NO)
+	WHERE LEN (sp.PartId) = 3
+
+	-- Updates from Shawns XLS (for non chemical parts).
+	UPDATE sp
+ 	SET
+		Keyword = xls.Keyword,
+		ShortDescription = xls.NewDescription,
+		ProductCategoryID = xls.Cat,
+		PartClassificationID = xls.PartsClassID,
+		LongDescription = xls.CurrentDescription,
+		VRMSCode = xls.[Group]
+	FROM #StagingParts sp
+	INNER JOIN ShawnsXLS xls 
+		ON sp.PartID = xls.PartNo
+	WHERE LEN(sp.PartId) > 3  -- Check w/ S.  There is a single part w/ 3 digit Part
 	
 	-- Remap obsolete ProductCategoryID (see email 06/01/2015 "FW: Product Category 7536 and 7542")
 	UPDATE #StagingParts
