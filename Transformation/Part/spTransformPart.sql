@@ -225,7 +225,7 @@ BEGIN
 	FROM #StagingPartLocation SPL
 	INNER JOIN SourceWicm220PartsHeader ph 
 		ON SPL.PartID = ph.PART_NO
-	INNER JOIN ShawnsXLS xls 
+	LEFT JOIN ShawnsXLS xls 
 		ON ph.PART_NO = xls.PartNo
 
 	-- Cleanse Manaufacturer
