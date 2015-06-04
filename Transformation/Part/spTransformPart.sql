@@ -184,10 +184,16 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for Chemicals
 	UPDATE #StagingPartLocation
 	SET
+		UnitOfMeasure = dbo.TRIM(ph.UNIT_ISSUE),
+		StockStatus = 'STOCKED',
+		Manufacturer = tpml.TargetValue,		
+		ManufacturerPartNo = LEFT(dbo.TRIM(ph.MFG_NUMBER), 22)
+	FROM #StagingPartLocation spl
 	INNER JOIN SourceWicm220PartsHeader ph 
-		ON SPL.PartID = ph.PART_NO
-	LEFT JOIN ShawnsXLS xls 
-		ON ph.PART_NO = xls.PartNo
+		ON spl.PartID = ph.PART_NO
+	LEFT JOIN TransformPartManufacturerLookup tpml 
+		ON dbo.TRIM(ph.[CATALOG]) = tpml.SourceValue
+	WHERE LEN(spl.PartId) = 3
 
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for non Chemicals (using Shawns XLS)
 	UPDATE #StagingPartLocation
