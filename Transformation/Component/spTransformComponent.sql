@@ -281,10 +281,10 @@ BEGIN
 	FROM #Components vehs
 	ORDER BY vehs.AssetID
 
-	-- Vehicles to the crosswalk table.
-	INSERT INTO TransformEquipmentLegacyXwalk
+	-- Components to the crosswalk table.
+	INSERT INTO TransformComponentLegacyXwalk
 	SELECT
-		vehs.AssetID [EquipmentID],
+		vehs.AssetID [AssetID],
 		'SourceWicm210ObjectVehicle' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
