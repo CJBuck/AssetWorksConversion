@@ -184,7 +184,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for Chemicals
 	UPDATE #StagingPartLocation
 	SET
-		UnitOfMeasure = dbo.TRIM(ph.UNIT_ISSUE),
+		UnitOfMeasure = LEFT(dbo.TRIM(ph.UNIT_ISSUE), 10),
 		StockStatus = 'STOCKED',
 		Manufacturer = tpml.TargetValue,		
 		ManufacturerPartNo = LEFT(dbo.TRIM(ph.MFG_NUMBER), 22)
@@ -198,59 +198,21 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for non Chemicals (using Shawns XLS)
 	UPDATE #StagingPartLocation
 	SET
-		UnitOfMeasure = dbo.TRIM(xls.[U/I]),
+		UnitOfMeasure = LEFT(dbo.TRIM(xls.[U/I]), 10),
 		StockStatus = UPPER(dbo.TRIM(xls.AW_StockStatus)),
 		Manufacturer = tpml.TargetValue,		
-		ManufacturerPartNo = dbo.TRIM(xls.NewMfgNo)
+		ManufacturerPartNo = LEFT(dbo.TRIM(xls.NewMfgNo), 22)
 	FROM #StagingPartLocation spl
 	INNER JOIN ShawnsXLS xls 
 		ON spl.PartId = xls.PartNo
 	LEFT JOIN TransformPartManufacturerLookup tpml 
 		ON xls.NewMfg = tpml.SourceValue
 	WHERE LEN(spl.PartId) > 3
-		
+
 	-- Copy #StagingPartsLocation to TransformPartLocation
 	TRUNCATE TABLE TransformPartLocation;
 	INSERT INTO dbo.TransformPartLocation
-	(
-	PartID,
-	PartSuffix,
-	InventoryLocation,
-	UnitOfMeasure,
-	Bins,
-	InventoryMonth,
-	StockStatus,
-	Manufacturer,
-	ManufacturerPartNo,
-	ReplenishMethod,
-	PerformMinMaxCalculation,
-	MinAvailable,
-	MaxAvailable,
-	SafetyStock,
-	PreferredVendorID,
-	DefaultReplenishmentGenerationType,
-	SuppliedByLocationIfTransferRequest,
-	Comments
-	)
-	SELECT
-		PartID,
-		PartSuffix,
-		InventoryLocation,
-		LEFT(UnitOfMeasure, 10),
-		Bins,
-		InventoryMonth,
-		StockStatus,
-		Manufacturer,
-		ManufacturerPartNo,
-		ReplenishMethod,
-		PerformMinMaxCalculation,
-		MinAvailable,
-		MaxAvailable,
-		SafetyStock,
-		PreferredVendorID,
-		DefaultReplenishmentGenerationType,
-		SuppliedByLocationIfTransferRequest,
-		Comments
+	SELECT *
 	FROM #StagingPartLocation AS spl;
 
 -- =================================================================================================
@@ -292,18 +254,10 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	INSERT INTO TransformPartLocationBin
 	SELECT *
 	FROM BinsPivot
-	WHERE PartID IN (SELECT PartID FROM TransformPartLocation)
 	ORDER BY PartID
 
 	--Insert non60Bins into TransformPartLocationBin
-	INSERT INTO [dbo].[TransformPartLocationBin]
-	(
-		PartID,
-		LocationId,
-		BinID,
-		PrimaryBin,
-		NewBin
-	)
+	INSERT INTO TransformPartLocationBin
 	SELECT
 		non60Parts.PART_NO AS PartId,
 		ISNULL(invLook.AW_InventoryLocation,'') AS LocationId,
@@ -315,7 +269,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		SELECT pd.PART_NO, pd.LOCATION , PL_LOC1 AS PL_LOC, 'Y' AS PrimaryBin
 		FROM dbo.SourceWicm220PartsHeader ph
 		INNER JOIN dbo.SourceWicm221PartsDetail pd
-		ON ph.PART_No = pd.PART_NO
+			ON ph.PART_No = pd.PART_NO
 		WHERE PL_LOC1 IS NOT NULL AND PL_LOC1 != '' AND pd.LOCATION != '60'
 
 		UNION 
@@ -323,7 +277,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		SELECT pd.PART_NO, pd.LOCATION , PL_LOC2 AS PL_LOC, 'N' AS PrimaryBin
 		FROM dbo.SourceWicm220PartsHeader ph
 		INNER JOIN dbo.SourceWicm221PartsDetail pd
-		ON ph.PART_No = pd.PART_NO
+			ON ph.PART_No = pd.PART_NO
 		WHERE PL_LOC2 IS NOT NULL AND PL_LOC2 != '' AND pd.LOCATION != '60'
 
 		UNION 
@@ -331,7 +285,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		SELECT pd.PART_NO, pd.LOCATION , PL_LOC3 AS PL_LOC, 'N' AS PrimaryBin
 		FROM dbo.SourceWicm220PartsHeader ph
 		INNER JOIN dbo.SourceWicm221PartsDetail pd
-		ON ph.PART_No = pd.PART_NO
+			ON ph.PART_No = pd.PART_NO
 		WHERE PL_LOC3 IS NOT NULL AND PL_LOC3 != '' AND pd.LOCATION != '60'
 	)
 	AS non60Parts
@@ -355,7 +309,6 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		ON dbo.TRIM(PH.PART_NO) = dbo.TRIM(PD.PART_NO)
 	LEFT JOIN TransformPartInventoryLocationLookup invLook
 		ON PD.LOCATION = invLook.WICM_Location
-	WHERE dbo.TRIM(PH.PART_NO) IN (SELECT PartID FROM TransformPart)
-	AND CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
+	WHERE CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
 	AND ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
 END
