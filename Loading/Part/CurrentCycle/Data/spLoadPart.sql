@@ -18,6 +18,7 @@ ALTER PROCEDURE dbo.spLoadPart
 -- =================================================================================================
 AS
 BEGIN
+	--Need to drop tables in order of most dependent to least dependent to prevent referential integrity errors
 	IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.TargetPartAdjustment') AND type IN (N'U'))
 		DROP TABLE dbo.TargetPartAdjustment
 
@@ -33,50 +34,55 @@ BEGIN
 	CREATE TABLE dbo.TargetPart
 	(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPart_Control  DEFAULT ('[i]'),
-		PartID NVARCHAR(128) NOT NULL,
-		PartSuffix NCHAR(1) NOT NULL,
-		Keyword NVARCHAR(255) NOT NULL,
-		ShortDescription NVARCHAR(255) NOT NULL,
-		ProductCategoryID NVARCHAR(255) NOT NULL,
-		PartClassificationID NVARCHAR(255) NOT NULL,
-		Tire NCHAR(1) NULL,
-		Core NCHAR(1) NULL,
-		ControlledSubstance NCHAR(1) NULL,
-		ItemFabricatedWithoutCore NCHAR(1) NULL,
+		PartID NVARCHAR(22) NOT NULL,
+		PartSuffix NCHAR(1) NOT NULL, -- check w/ S. Spec says NVARCHAR(22)
+		Keyword NVARCHAR(15) NOT NULL,
+		ShortDescription NVARCHAR(120) NOT NULL,
+		ProductCategoryID NVARCHAR(20) NOT NULL,
+		PartClassificationID NVARCHAR(2) NOT NULL, CONSTRAINT CHK_TargetPart_PartClassificationID CHECK (PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')),
+		Tire NCHAR(1) NULL CONSTRAINT CHK_TargetPart_Tire CHECK(Tire IN ('Y','N')),
+		Core NCHAR(1) NULL CONSTRAINT CHK_TargetPart_Core CHECK(Core IN ('Y','N')),
+		ControlledSubstance NCHAR(1) NULL CONSTRAINT CHK_TargetPart_ControlledSubstance CHECK(ControlledSubstance IN ('Y','N')),
+		ItemFabricatedWithoutCore NCHAR(1) NULL CONSTRAINT CHK_TargetPart_ItemFabricatedWithoutCore CHECK(ItemFabricatedWithoutCore IN ('Y','N')),
 		PathAndFileName NVARCHAR(255) NULL,
-		FileDescription NVARCHAR(255) NULL,
-		LongDescription NVARCHAR(255) NULL,
-		PurchasingDefaultAccountID NVARCHAR(255) NULL,
-		Comments NVARCHAR(4000) NULL,
-		MarkupPercentage NVARCHAR(255) NULL,
-		NoMarkupOnPart NVARCHAR(255) NULL,
-		MarkupCapAmount NVARCHAR(255) NULL,
-		VRMSCode NVARCHAR(255) NULL,
+		FileDescription NVARCHAR(60) NULL,
+		LongDescription NVARCHAR(240) NULL,
+		PurchasingDefaultAccountID NVARCHAR(30) NULL,
+		Comments NVARCHAR(600) NULL,
+		MarkupPercentage NVARCHAR(22) NULL,
+		NoMarkupOnPart NVARCHAR(1) NULL,
+		MarkupCapAmount NVARCHAR(4) NULL, -- check w/ S. Spec says NCHAR(1)
+		VRMSCode NVARCHAR(20) NULL,
 		ExcludeFromInvLists NCHAR(1) NULL,
 		CONSTRAINT PK_TargetPart PRIMARY KEY CLUSTERED(PartID)
 	);
 
 	CREATE TABLE dbo.TargetPartLocation(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPartLocation_Control  DEFAULT ('[i]'),
-		PartID nvarchar(128) NOT NULL,
+		PartID nvarchar(22) NOT NULL,
 		PartSuffix nchar(1) NOT NULL,
-		InventoryLocation nvarchar(128) NOT NULL,
-		UnitOfMeasure nvarchar(255) NOT NULL,
+		InventoryLocation nvarchar(10) NOT NULL,
+		UnitOfMeasure nvarchar(10) NOT NULL,
 		Bins nvarchar(255) NOT NULL,
-		InventoryMonth nvarchar(255) NOT NULL,
-		StockStatus nvarchar(255) NOT NULL,
-		Manufacturer nvarchar(255) NOT NULL,
-		ManufacturerPartNo nvarchar(255) NOT NULL,
-		ReplenishMethod nvarchar(255) NOT NULL,
+		InventoryMonth nvarchar(50) NOT NULL,
+		StockStatus nvarchar(30) NOT NULL,
+		Manufacturer nvarchar(15) NULL,
+		ManufacturerPartNo nvarchar(22) NULL,
+		ReplenishMethod nvarchar(10) NOT NULL,
 		PerformMinMaxCalculation nchar(1) NOT NULL,
-		MinAvailable nvarchar(255) NOT NULL,
-		MaxAvailable nvarchar(255) NOT NULL,
-		SafetyStock nvarchar(255) NOT NULL,
-		PreferredVendorID nvarchar(255) NULL,
-		DefaultReplenishmentGenerationType nvarchar(255) NULL,
-		SuppliedByLocationIfTransferRequest nvarchar(128) NULL,
-		Comments nvarchar(255) NULL,
+		MinAvailable nvarchar(22) NOT NULL,
+		MaxAvailable nvarchar(22) NOT NULL,
+		SafetyStock nvarchar(22) NOT NULL,
+		PreferredVendorID nvarchar(15) NULL,
+		DefaultReplenishmentGenerationType nvarchar(20) NULL,
+		SuppliedByLocationIfTransferRequest nvarchar(10) NULL,
+		Comments nvarchar(600) NULL,
+		-- Check Constraints
+		CONSTRAINT CHK_TargetPartLocation_PartSuffix CHECK (PartSuffix IN ('0', '1', '2')),
+		CONSTRAINT CHK_TargetPartLocation_StockStatus CHECK (StockStatus IN ('STOCKED', 'ON DEMAND - PROMOTABLE', 'ON DEMAND - NOT PROMOTABLE', 'PROHIBITED')),
+		-- Primary Keys
 		CONSTRAINT PK_TargetPartLocation PRIMARY KEY CLUSTERED(PartID, InventoryLocation),
+		-- Foreign Keys
 		CONSTRAINT FK_TargetPartLocation_TargetPart FOREIGN KEY(PartID)
 			REFERENCES dbo.TargetPart(PartID) ON UPDATE NO ACTION ON DELETE NO ACTION,
 		CONSTRAINT FK_TargetPartLocation_InventoryLocation FOREIGN KEY(InventoryLocation)
@@ -87,9 +93,9 @@ BEGIN
 
 	CREATE TABLE dbo.TargetPartLocationBin(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPartLocationBin_Control  DEFAULT ('[i]'),
-		PartID nvarchar(128) NOT NULL,
-		LocationId nvarchar(128) NOT NULL,
-		BinID nvarchar(128) NOT NULL,
+		PartID nvarchar(22) NOT NULL,
+		LocationId nvarchar(10) NOT NULL,
+		BinID nvarchar(20) NOT NULL,
 		PrimaryBin nchar(1) NOT NULL,
 		NewBin nchar(1) NOT NULL,
 		CONSTRAINT PK_TargetPartLocationBin PRIMARY KEY CLUSTERED(PartID, LocationId, BinID),
@@ -100,13 +106,13 @@ BEGIN
 	CREATE TABLE dbo.TargetPartAdjustment
 	(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPartAdjustment_Control  DEFAULT ('[i]'),
-		PartID nvarchar(128) NOT NULL,
-		LocationID nvarchar(128) NOT NULL,
+		PartID nvarchar(22) NOT NULL,
+		LocationID nvarchar(10) NOT NULL,
 		PartSuffix nchar(1) NOT NULL,
-		[Action] nvarchar(255) NOT NULL,
-		AdjustmentType nvarchar(255) NOT NULL,
-		Quantity nvarchar(255) NOT NULL,
-		UnitPrice nvarchar(255) NOT NULL,
+		[Action] nvarchar(8) NOT NULL,
+		AdjustmentType nvarchar(25) NOT NULL,
+		Quantity nvarchar(22) NOT NULL,
+		UnitPrice nvarchar(22) NOT NULL,
 		CONSTRAINT PK_TargetPartAdjustment PRIMARY KEY CLUSTERED(PartID, LocationId),
 		CONSTRAINT FK_TargetPartAdjustment_TargetPartLocation FOREIGN KEY(PartID, LocationId)
 			REFERENCES dbo.TargetPartLocation(PartID, InventoryLocation) ON UPDATE NO ACTION ON DELETE NO ACTION 
@@ -157,6 +163,8 @@ BEGIN
 		tp.VRMSCode,
 		tp.ExcludeFromInvLists
 	FROM dbo.TransformPart tp
+	WHERE tp.PartID IS NOT NULL
+		AND PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
 
 	INSERT INTO dbo.TargetPartLocation
 	(
@@ -188,7 +196,7 @@ BEGIN
 		tpl.InventoryMonth,
 		tpl.StockStatus,
 		tpl.Manufacturer,
-		tpl.ManufacturerPartNo,
+		tpl.ManufacturerPartNo, 22,
 		tpl.ReplenishMethod,
 		tpl.PerformMinMaxCalculation,
 		tpl.MinAvailable,
@@ -200,6 +208,9 @@ BEGIN
 		tpl.Comments
 	FROM dbo.TransformPartLocation tpl
 	WHERE tpl.InventoryLocation != '' --temporary measure to ensure unique records while location load criteria is determined
+		AND tpl.InventoryLocation IS NOT NULL
+		AND tpl.UnitOfMeasure IS NOT NULL
+		AND UPPER(tpl.StockStatus) IN ('STOCKED', 'ON DEMAND - PROMOTABLE', 'ON DEMAND - NOT PROMOTABLE', 'PROHIBITED')
 
 	INSERT INTO dbo.TargetPartLocationBin
 	(
@@ -216,27 +227,30 @@ BEGIN
 		tplb.PrimaryBin,
 		tplb.NewBin
 	FROM dbo.TransformPartLocationBin tplb
+	INNER JOIN dbo.TargetPartLocation AS tpl
+		ON tplb.PartID = tpl.PartID
+		AND tplb.LocationId = tpl.InventoryLocation
 	WHERE tplb.LocationId != '' --temporary measure to ensure unique records while location load criteria is determined
 
-	INSERT INTO dbo.TargetPartAdjustment
-	(
-		PartID,
-		LocationId,
-		PartSuffix,
-		[Action],
-		AdjustmentType,
-		Quantity,
-		UnitPrice
-	)
-	SELECT
-		tpa.PartID,
-		tpa.LocationId,
-		tpa.PartSuffix,
-		tpa.[Action],
-		tpa.AdjustmentType,
-		tpa.Quantity,
-		tpa.UnitPrice
-	FROM dbo.TransformPartAdjustment tpa
-	WHERE tpa.LocationId != '' --temporary measure to ensure unique records while location load criteria is determined
+	--INSERT INTO dbo.TargetPartAdjustment
+	--(
+	--	PartID,
+	--	LocationId,
+	--	PartSuffix,
+	--	[Action],
+	--	AdjustmentType,
+	--	Quantity,
+	--	UnitPrice
+	--)
+	--SELECT
+	--	tpa.PartID,
+	--	tpa.LocationId,
+	--	tpa.PartSuffix,
+	--	tpa.[Action],
+	--	tpa.AdjustmentType,
+	--	tpa.Quantity,
+	--	tpa.UnitPrice
+	--FROM dbo.TransformPartAdjustment tpa
+	--WHERE tpa.LocationId != '' --temporary measure to ensure unique records while location load criteria is determined
 
 END
