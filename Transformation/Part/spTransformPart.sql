@@ -49,30 +49,30 @@ BEGIN
 		0 [PartSuffix],
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN 'CHEMICAL'
-			ELSE ''
+			ELSE NULL
 		END [Keyword],
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_DESC))
 			WHEN LTRIM(RTRIM(PH.PART_NO)) = '031236' THEN 'GASKET'
-			ELSE ''
+			ELSE NULL
 		END [ShortDescription],
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN '7720'
-			ELSE ''
+			ELSE NULL
 		END [ProductCategoryID],
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN 'ST'
-			ELSE ''
+			ELSE NULL
 		END [PartClassificationID],
 		CASE
 			WHEN PH.PART_CAT = '9560' THEN 'Y'
 			ELSE 'N'
 		END [Tire],
-		'' [Core],		-- Open issue: coming from General Services
+		NULL [Core],		-- Open issue: coming from General Services
 		'N' [ControlledSubstance],
 		'N' [ItemFabricatedWithoutCore],
-		'' [PathAndFileName],		-- Open issue
-		'' [FileDescription],		-- Open issue
+		NULL [PathAndFileName],		-- Open issue
+		NULL [FileDescription],		-- Open issue
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_DESC))
 			ELSE ''
@@ -84,9 +84,11 @@ BEGIN
 		000.0 [MarkupCapAmount],
 		CASE
 			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_GROUP))
-			ELSE ''
+			ELSE NULL
 		END [VRMSCode],
-		'' [ExcludeFromInvLists]
+		CASE
+			WHEN PH.PART_CAT = '7950' THEN 'Y'
+		END  [ExcludeFromInvLists]
 	FROM SourceWicm220PartsHeader PH
 
 	-- Updates from Shawns XLS.
@@ -131,11 +133,6 @@ BEGIN
 								 WHEN 7542 THEN 7541
 								 ELSE ProductCategoryID
 						    END
-
-	-- Set the ExcludeFromInvLists based on ProductCategoryID
-	UPDATE #StagingParts
-	SET ExcludeFromInvLists = 'Y'
-	WHERE ProductCategoryID = '7950'
 		
 	-- Copy #StagingParts to TransformPart
 	TRUNCATE TABLE TransformPart;
@@ -167,28 +164,28 @@ BEGIN
 	SELECT
 		SP.PartID [PartID],
 		0 [PartSuffix],
-		ISNULL(invLook.AW_InventoryLocation,'') AS InventoryLocationID,
-		'' [UnitOfMeasure],
+		invLook.AW_InventoryLocation AS InventoryLocationID,
+		NULL AS [UnitOfMeasure],
 		'[335:35;Bin;1-2:1-2]' [BinID],
 		'APRIL' [InventoryMonth],
 		CASE
 			WHEN LEN(SP.PartID) = 3 THEN 'STOCKED'
 			ELSE ''
 		END [StockStatus],
-		'' [Manufacturer],
-		'' [ManufacturerPartNumber],
+		NULL AS [Manufacturer],
+		NULL AS [ManufacturerPartNumber],
 		'Min-Max' [ReplenishMethod],
-		'' [PerformMinMaxCalculation],
+		'' AS [PerformMinMaxCalculation],
 		ISNULL(PD.LOW_LIM, 0) [MinAvailable],
 		ISNULL(PD.HIGH_LIM, 0) [MaxAvailable],
 		ISNULL(PD.CRITICAL_LIM, 0) [SafetyStock],	-- Open issue (missing from spec)
-		'' [PreferredVendorID],
+		NULL AS [PreferredVendorID],
 		'REQUISITION' [DefaultReplenishmentGenerationType],
 		CASE
 			WHEN LTRIM(RTRIM(PD.LOCATION)) <> '60' THEN 'STOREROOM'
 			ELSE NULL
 		END [SuppliedByLocationIfTransferRequest],
-		'' [Comments]
+		NULL AS [Comments]
 	FROM SourceWicm221PartsDetail PD
 	INNER JOIN #StagingParts sp 
 		ON dbo.TRIM(PD.PART_NO) = sp.PartID
