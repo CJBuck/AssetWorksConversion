@@ -20,114 +20,67 @@ GO
 ALTER PROCEDURE dbo.spTransformPart
 AS
 BEGIN
+-- =================================================================================================
+-- Build dbo.TransformPart
+-- =================================================================================================
+	IF OBJECT_ID('tempdb..#StagingParts') IS NOT NULL
+		DROP TABLE #StagingParts
+
 	CREATE TABLE #StagingParts(
-		[PartID] [varchar](22) NOT NULL,
-		[PartSuffix] [int] NULL,
-		[Keyword] [varchar](15) NULL,
-		[ShortDescription] [varchar](120) NULL,
-		[ProductCategoryID] [varchar](20) NULL,
-		[PartClassificationID] [varchar](2) NULL,
-		[Tire] [char](1) NULL,
-		[Core] [char](1) NULL,
-		[ControlledSubstance] [char](1) NULL,
-		[ItemFabricatedWithoutCore] [char](1) NULL,
-		[PathAndFileName] [varchar](255) NULL,
-		[FileDescription] [varchar](60) NULL,
-		[LongDescription] [varchar](240) NULL,
-		[PurchasingDefaultAccountID] [varchar](30) NULL,
-		[Comments] [varchar](8000) NULL,
-		[MarkupPercentage] [decimal](22, 1) NULL,
-		[NoMarkupOnPart] [char](1) NULL,
-		[MarkupCapAmount] [decimal](22, 2) NULL,
-		[VRMSCode] [varchar](20) NULL,
-		[ExcludeFromInvLists] [char] (1) NULL
+		PartID varchar(22) NOT NULL,
+		PartSuffix int NULL,
+		Keyword varchar(15) NULL,
+		ShortDescription varchar(120) NULL,
+		ProductCategoryID varchar(20) NULL,
+		PartClassificationID varchar(2) NULL,
+		Tire char(1) NULL,
+		Core char(1) NULL,
+		ControlledSubstance char(1) NULL,
+		ItemFabricatedWithoutCore char(1) NULL,
+		PathAndFileName varchar(255) NULL,
+		FileDescription varchar(60) NULL,
+		LongDescription varchar(240) NULL,
+		PurchasingDefaultAccountID varchar(30) NULL,
+		Comments varchar(600) NULL,
+		MarkupPercentage decimal(22, 1) NULL, -- check w/ S. (spec says integer)
+		NoMarkupOnPart char(1) NULL,
+		MarkupCapAmount decimal(22, 2) NULL, -- check w/ S. (spec says integer)
+		VRMSCode varchar(20) NULL,
+		ExcludeFromInvLists char (1) NULL
 	)
 
+	--load common values first
 	INSERT INTO #StagingParts
+	(
+		PartId,
+		PartSuffix,
+		Tire,
+		ControlledSubstance,
+		ItemFabricatedWithoutCore,
+		PurchasingDefaultAccountID,
+		Comments,
+		MarkupPercentage,
+		NoMarkupOnPart,
+		MarkupCapAmount,
+		ExcludeFromInvLists
+	)
 	SELECT
-		LTRIM(RTRIM(PH.PART_NO)) [PartID],
-		0 [PartSuffix],
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN 'CHEMICAL'
-			ELSE NULL
-		END [Keyword],
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_DESC))
-			WHEN LTRIM(RTRIM(PH.PART_NO)) = '031236' THEN 'GASKET'
-			ELSE NULL
-		END [ShortDescription],
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN '7720'
-			ELSE NULL
-		END [ProductCategoryID],
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN 'ST'
-			ELSE NULL
-		END [PartClassificationID],
-		CASE
-			WHEN PH.PART_CAT = '9560' THEN 'Y'
-			ELSE 'N'
-		END [Tire],
-		NULL [Core],		-- Open issue: coming from General Services
-		'N' [ControlledSubstance],
-		'N' [ItemFabricatedWithoutCore],
-		NULL [PathAndFileName],		-- Open issue
-		NULL [FileDescription],		-- Open issue
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_DESC))
-			ELSE ''
-		END [LongDescription],
-		'6000-0000-145300-000000-00000' [PurchasingDefaultAccountID],
-		dbo.GroupConcatComments(LTRIM(RTRIM(PH.[PART_NO]))) [Comments],
-		000.0 [MarkupPercentage],
-		'Y' [NoMarkupOnPart],
-		000.0 [MarkupCapAmount],
-		CASE
-			WHEN LEN(LTRIM(RTRIM(PH.PART_NO))) = 3 THEN LTRIM(RTRIM(PH.PART_GROUP))
-			ELSE NULL
-		END [VRMSCode],
-		CASE
-			WHEN PH.PART_CAT = '7950' THEN 'Y'
-		END  [ExcludeFromInvLists]
+		LTRIM(RTRIM(PH.PART_NO)) AS PartID,
+		0 AS PartSuffix,
+		CASE WHEN PH.PART_CAT = '9560' THEN 'Y' ELSE 'N' END AS Tire,
+		'N' ControlledSubstance,
+		'N' ItemFabricatedWithoutCore,
+		'6000-0000-145300-000000-00000' AS PurchasingDefaultAccountID,
+		dbo.GroupConcatComments(LTRIM(RTRIM(PH.PART_NO))) AS Comments,
+		000.0 AS MarkupPercentage,
+		'Y' AS NoMarkupOnPart,
+		000.0 AS MarkupCapAmount,
+		CASE WHEN PH.PART_CAT = '7950' THEN 'Y' END AS ExcludeFromInvLists
 	FROM SourceWicm220PartsHeader PH
 
-	-- Updates from Shawns XLS.
-	UPDATE #StagingParts
 	-- Update chemical parts (not included in Shawns XLS)
 	UPDATE sp
 	SET
-		Keyword =
-			CASE
-				WHEN LEN(SP.PartID) >= 4 THEN xls.Keyword
-				ELSE SP.Keyword
-			END,
-		ShortDescription =
-			CASE
-				WHEN ((LEN(SP.PartID) >= 4) AND (SP.PartID <> '031236')) THEN xls.NewDescription
-				ELSE SP.ShortDescription
-			END,
-		ProductCategoryID =
-			CASE
-				WHEN LEN(SP.PartID) >= 4 THEN xls.Cat
-				ELSE SP.ProductCategoryID
-			END,
-		PartClassificationID =
-			CASE
-				WHEN LEN(SP.PartID) >= 4 THEN xls.PartsClassID
-				ELSE SP.PartClassificationID
-			END,
-		LongDescription =
-			CASE
-				WHEN LEN(SP.PartID) >= 4 THEN xls.CurrentDescription
-				ELSE SP.LongDescription
-			END,
-		VRMSCode =
-			CASE
-				WHEN LEN(SP.PartID) >= 4 THEN xls.[Group]
-				ELSE SP.VRMSCode
-			END
-	FROM #StagingParts SP
-		INNER JOIN ShawnsXLS xls ON SP.PartID = xls.PartNo
 		Keyword = 'CHEMICAL',
 		ShortDescription = dbo.TRIM(swph.PART_DESC),
 		ProductCategoryID = '7720',
@@ -164,8 +117,15 @@ BEGIN
 	TRUNCATE TABLE TransformPart;
 	INSERT INTO TransformPart
 	SELECT * FROM #StagingParts
+
+-- =================================================================================================
+-- Build dbo.TransformPartLocation
+-- =================================================================================================
+IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
+	DROP TABLE #StagingPartLocation
 		
-	CREATE TABLE #StagingPartLocation(
+	CREATE TABLE #StagingPartLocation
+	(
 		[PartID] [varchar](22) NOT NULL,
 		[PartSuffix] [int] NOT NULL,
 		[InventoryLocation] [varchar](10) NULL,
@@ -187,84 +147,109 @@ BEGIN
 	)
 	
 	INSERT INTO #StagingPartLocation
+	(
+		PartID,
+		PartSuffix,
+		InventoryLocation,
+		Bins,
+		InventoryMonth,
+		ReplenishMethod,
+		PerformMinMaxCalculation,
+		MinAvailable,
+		MaxAvailable,
+		SafetyStock,
+		DefaultReplenishmentGenerationType,
+		SuppliedByLocationIfTransferRequest
+	)
 	SELECT
-		SP.PartID [PartID],
+		tp.PartID [PartID],
 		0 [PartSuffix],
 		invLook.AW_InventoryLocation AS InventoryLocationID,
-		NULL AS [UnitOfMeasure],
 		'[335:35;Bin;1-2:1-2]' [BinID],
 		'APRIL' [InventoryMonth],
-		CASE
-			WHEN LEN(SP.PartID) = 3 THEN 'STOCKED'
-			ELSE ''
-		END [StockStatus],
-		NULL AS [Manufacturer],
-		NULL AS [ManufacturerPartNumber],
 		'Min-Max' [ReplenishMethod],
 		'' AS [PerformMinMaxCalculation],
-		ISNULL(PD.LOW_LIM, 0) [MinAvailable],
-		ISNULL(PD.HIGH_LIM, 0) [MaxAvailable],
-		ISNULL(PD.CRITICAL_LIM, 0) [SafetyStock],	-- Open issue (missing from spec)
-		NULL AS [PreferredVendorID],
+		ISNULL(pd.LOW_LIM, 0) [MinAvailable],
+		ISNULL(pd.HIGH_LIM, 0) [MaxAvailable],
+		ISNULL(pd.CRITICAL_LIM, 0) [SafetyStock],	-- Open issue (missing from tpec)
 		'REQUISITION' [DefaultReplenishmentGenerationType],
-		CASE
-			WHEN LTRIM(RTRIM(PD.LOCATION)) <> '60' THEN 'STOREROOM'
-			ELSE NULL
-		END [SuppliedByLocationIfTransferRequest],
-		NULL AS [Comments]
-	FROM SourceWicm221PartsDetail PD
-	INNER JOIN #StagingParts sp 
-		ON dbo.TRIM(PD.PART_NO) = sp.PartID
-	LEFT JOIN TransformPartInventoryLocationLookup invLook
-		ON PD.LOCATION = invLook.WICM_Location
-	WHERE ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
-
-	-- *************************************************************************
-
-	-- UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo
+		CASE WHEN LTRIM(RTRIM(pd.LOCATION)) <> '60' THEN 'STOREROOM' ELSE NULL END AS [SuppliedByLocationIfTransferRequest]
+	FROM SourceWicm221PartsDetail pd
+	INNER JOIN dbo.TransformPart tp 
+		ON pd.PART_NO = tp.PartID
+	LEFT JOIN dbo.TransformPartInventoryLocationLookup AS invlook
+		ON pd.LOCATION = invlook.WICM_Location
+	WHERE ISNULL(invlook.IncludeInLoad, 1) = 1 -- ISNULL ensures undefined locations are also included (for mandatory field reporting)
+	
+	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for Chemicals
 	UPDATE #StagingPartLocation
 	SET
-		UnitOfMeasure =
-			CASE
-				WHEN LEN(SPL.PartID) = 3 THEN LEFT(LTRIM(RTRIM(ph.UNIT_ISSUE)), 10)
-				ELSE LEFT(LTRIM(RTRIM(xls.[U/I])), 10)
-			END,
-		StockStatus =
-			CASE
-				WHEN LEN(SPL.PartID) >= 4 
-					THEN LEFT(LTRIM(RTRIM(UPPER(xls.AW_StockStatus))), 30)
-				ELSE SPL.StockStatus
-			END,
-		Manufacturer =			
-			CASE
-				WHEN LEN(SPL.PartID) = 3 THEN LEFT(LTRIM(RTRIM(ph.[CATALOG])), 15)
-				ELSE ''
-			END,
-		ManufacturerPartNo =
-			CASE
-				WHEN LEN(SPL.PartID) = 3 THEN LEFT(LTRIM(RTRIM(ph.MFG_NUMBER)), 22)
-				ELSE ISNULL(LEFT(LTRIM(RTRIM(xls.NewMfgNo)), 22), '')
-			END
-	FROM #StagingPartLocation SPL
 	INNER JOIN SourceWicm220PartsHeader ph 
 		ON SPL.PartID = ph.PART_NO
 	LEFT JOIN ShawnsXLS xls 
 		ON ph.PART_NO = xls.PartNo
 
-	-- Cleanse Manaufacturer
+	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for non Chemicals (using Shawns XLS)
 	UPDATE #StagingPartLocation
-	SET Manufacturer = tpml.TargetValue
-	FROM #StagingPartLocation SPL
-	LEFT JOIN ShawnsXLS xls 
-			ON SPL.PartID = xls.PartNo
-	INNER JOIN TransformPartManufacturerLookup tpml 
+	SET
+		UnitOfMeasure = dbo.TRIM(xls.[U/I]),
+		StockStatus = UPPER(dbo.TRIM(xls.AW_StockStatus)),
+		Manufacturer = tpml.TargetValue,		
+		ManufacturerPartNo = dbo.TRIM(xls.NewMfgNo)
+	FROM #StagingPartLocation spl
+	INNER JOIN ShawnsXLS xls 
+		ON spl.PartId = xls.PartNo
+	LEFT JOIN TransformPartManufacturerLookup tpml 
 		ON xls.NewMfg = tpml.SourceValue
-	WHERE LEN(SPL.PartID) >= 4
+	WHERE LEN(spl.PartId) > 3
 		
 	-- Copy #StagingPartsLocation to TransformPartLocation
 	TRUNCATE TABLE TransformPartLocation;
-	INSERT INTO TransformPartLocation
-	SELECT * FROM #StagingPartLocation;
+	INSERT INTO dbo.TransformPartLocation
+	(
+	PartID,
+	PartSuffix,
+	InventoryLocation,
+	UnitOfMeasure,
+	Bins,
+	InventoryMonth,
+	StockStatus,
+	Manufacturer,
+	ManufacturerPartNo,
+	ReplenishMethod,
+	PerformMinMaxCalculation,
+	MinAvailable,
+	MaxAvailable,
+	SafetyStock,
+	PreferredVendorID,
+	DefaultReplenishmentGenerationType,
+	SuppliedByLocationIfTransferRequest,
+	Comments
+	)
+	SELECT
+		PartID,
+		PartSuffix,
+		InventoryLocation,
+		LEFT(UnitOfMeasure, 10),
+		Bins,
+		InventoryMonth,
+		StockStatus,
+		Manufacturer,
+		ManufacturerPartNo,
+		ReplenishMethod,
+		PerformMinMaxCalculation,
+		MinAvailable,
+		MaxAvailable,
+		SafetyStock,
+		PreferredVendorID,
+		DefaultReplenishmentGenerationType,
+		SuppliedByLocationIfTransferRequest,
+		Comments
+	FROM #StagingPartLocation AS spl;
+
+-- =================================================================================================
+-- Build dbo.TransformPartLocationBin
+-- =================================================================================================
 
 	-- Part Location Bin
 	TRUNCATE TABLE TransformPartLocationBin;
@@ -368,9 +353,3 @@ BEGIN
 	AND CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
 	AND ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#StagingParts') IS NOT NULL
-	DROP TABLE #StagingParts
-IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
-	DROP TABLE #StagingPartLocation
