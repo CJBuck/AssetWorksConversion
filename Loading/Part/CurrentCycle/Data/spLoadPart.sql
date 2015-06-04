@@ -196,7 +196,7 @@ BEGIN
 		tpl.InventoryMonth,
 		tpl.StockStatus,
 		tpl.Manufacturer,
-		tpl.ManufacturerPartNo, 22,
+		tpl.ManufacturerPartNo,
 		tpl.ReplenishMethod,
 		tpl.PerformMinMaxCalculation,
 		tpl.MinAvailable,
