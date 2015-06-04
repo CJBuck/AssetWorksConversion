@@ -84,11 +84,14 @@ BEGIN
 		CONSTRAINT PK_TargetPartLocation PRIMARY KEY CLUSTERED(PartID, InventoryLocation),
 		-- Foreign Keys
 		CONSTRAINT FK_TargetPartLocation_TargetPart FOREIGN KEY(PartID)
-			REFERENCES dbo.TargetPart(PartID) ON UPDATE NO ACTION ON DELETE NO ACTION,
+			REFERENCES dbo.TargetPart(PartID),
 		CONSTRAINT FK_TargetPartLocation_InventoryLocation FOREIGN KEY(InventoryLocation)
-			REFERENCES dbo.TransformPartInventoryLocationLookup(AW_InventoryLocation) ON UPDATE NO ACTION ON DELETE NO ACTION,
+			REFERENCES dbo.TransformPartInventoryLocationLookup(AW_InventoryLocation),
 		CONSTRAINT FK_TargetPartLocation_SuppliedByLocationIfTransferRequest FOREIGN KEY(SuppliedByLocationIfTransferRequest)
-			REFERENCES dbo.TransformPartInventoryLocationLookup(AW_InventoryLocation) ON UPDATE NO ACTION ON DELETE NO ACTION
+			REFERENCES dbo.TransformPartInventoryLocationLookup(AW_InventoryLocation),
+		CONSTRAINT FK_TargetPartLocation_Manufacturer FOREIGN KEY(Manufacturer)
+			REFERENCES dbo.TargetPartManufacturer(PartManufacturerID)
+
 	);
 
 	CREATE TABLE dbo.TargetPartLocationBin(
@@ -207,8 +210,7 @@ BEGIN
 		tpl.SuppliedByLocationIfTransferRequest,
 		tpl.Comments
 	FROM dbo.TransformPartLocation tpl
-	WHERE tpl.InventoryLocation != '' --temporary measure to ensure unique records while location load criteria is determined
-		AND tpl.InventoryLocation IS NOT NULL
+	WHERE tpl.InventoryLocation IS NOT NULL
 		AND tpl.UnitOfMeasure IS NOT NULL
 		AND UPPER(tpl.StockStatus) IN ('STOCKED', 'ON DEMAND - PROMOTABLE', 'ON DEMAND - NOT PROMOTABLE', 'PROHIBITED')
 
@@ -230,27 +232,30 @@ BEGIN
 	INNER JOIN dbo.TargetPartLocation AS tpl
 		ON tplb.PartID = tpl.PartID
 		AND tplb.LocationId = tpl.InventoryLocation
-	WHERE tplb.LocationId != '' --temporary measure to ensure unique records while location load criteria is determined
+	WHERE tplb.LocationId IS NOT NULL 
 
-	--INSERT INTO dbo.TargetPartAdjustment
-	--(
-	--	PartID,
-	--	LocationId,
-	--	PartSuffix,
-	--	[Action],
-	--	AdjustmentType,
-	--	Quantity,
-	--	UnitPrice
-	--)
-	--SELECT
-	--	tpa.PartID,
-	--	tpa.LocationId,
-	--	tpa.PartSuffix,
-	--	tpa.[Action],
-	--	tpa.AdjustmentType,
-	--	tpa.Quantity,
-	--	tpa.UnitPrice
-	--FROM dbo.TransformPartAdjustment tpa
-	--WHERE tpa.LocationId != '' --temporary measure to ensure unique records while location load criteria is determined
+	INSERT INTO dbo.TargetPartAdjustment
+	(
+		PartID,
+		LocationId,
+		PartSuffix,
+		[Action],
+		AdjustmentType,
+		Quantity,
+		UnitPrice
+	)
+	SELECT
+		tpa.PartID,
+		tpa.LocationId,
+		tpa.PartSuffix,
+		tpa.[Action],
+		tpa.AdjustmentType,
+		tpa.Quantity,
+		tpa.UnitPrice
+	FROM dbo.TransformPartAdjustment tpa
+	INNER JOIN dbo.TargetPartLocation AS tpl
+		ON tpa.PartID = tpl.PartID
+		AND tpa.LocationId = tpl.InventoryLocation
+	WHERE tpa.LocationId IS NOT NULL
 
 END
