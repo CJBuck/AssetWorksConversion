@@ -31,40 +31,20 @@ BEGIN
 		END
 	ELSE IF @Source = 'Vehicles'
 		BEGIN
-			WITH VehMissingClass AS (
-				SELECT DISTINCT OV.[OBJECT_ID], ISNULL(OV.VEH_MAKE, '') [WICM_VEH_MAKE],
-					ISNULL(OV.VEH_MODEL, '') [WICM_VEH_MODEL], ISNULL(OV.[CLASS], '') [WICM_CLASS]
-				FROM SourceWicm210ObjectVehicle OV
-					INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
-						ON OV.[OBJECT_ID] = vehdet.[WICM_OBJID]
-					LEFT JOIN TransformObjectVehicleValueEquipmentClass vec
-						ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
-							AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
-							AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
-				WHERE
-					OV.[OBJECT_ID] NOT IN ('006656', '006533', '006657', '006565', '006572', '006573', '006678')
-					AND ISNULL(vec.EquipmentClassID, '') = ''
-			),
-			SEMissingClass AS (
-				SELECT DISTINCT OV.[OBJECT_ID], ISNULL(OV.VEH_MAKE, '') [WICM_VEH_MAKE],
-					ISNULL(OV.VEH_MODEL, '') [WICM_VEH_MODEL], ISNULL(OV.[CLASS], '') [WICM_CLASS]
-				FROM SourceWicm210ObjectVehicle OV
-					INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails vehdet
-						ON OV.[OBJECT_ID] = vehdet.[WICM_OBJID]
-					LEFT JOIN TransformObjectVehicleValueEquipmentClass vec
-						ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
-							AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
-							AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
-				WHERE
-					OV.[OBJECT_ID] NOT IN ('006656', '006533', '006657', '006565', '006572', '006573', '006678')
-					AND ISNULL(vec.EquipmentClassID, '') = ''
-			)
-			SELECT DISTINCT sq.*
-			FROM (
-				SELECT * FROM VehMissingClass
-				UNION ALL
-				SELECT * FROM SEMissingClass
-			) sq
-			ORDER BY [OBJECT_ID]
+			SELECT DISTINCT OV.[OBJECT_ID],
+				ISNULL(OV.VEH_MAKE, '') [WICM_VEH_MAKE],
+				ISNULL(OV.VEH_MODEL, '') [WICM_VEH_MODEL],
+				ISNULL(OV.[CLASS], '') [WICM_CLASS]
+			FROM SourceWicm210ObjectVehicle OV
+				LEFT JOIN TransformObjectVehicleValueEquipmentClass vec
+					ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
+						AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
+						AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
+			WHERE
+				(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
+				AND ISNULL(vec.EquipmentClassID, '') = ''
+				AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
+					'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
+					'006673', '006674', '006675'))
 		END
 END

@@ -43,7 +43,6 @@ ELSE IF @Source = 'Facilities'
 		SELECT OE.[OBJECT_ID], OE.MFR_NAME,
 			LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) [Truncated MFR_NAME]
 		FROM SourceWicm210ObjectEquipment OE
-		-- ManufacturerID Cleansing
 		WHERE
 			OE.[STATUS] = 'A' AND OE.[CLASS] NOT IN ('JAPS', 'LHPL', 'RDGDMT')
 			AND LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) NOT IN (
@@ -65,39 +64,18 @@ ELSE IF @Source = 'Hydrants'
 	END
 ELSE IF @Source = 'Vehicles'
 	BEGIN
-		WITH Vehicles AS (
-			SELECT OV.[OBJECT_ID],
-				ISNULL(LTRIM(RTRIM(OV.[VEH_MAKE])), '') [Make],
-				ISNULL(manid.SourceValue, '') [Source Value]
-			FROM SourceWicm210ObjectVehicle OV
-				INNER JOIN TransformEquipmentVehicleValueVehicleDetails vet
-					ON LTRIM(RTRIM(OV.[OBJECT_ID])) = vet.[WICM_OBJID]
-				LEFT JOIN TransformEquipmentManufacturer manid
-					ON LTRIM(RTRIM(OV.[VEH_MAKE])) = manid.SourceValue
-						AND manid.[Source] = 'Vehicles'
-			WHERE
-				(ISNULL(manid.SourceValue, '') = '')
-		),
-		SpecialEquip AS (
-			SELECT OV.[OBJECT_ID],
-				ISNULL(LTRIM(RTRIM(OV.[VEH_MAKE])), '') [Make],
-				ISNULL(manid.SourceValue, '') [Source Value]
-			FROM SourceWicm210ObjectVehicle OV
-				INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails vet
-					ON LTRIM(RTRIM(OV.[OBJECT_ID])) = vet.[WICM_OBJID]
-				LEFT JOIN TransformEquipmentManufacturer manid
-					ON LTRIM(RTRIM(OV.[VEH_MAKE])) = manid.SourceValue
-						AND manid.[Source] = 'Vehicles'
-			WHERE
-				(ISNULL(manid.SourceValue, '') = '')
-		)
-		SELECT DISTINCT sq.*
-		FROM (
-			SELECT * FROM Vehicles
-			UNION ALL
-			SELECT * FROM SpecialEquip
-		) sq
-		ORDER BY [Source Value] DESC
+		SELECT OV.[OBJECT_ID],
+			ISNULL(LTRIM(RTRIM(OV.[VEH_MAKE])), '') [Make],
+			ISNULL(manid.SourceValue, '') [Source Value]
+		FROM SourceWicm210ObjectVehicle OV
+			LEFT JOIN TransformEquipmentManufacturer manid
+				ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue AND manid.[Source] LIKE '%Vehicles%'
+		WHERE
+			(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
+			AND (ISNULL(manid.TargetValue, '') = '')
+			AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
+				'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
+				'006673', '006674', '006675'))
 	END
 ELSE
 	-- Current Valid Values
