@@ -22,6 +22,7 @@ CREATE TABLE dbo.TargetPartManufacturer
 	PartManufacturerID nvarchar(15) NOT NULL,
 	Name nvarchar(30) NOT NULL,
 	PartCatalog nchar(1) NULL CONSTRAINT CHK_TargetPartManufacturer_PartCatalog CHECK(PartCatalog IN ('Y','N')),
-	Active nchar(1) NOT NULL CONSTRAINT CHK_TargetPartManufacturer_Active CHECK(Active IN ('Y','N'))
+	Active nchar(1) NOT NULL CONSTRAINT CHK_TargetPartManufacturer_Active CHECK(Active IN ('Y','N')),
+	CONSTRAINT PK_TargetPartManufacturer PRIMARY KEY CLUSTERED(PartManufacturerID),
 )
 

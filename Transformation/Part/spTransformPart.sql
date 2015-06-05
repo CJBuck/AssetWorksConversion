@@ -179,7 +179,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		ON pd.PART_NO = tp.PartID
 	LEFT JOIN dbo.TransformPartInventoryLocationLookup AS invlook
 		ON pd.LOCATION = invlook.WICM_Location
-	WHERE ISNULL(invlook.IncludeInLoad, 1) = 1 -- ISNULL ensures undefined locations are also included (for mandatory field reporting)
+	--WHERE ISNULL(invlook.IncludeInLoad, 1) = 1 --moved to spLoadPart to keep exclusion consistent (all records in Transform, exclude in Transform->Target)
 	
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for Chemicals
 	UPDATE #StagingPartLocation
@@ -242,7 +242,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		FROM ShawnsXLS xls
 		WHERE ISNULL(xls.[Bin2], '') <> ''
 		UNION ALL
-			SELECT
+		SELECT
 			LTRIM(RTRIM(xls.[PartNo])) [PartID],
 			'STOREROOM' [LocationId],
 			xls.[Bin3] [BinID],
@@ -272,7 +272,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 			ON ph.PART_No = pd.PART_NO
 		WHERE PL_LOC1 IS NOT NULL AND PL_LOC1 != '' AND pd.LOCATION != '60'
 
-		UNION 
+		UNION ALL
 
 		SELECT pd.PART_NO, pd.LOCATION , PL_LOC2 AS PL_LOC, 'N' AS PrimaryBin
 		FROM dbo.SourceWicm220PartsHeader ph
@@ -280,7 +280,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 			ON ph.PART_No = pd.PART_NO
 		WHERE PL_LOC2 IS NOT NULL AND PL_LOC2 != '' AND pd.LOCATION != '60'
 
-		UNION 
+		UNION ALL
 
 		SELECT pd.PART_NO, pd.LOCATION , PL_LOC3 AS PL_LOC, 'N' AS PrimaryBin
 		FROM dbo.SourceWicm220PartsHeader ph
@@ -291,7 +291,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	AS non60Parts
 	LEFT JOIN dbo.TransformPartInventoryLocationLookup invLook
 		ON non60Parts.LOCATION = invLook.WICM_Location
-	WHERE ISNULL(invLook.IncludeInLoad,1) = 1
+	--WHERE ISNULL(invLook.IncludeInLoad,1) = 1 --moved to spLoadPart to keep exclusion consistent (all records in Transform, exclude in Transform->Target)
 
 	-- Part Adjustment
 	TRUNCATE TABLE TransformPartAdjustment;
@@ -310,5 +310,5 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	LEFT JOIN TransformPartInventoryLocationLookup invLook
 		ON PD.LOCATION = invLook.WICM_Location
 	WHERE CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
-	AND ISNULL(invLook.IncludeInLoad,1) = 1 --temporary measure to handle undefined locations
+	--AND ISNULL(invLook.IncludeInLoad,1) = 1 --moved to spLoadPart to keep exclusion consistent (all records in Transform, exclude in Transform->Target)
 END
