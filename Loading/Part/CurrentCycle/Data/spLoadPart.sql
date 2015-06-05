@@ -57,7 +57,8 @@ BEGIN
 		CONSTRAINT PK_TargetPart PRIMARY KEY CLUSTERED(PartID)
 	);
 
-	CREATE TABLE dbo.TargetPartLocation(
+	CREATE TABLE dbo.TargetPartLocation
+	(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPartLocation_Control  DEFAULT ('[i]'),
 		PartID nvarchar(22) NOT NULL,
 		PartSuffix nchar(1) NOT NULL,
@@ -91,10 +92,10 @@ BEGIN
 			REFERENCES dbo.TransformPartInventoryLocationLookup(AW_InventoryLocation),
 		CONSTRAINT FK_TargetPartLocation_Manufacturer FOREIGN KEY(Manufacturer)
 			REFERENCES dbo.TargetPartManufacturer(PartManufacturerID)
-
 	);
 
-	CREATE TABLE dbo.TargetPartLocationBin(
+	CREATE TABLE dbo.TargetPartLocationBin
+	(
 		Control nvarchar(255) NOT NULL CONSTRAINT DF_TargetPartLocationBin_Control  DEFAULT ('[i]'),
 		PartID nvarchar(22) NOT NULL,
 		LocationId nvarchar(10) NOT NULL,
@@ -166,8 +167,7 @@ BEGIN
 		tp.VRMSCode,
 		tp.ExcludeFromInvLists
 	FROM dbo.TransformPart tp
-	WHERE tp.PartID IS NOT NULL
-		AND PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
+	WHERE PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
 
 	INSERT INTO dbo.TargetPartLocation
 	(
@@ -210,9 +210,13 @@ BEGIN
 		tpl.SuppliedByLocationIfTransferRequest,
 		tpl.Comments
 	FROM dbo.TransformPartLocation tpl
+	INNER JOIN dbo.TransformPartInventoryLocationLookup invLook
+		ON tpl.InventoryLocation = invLook.AW_InventoryLocation
 	WHERE tpl.InventoryLocation IS NOT NULL
 		AND tpl.UnitOfMeasure IS NOT NULL
 		AND UPPER(tpl.StockStatus) IN ('STOCKED', 'ON DEMAND - PROMOTABLE', 'ON DEMAND - NOT PROMOTABLE', 'PROHIBITED')
+		AND invLook.IncludeInLoad = 1
+
 
 	INSERT INTO dbo.TargetPartLocationBin
 	(
@@ -229,10 +233,12 @@ BEGIN
 		tplb.PrimaryBin,
 		tplb.NewBin
 	FROM dbo.TransformPartLocationBin tplb
-	INNER JOIN dbo.TargetPartLocation AS tpl
+	INNER JOIN dbo.TargetPartLocation AS tpl --exclude form load records which have no parent
 		ON tplb.PartID = tpl.PartID
 		AND tplb.LocationId = tpl.InventoryLocation
-	WHERE tplb.LocationId IS NOT NULL 
+	INNER JOIN dbo.TransformPartInventoryLocationLookup invLook -- exclude records without valid location
+		ON tpl.InventoryLocation = invLook.AW_InventoryLocation
+	WHERE invLook.IncludeInLoad = 1 -- exclude locations explicitly excluded by spec (IncludeInLoad = 0)
 
 	INSERT INTO dbo.TargetPartAdjustment
 	(
