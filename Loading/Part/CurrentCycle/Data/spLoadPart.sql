@@ -54,7 +54,9 @@ BEGIN
 		MarkupCapAmount NVARCHAR(4) NULL, -- check w/ S. Spec says NCHAR(1)
 		VRMSCode NVARCHAR(20) NULL,
 		ExcludeFromInvLists NCHAR(1) NULL,
-		CONSTRAINT PK_TargetPart PRIMARY KEY CLUSTERED(PartID)
+		CONSTRAINT PK_TargetPart PRIMARY KEY CLUSTERED(PartID),
+		CONSTRAINT FK_TargetPart_Keyword FOREIGN KEY(Keyword)
+			REFERENCES dbo.Staging_KeywordLookup(Keyword)
 	);
 
 	CREATE TABLE dbo.TargetPartLocation
@@ -167,7 +169,10 @@ BEGIN
 		tp.VRMSCode,
 		tp.ExcludeFromInvLists
 	FROM dbo.TransformPart tp
-	WHERE PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
+	INNER JOIN dbo.Staging_KeywordLookup AS skl
+		ON tp.Keyword = skl.Keyword
+	WHERE tp.PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
+
 
 	INSERT INTO dbo.TargetPartLocation
 	(
