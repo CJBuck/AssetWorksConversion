@@ -31,6 +31,7 @@ DECLARE @Part_TransformCount int;
 DECLARE @Part_TargetCount int;
 DECLARE @Part_DropCount int;
 DECLARE @Part_Validation1 int;
+DECLARE @Part_Validation2 int;
 
 SELECT @Part_SourceCount = COUNT(*) 
 FROM dbo.SourceWicm220PartsHeader
@@ -44,14 +45,23 @@ FROM dbo.TargetPart;
 --DropCount is set of all records failing at least one validation rule
 SELECT @Part_DropCount = COUNT(*) 
 FROM dbo.TransformPart tpl
-WHERE ISNULL(PartClassificationID,'') 
-NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
+LEFT JOIN Staging_KeywordLookup skl
+	ON tpl.Keyword = skl.Keyword
+WHERE skl.Keyword IS NULL
+	OR ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
 
 --Individial validation rules (note total of all validation rules will not equal drop count because one record can fail one or more validation rules)
 SELECT @Part_Validation1 = COUNT(*) 
 FROM dbo.TransformPart tpl
-WHERE ISNULL(PartClassificationID,'') 
-NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
+LEFT JOIN Staging_KeywordLookup skl
+	ON tpl.Keyword = skl.Keyword
+WHERE ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
+
+SELECT @Part_Validation2 = COUNT(*) 
+FROM dbo.TransformPart tpl
+LEFT JOIN Staging_KeywordLookup skl
+	ON tpl.Keyword = skl.Keyword
+WHERE skl.Keyword IS NULL;
 
 INSERT INTO #PartSetValidationSummary
 VALUES
@@ -60,6 +70,7 @@ VALUES
 ('Part', 'Total Dropped Records (one or more errors)', @Part_DropCount),
 ('Part', 'Total Target Records (TargetPart)', @Part_TargetCount),
 ('Part', 'Validation: Missing, unknown, or bad PartClassificationID', @Part_Validation1),
+('Part', 'Validation: Missing, unknown, or bad Keyword', @Part_Validation2),
 ('Part', 'Discrepency', @Part_SourceCount - (@Part_TargetCount + @Part_DropCount))
 
 ---------------------------------------------------------------
