@@ -165,7 +165,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		tp.PartID [PartID],
 		0 [PartSuffix],
 		invLook.AW_InventoryLocation AS InventoryLocationID,
-		'[335:35;Bin;1-2:1-2]' [BinID],
+		'[335:35;Bin;1-3:1-2]' [BinID],
 		'APRIL' [InventoryMonth],
 		'Min-Max' [ReplenishMethod],
 		'' AS [PerformMinMaxCalculation],
