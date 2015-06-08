@@ -155,6 +155,17 @@ BEGIN
 		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
+	UPDATE #Components
+	SET
+		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
+		AssetCategoryID = 'SPECIALTY',
+		StationLocation = vehdet.AW_LOCATION,
+		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10),
+		DepartmentForPM = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
+	FROM #Components OV
+		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
+			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
+
 	-- ManufacturerID & ModelID Cleansing
 	UPDATE #Components
 	SET

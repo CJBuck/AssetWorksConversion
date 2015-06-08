@@ -254,12 +254,7 @@ BEGIN
 	UPDATE #Vehicles
 	SET
 		ModelYear = LTRIM(RTRIM(sedet.AW_YEAR)),
-		AssetCategoryID =
-			CASE
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'CONSTRUCTION EQUIPMENT' THEN 'EQUIPMENT'
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'TRAILERS' THEN 'TRAILER'
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'VEHICLES' THEN 'VEHICLE'
-			END,
+		AssetCategoryID = 'SPECIALTY',
 		AssignedPM = 'VEH SHOP',
 		AssignedRepair = 'VEH SHOP',
 		StationLocation = sedet.AW_LOCATION,
