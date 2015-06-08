@@ -48,14 +48,14 @@ FROM dbo.TransformPart tpl
 LEFT JOIN Staging_KeywordLookup skl
 	ON tpl.Keyword = skl.Keyword
 WHERE skl.Keyword IS NULL
-	OR ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
+	OR ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS');
 
 --Individial validation rules (note total of all validation rules will not equal drop count because one record can fail one or more validation rules)
 SELECT @Part_Validation1 = COUNT(*) 
 FROM dbo.TransformPart tpl
 LEFT JOIN Staging_KeywordLookup skl
 	ON tpl.Keyword = skl.Keyword
-WHERE ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC');
+WHERE ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS');
 
 SELECT @Part_Validation2 = COUNT(*) 
 FROM dbo.TransformPart tpl
