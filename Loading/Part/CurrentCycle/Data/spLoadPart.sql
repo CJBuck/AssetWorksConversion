@@ -39,7 +39,7 @@ BEGIN
 		Keyword NVARCHAR(15) NOT NULL,
 		ShortDescription NVARCHAR(120) NOT NULL,
 		ProductCategoryID NVARCHAR(20) NOT NULL,
-		PartClassificationID NVARCHAR(2) NOT NULL, CONSTRAINT CHK_TargetPart_PartClassificationID CHECK (PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')),
+		PartClassificationID NVARCHAR(2) NOT NULL, CONSTRAINT CHK_TargetPart_PartClassificationID CHECK (PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS')),
 		Tire NCHAR(1) NULL CONSTRAINT CHK_TargetPart_Tire CHECK(Tire IN ('Y','N')),
 		Core NCHAR(1) NULL CONSTRAINT CHK_TargetPart_Core CHECK(Core IN ('Y','N')),
 		ControlledSubstance NCHAR(1) NULL CONSTRAINT CHK_TargetPart_ControlledSubstance CHECK(ControlledSubstance IN ('Y','N')),
@@ -171,7 +171,7 @@ BEGIN
 	FROM dbo.TransformPart tp
 	INNER JOIN dbo.Staging_KeywordLookup AS skl
 		ON tp.Keyword = skl.Keyword
-	WHERE tp.PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC')
+	WHERE tp.PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS')
 
 
 	INSERT INTO dbo.TargetPartLocation

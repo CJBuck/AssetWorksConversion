@@ -65,7 +65,7 @@ BEGIN
 		ExcludeFromInvLists
 	)
 	SELECT
-		LTRIM(RTRIM(PH.PART_NO)) AS PartID,
+		dbo.Trim(PH.PART_NO) AS PartID,
 		0 AS PartSuffix,
 		CASE WHEN PH.PART_CAT = '9560' THEN 'Y' ELSE 'N' END AS Tire,
 		'N' ControlledSubstance,
@@ -112,6 +112,17 @@ BEGIN
 								 WHEN 7542 THEN 7541
 								 ELSE ProductCategoryID
 						    END
+
+	-- Update PartClassificationId for parts with fractional quantities (per spec update v2.0.9)
+
+	UPDATE #StagingParts
+	SET PartClassificationId = 'FS'
+	WHERE PartId IN 
+	(
+		SELECT DISTINCT dbo.Trim(part_no)
+		FROM sourcewicm221partsdetail
+		WHERE QTY_ONHAND not like '%.000'
+	)
 		
 	-- Copy #StagingParts to TransformPart
 	TRUNCATE TABLE TransformPart;
