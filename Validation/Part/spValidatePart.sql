@@ -45,23 +45,21 @@ FROM dbo.TargetPart;
 --DropCount is set of all records failing at least one validation rule
 SELECT @Part_DropCount = COUNT(*) 
 FROM dbo.TransformPart tpl
-LEFT JOIN Staging_KeywordLookup skl
-	ON tpl.Keyword = skl.Keyword
-WHERE skl.Keyword IS NULL
+LEFT JOIN TransformKeywordLookup tkl
+	ON tpl.Keyword = tkl.Keyword
+WHERE tkl.Keyword IS NULL
 	OR ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS');
 
 --Individial validation rules (note total of all validation rules will not equal drop count because one record can fail one or more validation rules)
 SELECT @Part_Validation1 = COUNT(*) 
 FROM dbo.TransformPart tpl
-LEFT JOIN Staging_KeywordLookup skl
-	ON tpl.Keyword = skl.Keyword
 WHERE ISNULL(PartClassificationID,'') NOT IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS');
 
 SELECT @Part_Validation2 = COUNT(*) 
 FROM dbo.TransformPart tpl
-LEFT JOIN Staging_KeywordLookup skl
-	ON tpl.Keyword = skl.Keyword
-WHERE skl.Keyword IS NULL;
+LEFT JOIN TransformKeywordLookup tkl
+	ON tpl.Keyword = tkl.Keyword
+WHERE tkl.Keyword IS NULL;
 
 INSERT INTO #PartSetValidationSummary
 VALUES

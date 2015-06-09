@@ -169,8 +169,8 @@ BEGIN
 		tp.VRMSCode,
 		tp.ExcludeFromInvLists
 	FROM dbo.TransformPart tp
-	INNER JOIN dbo.Staging_KeywordLookup AS skl
-		ON tp.Keyword = skl.Keyword
+	INNER JOIN dbo.TransformKeywordLookup AS tkl
+		ON tp.Keyword = tkl.Keyword
 	WHERE tp.PartClassificationID IN ('CS', 'FB', 'RR', 'ST','SW','WA','WC','FS')
 
 

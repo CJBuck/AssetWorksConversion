@@ -114,7 +114,6 @@ BEGIN
 						    END
 
 	-- Update PartClassificationId for parts with fractional quantities (per spec update v2.0.9)
-
 	UPDATE #StagingParts
 	SET PartClassificationId = 'FS'
 	WHERE PartId IN 
