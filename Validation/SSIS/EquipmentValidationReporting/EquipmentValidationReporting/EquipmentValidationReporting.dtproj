@@ -37,5 +37,10 @@
       <FullPath>PartValidation.dtsx</FullPath>
       <References />
     </DtsPackage>
+    <DtsPackage FormatVersion="3">
+      <Name>Component.dtsx</Name>
+      <FullPath>Component.dtsx</FullPath>
+      <References />
+    </DtsPackage>
   </DTSPackages>
 </Project>
