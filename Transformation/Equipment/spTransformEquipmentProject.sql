@@ -65,6 +65,7 @@ BEGIN
 	CREATE TABLE #StagingProjects(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
+		[Location] [varchar] (2) NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
 		[AssetType] [varchar](20) NULL,
@@ -158,6 +159,7 @@ BEGIN
 	INSERT INTO #StagingProjects
 	SELECT
 		LTRIM(RTRIM(OP.[OBJECT_ID])) [Object_ID],
+		LTRIM(RTRIM(OP.LOCATION)) [Location],
 		'[i]' [Control],
 		'EQP' + '' [EquipmentID],
 		'STATIONARY' [AssetType],
@@ -165,12 +167,15 @@ BEGIN
 		LTRIM(RTRIM(OP.[OBJECT_ID])) [AssetNumber],
 		'EQP' + '' [SerialNumber],
 		'' [EquipmentType],
-		'NONE' [PMProgramType],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'NONE'
+			ELSE 'BOTH'
+		END [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		1901 [ModelYear],
-		'NOT APPLICABLE' [ManufacturerID],
-		'NOT APPLICABLE' [ModelID],
+		'NA' [ManufacturerID],
+		'NA' [ModelID],
 		'NO METER' [MeterTypesClass],
 		'' [Meter1Type],
 		'' [Meter2Type],
@@ -228,7 +233,7 @@ BEGIN
 			WHEN '05' THEN 'N3'
 			ELSE ''
 		END [DefaultWOPriorityID],
-		NULL [ActualDeliveryDate],
+		NULL  [ActualDeliveryDate],
 		NULL [ActualInServiceDate],		-- Open issue
 		NULL [OriginalCost],
 		'' [DepreciationMethod],
@@ -264,7 +269,24 @@ BEGIN
 	FROM SourceWicm210ObjectProject OP
 	WHERE
 		LTRIM(RTRIM(OP.[OBJECT_ID])) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
-		
+
+	UPDATE #StagingProjects
+	SET ActualDeliveryDate =
+		CASE
+			WHEN (ISDATE(woifp.WORK_PEND_DT) = 1) THEN CAST(woifp.WORK_PEND_DT AS DATETIME)
+			WHEN ((ISDATE(woifp.WORK_PEND_DT) = 0) AND (ISDATE(woifp.PL_CMPL_DT_W) = 1)
+				AND (woifp.PL_CMPL_DT_W > woifp.PL_CMPL_DT_C))
+					THEN CAST(woifp.PL_CMPL_DT_W AS DATETIME)
+			WHEN ((ISDATE(woifp.WORK_PEND_DT) = 0) AND (ISDATE(woifp.PL_CMPL_DT_C) = 1)
+				AND (woifp.PL_CMPL_DT_C > woifp.PL_CMPL_DT_W))
+					THEN CAST(woifp.PL_CMPL_DT_C AS DATETIME)
+			ELSE NULL
+		END
+	FROM #StagingProjects SP
+		INNER JOIN SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending woifp
+			ON SP.[Object_ID] = woifp.WO_ALT1_OB_ID
+	WHERE SP.Location = '04'
+	
 	-- Asset Category :: Step 1
 	UPDATE #StagingProjects
 	SET
@@ -341,6 +363,7 @@ BEGIN
 	INSERT INTO #StagingProjects
 	SELECT
 		sp.[Object_ID],
+		sp.Location,
 		'[i]' [Control],
 		'EQP' + '' [EquipmentID],
 		'STATIONARY' [AssetType],
@@ -348,12 +371,12 @@ BEGIN
 		sp.[AssetNumber],
 		sp.[SerialNumber],
 		lkup.EquipmentType [EquipmentType],
-		'NONE' [PMProgramType],
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		1901 [ModelYear],
-		'NOT APPLICABLE' [ManufacturerID],
-		'NOT APPLICABLE' [ModelID],
+		'NA' [ManufacturerID],
+		'NA' [ModelID],
 		'NO METER' [MeterTypesClass],
 		'' [Meter1Type],
 		'' [Meter2Type],
