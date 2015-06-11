@@ -86,7 +86,7 @@ BEGIN
 				THEN 'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR)
 			ELSE LTRIM(RTRIM(OV.SERIAL_NO))
 		END [SerialNumber],
-		'CLASS' [PMProgramType],
+		'BOTH' [PMProgramType],
 		'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR) [AssetNumber],
 		'' [MeterTypesClass],
 		'' [Meter1Type],
