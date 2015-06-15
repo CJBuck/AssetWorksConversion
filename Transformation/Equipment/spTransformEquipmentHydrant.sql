@@ -245,8 +245,10 @@ BEGIN
 				AND modid.SourceModelID = LTRIM(RTRIM(H.HYD_MAKE))
 				AND modid.[Source] = 'Hydrants'
 				
-	-- 6/2/2015 Temporary while logic is resolved with the business units.
-	UPDATE #Hydrants SET ActualInServiceDate = NULL
+	-- InServiceDate without DeliveryDate is invalid
+	UPDATE #Hydrants 
+	SET ActualInServiceDate = NULL
+	WHERE ActualDeliveryDate IS NULL
 
 	INSERT INTO TransformEquipment
 	SELECT
