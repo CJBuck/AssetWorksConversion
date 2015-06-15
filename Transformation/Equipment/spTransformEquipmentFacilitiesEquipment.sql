@@ -255,6 +255,8 @@ DECLARE
 			ELSE NULL
 		END [ActualDeliveryDate],
 		CASE
+			-- No or invalid Delivery date (don't populate InServiceDate) 
+			WHEN ISDATE(OE.ACQ_DATE) = 0 THEN NULL 
 			-- Install Dt before Acq Date
 			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
 				AND (OE.DATE_INSTALL < OE.ACQ_DATE) THEN NULL
