@@ -158,7 +158,7 @@ DECLARE
 		ISNULL(LTRIM(RTRIM(OE.[OBJECT_ID])), '') [AssetNumber],
 		ISNULL(LTRIM(RTRIM(OE.SERIAL_NO)), '') [SerialNumber],
 		'' [EquipmentType],
-		'CLASS' [PMProgramType],
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		ISNULL(OE.VEH_YEAR, NULL) [ModelYear],

@@ -119,7 +119,7 @@ BEGIN
 			ELSE LTRIM(RTRIM(OV.SERIAL_NO))
 		END [SerialNumber],
 		'' [EquipmentType],
-		'INDIVIDUAL' [PMProgramType],		-- Open issue
+		'BOTH' [PMProgramType],		-- Open issue
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		NULL [ModelYear],
