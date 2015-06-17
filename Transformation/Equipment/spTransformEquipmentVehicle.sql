@@ -119,7 +119,7 @@ BEGIN
 			ELSE LTRIM(RTRIM(OV.SERIAL_NO))
 		END [SerialNumber],
 		'' [EquipmentType],
-		'BOTH' [PMProgramType],		-- Open issue
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		NULL [ModelYear],
@@ -145,7 +145,7 @@ BEGIN
 		'' [StoredLocation],
 		'' [StationLocation],
 		'' [Jurisdiction],
-		'DAY' [PreferredPMShift],		-- Open issue
+		'DAY' [PreferredPMShift],
 		'' [VehicleLocation],
 		'' [BuildingLocation],
 		'' [OtherLocation],
@@ -278,7 +278,7 @@ BEGIN
 			ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
 				AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
 				AND modid.[Source] = 'Vehicles'
-					
+
 	-- EquipmentClass & EquimentType Cleansing
 	UPDATE #Vehicles
 	SET
@@ -317,7 +317,7 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
-				
+
 	-- Meter Types Class
 	UPDATE #Vehicles
 	SET MeterTypesClass = 
@@ -327,7 +327,7 @@ BEGIN
 		END
 	FROM #Vehicles V
 		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON V.Maintenance = mtc.EquipmentClassID
-				
+
 	-- EquipmentClass specific updates
 	UPDATE #Vehicles
 	SET

@@ -15,7 +15,7 @@ BEGIN
 	DECLARE
 		@NewID				INT,
 		@RowNumInProgress	INT
-	
+
 	-- Grab the relevant ObjectIDs
 	-- Location = '04'
 	SELECT DISTINCT LTRIM(RTRIM(OP.[OBJECT_ID])) [OBJECT_ID], LTRIM(RTRIM(OP.LOCATION)) [LOCATION]
@@ -28,7 +28,7 @@ BEGIN
 		AND OP.LOCATION = '04'
 		AND OP.[STATUS] = 'A'
 		AND LTRIM(RTRIM(OP.[CLASS])) NOT IN ('LHTP', 'WRKSTA')
-		
+
 	-- Location = '05'
 	INSERT INTO #ObjectIDs
 	SELECT DISTINCT LTRIM(RTRIM(OP.[OBJECT_ID])) [OBJECT_ID], LTRIM(RTRIM(OP.LOCATION)) [LOCATION]
@@ -37,7 +37,7 @@ BEGIN
 		OP.[OBJECT_ID] NOT IN ('FRST', 'OTHR', 'SAFE')
 		AND OP.LOCATION = '05'
 		AND LTRIM(RTRIM(OP.[CLASS])) NOT IN ('LHTP', 'WRKSTA')
-		
+
 	-- Populate a temp table with the ActualInServiceDate per spec.
 	SELECT DISTINCT
 		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) [OBJECT_ID],
@@ -47,7 +47,7 @@ BEGIN
 	WHERE
 		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
 		AND ((woifp.WORK_PEND_DT IS NOT NULL) AND (LTRIM(RTRIM(woifp.WORK_PEND_DT)) <> '0'))
-		
+
 	INSERT INTO #InSvcDate
 	SELECT LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)),
 		CASE
@@ -61,7 +61,7 @@ BEGIN
 		AND LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) NOT IN (SELECT [OBJECT_ID] FROM #InSvcDate)
 		AND ((woifp.WORK_PEND_DT IS NULL) OR (LTRIM(RTRIM(woifp.WORK_PEND_DT)) = '0'))
 	-- *****
-	
+
 	CREATE TABLE #StagingProjects(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
@@ -234,7 +234,7 @@ BEGIN
 			ELSE ''
 		END [DefaultWOPriorityID],
 		NULL  [ActualDeliveryDate],
-		NULL [ActualInServiceDate],		-- Open issue
+		NULL [ActualInServiceDate],
 		NULL [OriginalCost],
 		'' [DepreciationMethod],
 		NULL [LifeMonths],
@@ -286,7 +286,7 @@ BEGIN
 		INNER JOIN SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending woifp
 			ON SP.[Object_ID] = woifp.WO_ALT1_OB_ID
 	WHERE SP.Location = '04'
-	
+
 	-- Asset Category :: Step 1
 	UPDATE #StagingProjects
 	SET
@@ -420,7 +420,7 @@ BEGIN
 		sp.[Comments],
 		sp.[DefaultWOPriorityID],
 		NULL [ActualDeliveryDate],
-		NULL [ActualInServiceDate],		-- Open issue
+		NULL [ActualInServiceDate],
 		NULL [OriginalCost],
 		'' [DepreciationMethod],
 		NULL [LifeMonths],
@@ -455,7 +455,7 @@ BEGIN
 	FROM TransformEquipmentProjectValueAssetCategory lkup
 		INNER JOIN #StagingProjects sp on lkup.[OBJECT_ID] = sp.[Object_ID]
 	WHERE sp.[Object_ID] = 'RSDL'
-	
+
 	-- Asset Category :: Step 4
 	DELETE #StagingProjects WHERE AssetNumber = 'RSDL' AND EquipmentType = ''
 
@@ -490,7 +490,7 @@ BEGIN
 			FROM SourceWicm250WorkOrderHeaderAdmin
 			WHERE [OBJECT_ID] IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
 			) woa ON LTRIM(RTRIM(SP.[Object_ID])) = LTRIM(RTRIM(woa.[OBJECT_ID]))
-			
+
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
 	--     Just commented out for now.
 	--UPDATE #StagingProjects
@@ -718,7 +718,7 @@ BEGIN
 					INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 				WHERE SP.RowNum = @RowNumInProgress
 			END
-		
+
 		FETCH NEXT FROM Projects_Cursor
 		INTO @RowNumInProgress
 	END

@@ -114,7 +114,7 @@ BEGIN
 		'STATIONARY' [AssetType],
 		LEFT(LTRIM(RTRIM(H.STREET_NAME)) + ' (' + 
 			LTRIM(RTRIM(H.XSTREET_NAME)) + ')', 40) [Description],	-- Truncated
-		'HYDRANT' [AssetNumber],	-- Open issue: populate with something else?
+		'HYDRANT' [AssetNumber],
 		'HYD' + RIGHT('0000000' + RTRIM(LTRIM(H.HYD_NO)), 7) [SerialNumber],
 		'' [EquipmentType],
 		'CLASS' [PMProgramType],
@@ -137,7 +137,7 @@ BEGIN
 		NULL [MaxMeter2Value],
 		'DMAINT HYDRANT' [Maintenance],
 		CASE
-			WHEN H.[HYD_NO] IN ('02516', '02517', '02518', '02590', '02591', '02592', '02814', 
+			WHEN H.[HYD_NO] IN ('02516', '02517', '02518', '02590', '02591', '02592', '02814',
 				'02815', '02816', '02817', '02818', '02819', '07420', '09489', '09490',
 				'09491') THEN 'DPM HYDRANT SOURCE WTR'
 			WHEN H.[HYD_NO] IN ('03130', '09013', '09014') THEN 'DPM HYDRANT WW'
@@ -231,7 +231,7 @@ BEGIN
 			CASE
 				WHEN ISNULL(LTRIM(RTRIM(h.HYD_MAKE)), '')
 					IN ('NA', '', 'N/A', 'UNKNOWN') THEN 'UNKNOWN'
-				ELSE LTRIM(RTRIM(modid.CleansedModelID)) 
+				ELSE LTRIM(RTRIM(modid.CleansedModelID))
 			END
 	FROM #Hydrants hyds
 		INNER JOIN SourcePups201Hydrant h ON hyds.Hyd_No = h.HYD_NO
@@ -244,9 +244,9 @@ BEGIN
 			ON manid.TargetValue = modid.CleansedManufacturerID
 				AND modid.SourceModelID = LTRIM(RTRIM(H.HYD_MAKE))
 				AND modid.[Source] = 'Hydrants'
-				
+
 	-- InServiceDate without DeliveryDate is invalid
-	UPDATE #Hydrants 
+	UPDATE #Hydrants
 	SET ActualInServiceDate = NULL
 	WHERE ActualDeliveryDate IS NULL
 

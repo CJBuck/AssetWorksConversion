@@ -115,7 +115,7 @@ BEGIN
 		LEFT((LTRIM(RTRIM(STREET_NAME)) + ' (' + 
 			LTRIM(RTRIM(XSTREET_NAME)) + '-' + 
 			LTRIM(RTRIM(TO_STREET)) + ')'), 40) [Description],
-		'' [AssetNumber],	-- Open Issue: populate from "Source Water Isolation Valve 
+		'' [AssetNumber],	-- Open Issue: populate from "Source Water Isolation Valve
 							-- Spreadsheet" - Chris Basford.
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [SerialNumber],
 		'' [EquipmentType],
@@ -168,7 +168,7 @@ BEGIN
 			ELSE ''
 		END [StationLocation],
 		'' [Jurisdiction],
-		'DAY' [PreferredPMShift],	-- Open issue:  default value from AssetWorks?
+		'DAY' [PreferredPMShift],
 		'' [VehicleLocation],
 		'' [BuildingLocation],
 		'' [OtherLocation],
@@ -233,7 +233,7 @@ BEGIN
 	FROM SourcePups201Valve SPV
 	WHERE
 		(SPV.[STATUS] = 'A')
-		OR ((SPV.[STATUS] = 'I') AND 
+		OR ((SPV.[STATUS] = 'I') AND
 			(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
 		OR (
 			(SPV.BYPASS_CD = 'Y')
@@ -243,10 +243,10 @@ BEGIN
 					(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
 				)
 			)
-			
+
 	-- EquipmentType
 	UPDATE #Valves
-	SET 
+	SET
 		EquipmentType =
 			CASE
 				WHEN SPV.VALVE_NO IN ('028539', '028540') THEN 'DVL REG SURGE'
@@ -282,19 +282,19 @@ BEGIN
 	UPDATE #Valves
 	SET
 		Maintenance =
-			CASE 
+			CASE
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
 				ELSE 'DMAINT VALVE'
 			END,
 		Standards =
-			CASE 
+			CASE
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
 				ELSE 'DMAINT VALVE'
 			END,
 		Resources = 
-			CASE 
+			CASE
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DAR%' THEN 'DMAINT AIR RELEASE'
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'DMAINT BLOWOFF'
 				ELSE 'DMAINT VALVE'
@@ -317,7 +317,7 @@ BEGIN
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LEFT(LTRIM(RTRIM(spv.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
 				AND manid.[Source] LIKE '%Valves%'
-				
+
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
 	UPDATE #Valves SET ActualInServiceDate = NULL
 

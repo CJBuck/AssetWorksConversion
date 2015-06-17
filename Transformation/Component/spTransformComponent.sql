@@ -180,12 +180,12 @@ BEGIN
 			ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
 				AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
 				AND modid.[Source] = 'Vehicles'
-					
+
 	-- EquipmentClass & EquimentType Cleansing
 	UPDATE #Components
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
-		MeterTypesClass = 
+		MeterTypesClass =
 			CASE
 				WHEN tec.MeterTypes = 'Y' THEN LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
 				ELSE 'NO METER'
@@ -224,10 +224,10 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
-				
+
 	-- Meter Types Class
 	UPDATE #Components
-	SET MeterTypesClass = 
+	SET MeterTypesClass =
 		CASE
 			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
 			ELSE 'NO METER'
