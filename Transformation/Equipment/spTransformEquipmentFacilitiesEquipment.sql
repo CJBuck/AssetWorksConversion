@@ -264,22 +264,22 @@ DECLARE
 			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
 				AND (OE.DATE_INSTALL > OE.ACQ_DATE) THEN CAST(OE.DATE_INSTALL AS DATETIME)
 			-- Install Dt blank, NULL, or not a date
-			WHEN (ISDATE(OE.DATE_INSTALL) = 0) 
+			WHEN (ISDATE(OE.DATE_INSTALL) = 0)
 				OR (ISNULL(OE.DATE_INSTALL, '') = '')
 				OR (ISNULL(OE.ACQ_DATE, '') = '') THEN NULL
 			ELSE NULL
 		END [ActualInServiceDate],
 		ISNULL(OE.ADDON_COST, NULL) [OriginalCost],
 		'1/2 YEAR STRAIGHT LINE' [DepreciationMethod],
-		NULL [LifeMonths],			-- Open issue
+		NULL [LifeMonths],
 		NULL [MonthsRemaining],
 		'OWNED' [Ownership],
-		'' [VendorID],				-- Open issue
+		'' [VendorID],
 		NULL [ExpirationDate],
 		NULL [Meter1Expiration],
 		NULL [Meter2Expiration],
 		NULL [Deductible],
-		'' [WarrantyType],			-- Open issue
+		'' [WarrantyType],
 		'' [Comments2],
 		CASE
 			WHEN ISDATE(OBSOL_DATE) = 1 THEN MONTH(OE.OBSOL_DATE)
@@ -312,7 +312,7 @@ DECLARE
 	FROM SourceWicm210ObjectEquipment OE
 	WHERE
 		OE.[STATUS] = 'A' AND LTRIM(RTRIM(OE.[CLASS])) NOT IN ('JAPS', 'LHPL', 'RDGDMT')
-		
+
 	-- (FAC_MODEL <> 'NA') EquipmentType, ManufacturerID, ModelID, Maintenance,
 	-- PMProgram, Standards, Resources
 	UPDATE #StagingEquip
@@ -360,7 +360,7 @@ DECLARE
 				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
 	WHERE
 		LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
-		
+
 	-- (FAC_MODEL = 'NA') and not in TransformEquipmentFacilitiesEquipmentValueEquipmentType
 	UPDATE #StagingEquip
 	SET
@@ -376,7 +376,7 @@ DECLARE
 		AND LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
 		AND FAC.EquipmentType = ''
 
-	-- Condition Rating				
+	-- Condition Rating
 	UPDATE #StagingEquip
 	SET ConditionRating = ISNULL(cr.ConditionRating, '')
 	FROM #StagingEquip FACS
@@ -412,7 +412,7 @@ DECLARE
 		-- Get the next auto-number
 		INSERT INTO EquipmentIDAutoCounter DEFAULT VALUES
 		SET @NewID = @@IDENTITY
-		
+
 		IF @RowNumInProgress = 1
 			BEGIN
 				SELECT
@@ -456,7 +456,7 @@ DECLARE
 					SP.[Jurisdiction],
 					SP.[PreferredPMShift],
 					SP.[VehicleLocation],
-					'' [BuildingLocation],
+					SP.[BuildingLocation],
 					SP.[OtherLocation],
 					SP.[DepartmentID],
 					SP.[DeptToNotifyForPM],
@@ -557,7 +557,7 @@ DECLARE
 					SP.[Jurisdiction],
 					SP.[PreferredPMShift],
 					SP.[VehicleLocation],
-					'' [BuildingLocation],
+					SP.[BuildingLocation],
 					SP.[OtherLocation],
 					SP.[DepartmentID],
 					SP.[DeptToNotifyForPM],
@@ -613,7 +613,7 @@ DECLARE
 				FROM #StagingEquip SP
 				WHERE SP.RowNum = @RowNumInProgress
 			END
-		
+
 		FETCH NEXT FROM Facilities_Cursor
 		INTO @RowNumInProgress
 	END
