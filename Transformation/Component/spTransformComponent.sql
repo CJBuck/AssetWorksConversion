@@ -13,7 +13,10 @@ GO
 ALTER PROCEDURE dbo.spTransformComponent
 AS
 BEGIN
-	CREATE TABLE #Components(
+	IF OBJECT_ID('tmp.Components') IS NOT NULL
+		DROP TABLE tmp.Components
+
+	CREATE TABLE tmp.Components(
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[AssetID] [varchar](20) NOT NULL,
@@ -69,7 +72,7 @@ BEGIN
 		[Ownership] [varchar](8) NULL
 	)
 
-	INSERT INTO #Components
+	INSERT INTO tmp.Components
 	SELECT
 		LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
 		'[i]' [Control],
@@ -144,34 +147,34 @@ BEGIN
 			'006673', '006674', '006675'))
 
 	-- Special Equipment specific updates
-	UPDATE #Components
+	UPDATE tmp.Components
 	SET
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
 		AssetCategoryID = 'SPECIALTY',
 		StationLocation = vehdet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10),
 		DepartmentForPM = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM #Components OV
+	FROM tmp.Components OV
 		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
-	UPDATE #Components
+	UPDATE tmp.Components
 	SET
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
 		AssetCategoryID = 'SPECIALTY',
 		StationLocation = vehdet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10),
 		DepartmentForPM = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM #Components OV
+	FROM tmp.Components OV
 		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
 	-- ManufacturerID & ModelID Cleansing
-	UPDATE #Components
+	UPDATE tmp.Components
 	SET
 		ManufacturerID = ISNULL(manid.TargetValue, ''),
 		ModelID = ISNULL(modid.CleansedModelID, '')
-	FROM #Components vehs
+	FROM tmp.Components vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue
@@ -180,12 +183,12 @@ BEGIN
 			ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
 				AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
 				AND modid.[Source] = 'Vehicles'
-
+					
 	-- EquipmentClass & EquimentType Cleansing
-	UPDATE #Components
+	UPDATE tmp.Components
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
-		MeterTypesClass =
+		MeterTypesClass = 
 			CASE
 				WHEN tec.MeterTypes = 'Y' THEN LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
 				ELSE 'NO METER'
@@ -209,7 +212,7 @@ BEGIN
 		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
-	FROM #Components vehs
+	FROM tmp.Components vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
 			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
@@ -224,15 +227,15 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
-
+				
 	-- Meter Types Class
-	UPDATE #Components
-	SET MeterTypesClass =
+	UPDATE tmp.Components
+	SET MeterTypesClass = 
 		CASE
 			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
 			ELSE 'NO METER'
 		END
-	FROM #Components C
+	FROM tmp.Components C
 		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON C.Maintenance = mtc.EquipmentClassID
 
 	INSERT INTO TransformComponent
@@ -289,7 +292,7 @@ BEGIN
 		[DepreciationMethod],
 		[LifeMonths],
 		[Ownership]
-	FROM #Components vehs
+	FROM tmp.Components vehs
 	ORDER BY vehs.AssetID
 
 	-- Components to the crosswalk table.
@@ -299,9 +302,5 @@ BEGIN
 		'SourceWicm210ObjectVehicle' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
-	FROM #Components vehs
+	FROM tmp.Components vehs
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#Components') IS NOT NULL
-	DROP TABLE #Components
