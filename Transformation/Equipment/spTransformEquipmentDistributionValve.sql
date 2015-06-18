@@ -14,7 +14,10 @@ GO
 ALTER PROCEDURE dbo.spTransformEquipmentDistributionValve
 AS
 BEGIN
-	CREATE TABLE #Valves(
+	IF OBJECT_ID('tmp.Valves') IS NOT NULL
+		DROP TABLE tmp.Valves
+
+	CREATE TABLE tmp.Valves(
 		[Valve_No] [varchar] (6) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
@@ -106,7 +109,7 @@ BEGIN
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #Valves
+	INSERT INTO tmp.Valves
 	SELECT
 		LTRIM(RTRIM(SPV.[VALVE_NO])) [Valve_No],
 		'[i]' [Control],
@@ -245,7 +248,7 @@ BEGIN
 			)
 
 	-- EquipmentType
-	UPDATE #Valves
+	UPDATE tmp.Valves
 	SET
 		EquipmentType =
 			CASE
@@ -275,11 +278,11 @@ BEGIN
 				WHEN SPV.VLV_FUNCTION = '10' AND SPV.VLV_TYPE IN ('GATE', 'UNKNOWN') AND SPV.VLV_SIZE < 16 THEN 'DVL ISO GATE SMALL DIA'
 				ELSE ''
 			END
-	FROM #Valves vlvs
+	FROM tmp.Valves vlvs
 		INNER JOIN SourcePups201Valve spv ON vlvs.Valve_No = spv.VALVE_NO
 
 	-- Maintenance, Standards, Resources, and AssetCategoryID
-	UPDATE #Valves
+	UPDATE tmp.Valves
 	SET
 		Maintenance =
 			CASE
@@ -305,13 +308,13 @@ BEGIN
 				WHEN ISNULL(vlvs.EquipmentType, '') LIKE 'DBF%' THEN 'BLOWOFF'
 				ELSE 'VALVE'
 			END
-	FROM #Valves vlvs
+	FROM tmp.Valves vlvs
 
 	-- ManufacturerID
-	UPDATE #Valves
+	UPDATE tmp.Valves
 	SET
 		ManufacturerID = ISNULL(manid.TargetValue, '')
-	FROM #Valves vlvs
+	FROM tmp.Valves vlvs
 		INNER JOIN SourcePups201Valve spv ON vlvs.Valve_No = spv.VALVE_NO
 		-- ManufacturerID Cleansing
 		INNER JOIN TransformEquipmentManufacturer manid
@@ -319,7 +322,7 @@ BEGIN
 				AND manid.[Source] LIKE '%Valves%'
 
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
-	UPDATE #Valves SET ActualInServiceDate = NULL
+	UPDATE tmp.Valves SET ActualInServiceDate = NULL
 
 	-- Move data from the temp table to TransformEquipment.
 	INSERT INTO TransformEquipment
@@ -412,7 +415,7 @@ BEGIN
 		[DisposalMethod],
 		[DisposalAuthority],
 		[DisposalComments]
-	FROM #Valves vehs
+	FROM tmp.Valves vehs
 	ORDER BY vehs.EquipmentID
 
 	-- Vehicles to the crosswalk table.
@@ -422,9 +425,5 @@ BEGIN
 		'SourcePups201Valve' [Source],
 		'VALVE_NO' [LegacyIDSource],
 		vehs.Valve_No [LegacyID]
-	FROM #Valves vehs
+	FROM tmp.Valves vehs
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#Valves') IS NOT NULL
-	DROP TABLE #Valves
