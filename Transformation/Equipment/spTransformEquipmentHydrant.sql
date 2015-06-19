@@ -14,7 +14,11 @@ ALTER PROCEDURE dbo.spTransformEquipmentHydrant
 AS
 --
 BEGIN
-	CREATE TABLE #Hydrants(
+	-- Clean up
+	IF OBJECT_ID('tmp.Hydrants') IS NOT NULL
+		DROP TABLE tmp.Hydrants
+
+	CREATE TABLE tmp.Hydrants(
 		[Hyd_No] [varchar] (5) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
@@ -106,7 +110,7 @@ BEGIN
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #Hydrants
+	INSERT INTO tmp.Hydrants
 	SELECT
 		LTRIM(RTRIM(H.[HYD_NO])) [Hyd_No],
 		'[i]' [Control],
@@ -223,7 +227,7 @@ BEGIN
 	WHERE
 		(H.[STATUS] IN ('A', 'I')) AND (H.HYD_SEQ# = '00')
 
-	UPDATE #Hydrants
+	UPDATE tmp.Hydrants
 	SET
 		EquipmentType = vet.EquipmentType,
 		ManufacturerID = ISNULL(manid.TargetValue, 'UNKNOWN'),
@@ -233,7 +237,7 @@ BEGIN
 					IN ('NA', '', 'N/A', 'UNKNOWN') THEN 'UNKNOWN'
 				ELSE LTRIM(RTRIM(modid.CleansedModelID))
 			END
-	FROM #Hydrants hyds
+	FROM tmp.Hydrants hyds
 		INNER JOIN SourcePups201Hydrant h ON hyds.Hyd_No = h.HYD_NO
 		INNER JOIN TransformEquipmentHydrantValueEquipmentType vet
 			ON LTRIM(RTRIM(H.[HYD_MAKE])) = LTRIM(RTRIM(vet.[HYD_MAKE]))
@@ -246,7 +250,7 @@ BEGIN
 				AND modid.[Source] = 'Hydrants'
 
 	-- InServiceDate without DeliveryDate is invalid
-	UPDATE #Hydrants
+	UPDATE tmp.Hydrants
 	SET ActualInServiceDate = NULL
 	WHERE ActualDeliveryDate IS NULL
 
@@ -340,7 +344,7 @@ BEGIN
 		[DisposalMethod],
 		[DisposalAuthority],
 		[DisposalComments]
-	FROM #Hydrants vehs
+	FROM tmp.Hydrants vehs
 	ORDER BY vehs.EquipmentID
 
 	-- Vehicles to the crosswalk table.
@@ -350,9 +354,5 @@ BEGIN
 		'SourcePups201Hydrant' [Source],
 		'HYD_NO' [LegacyIDSource],
 		H.Hyd_No [LegacyID]
-	FROM #Hydrants H
+	FROM tmp.Hydrants H
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#Hydrants') IS NOT NULL
-	DROP TABLE #Hydrants
