@@ -112,8 +112,8 @@ BEGIN
 		'[i]' [Control],
 		'HYD' + RIGHT('0000000' + RTRIM(LTRIM(H.HYD_NO)), 7) [EquipmentID],
 		'STATIONARY' [AssetType],
-		LEFT(LTRIM(RTRIM(H.STREET_NAME)) + ' (' + 
-			LTRIM(RTRIM(H.XSTREET_NAME)) + ')', 40) [Description],	-- Truncated
+		LEFT(dbo.fnCompressWhiteSpace(H.STREET_NAME) + ' (' + 
+			dbo.fnCompressWhiteSpace(H.XSTREET_NAME) + ')', 40) [Description],	-- Truncated
 		'HYDRANT' [AssetNumber],
 		'HYD' + RIGHT('0000000' + RTRIM(LTRIM(H.HYD_NO)), 7) [SerialNumber],
 		'' [EquipmentType],
