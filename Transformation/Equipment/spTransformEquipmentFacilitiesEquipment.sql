@@ -11,18 +11,21 @@ IF OBJECT_ID('spTransformEquipmentFacilitiesEquipment') IS NULL
     EXEC ('CREATE PROCEDURE dbo.spTransformEquipmentFacilitiesEquipment AS SELECT 1')
 GO
 
-ALTER PROCEDURE dbo.spTransformEquipmentFacilitiesEquipment
+ALTER PROCEDURE [dbo].[spTransformEquipmentFacilitiesEquipment]
 AS
 BEGIN
 DECLARE
 	@NewID				INT,
 	@RowNumInProgress	INT
 	
-	CREATE TABLE #StationLocationLkUp (
+	IF OBJECT_ID('tmp.StationLocationLkUp') IS NOT NULL
+	DROP TABLE tmp.StationLocationLkUp
+
+	CREATE TABLE tmp.StationLocationLkUp (
 		[WICM_Class] [varchar] (4),
 		[AW_StationLoc] [varchar] (8)
 	)
-	INSERT INTO #StationLocationLkUp
+	INSERT INTO tmp.StationLocationLkUp
 	( [WICM_Class], [AW_StationLoc] )
 	VALUES
 	('BGWF', 'FACBGWF'),
@@ -55,7 +58,10 @@ DECLARE
 	('UYST', 'FACUYST'),
 	('YCWS', 'FACYCWS')
 
-	CREATE TABLE #StagingEquip(
+	IF OBJECT_ID('tmp.StagingEquip') IS NOT NULL
+	DROP TABLE tmp.StagingEquip
+
+	CREATE TABLE tmp.StagingEquip(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
@@ -148,7 +154,7 @@ DECLARE
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #StagingEquip
+	INSERT INTO tmp.StagingEquip
 	SELECT
 		LTRIM(RTRIM(OE.[OBJECT_ID])) [Object_ID],
 		'[i]' [Control],
@@ -315,7 +321,7 @@ DECLARE
 
 	-- (FAC_MODEL <> 'NA') EquipmentType, ManufacturerID, ModelID, Maintenance,
 	-- PMProgram, Standards, Resources
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = LTRIM(RTRIM(modid.ModelName)),
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
@@ -324,7 +330,7 @@ DECLARE
 		PMProgram = LTRIM(RTRIM(modid.ModelName)),
 		Standards = LTRIM(RTRIM(modid.ModelName)),
 		Resources = LTRIM(RTRIM(modid.ModelName))
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
 			ON LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
@@ -338,7 +344,7 @@ DECLARE
 
 	-- (FAC_MODEL = 'NA') EquipmentType, ManufacturerID, ModelID,
 	-- Maintenance, PMProgram, Standards, Resources
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = et.[EquipType],
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
@@ -347,7 +353,7 @@ DECLARE
 		PMProgram = et.[EquipType],
 		Standards = et.[EquipType],
 		Resources = et.[EquipType]
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentFacilitiesEquipmentValueEquipmentType et
 			ON LTRIM(RTRIM(FAC.[Object_ID])) = LTRIM(RTRIM(et.[OBJECT_ID]))
@@ -362,14 +368,14 @@ DECLARE
 		LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
 
 	-- (FAC_MODEL = 'NA') and not in TransformEquipmentFacilitiesEquipmentValueEquipmentType
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Maintenance = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		PMProgram = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Standards = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Resources = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE))
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 	WHERE
 		FAC.[Object_ID] NOT IN (SELECT [OBJECT_ID] FROM TransformEquipmentFacilitiesEquipmentValueEquipmentType)
@@ -377,30 +383,33 @@ DECLARE
 		AND FAC.EquipmentType = ''
 
 	-- Condition Rating
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET ConditionRating = ISNULL(cr.ConditionRating, '')
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN TransformEquipmentFacilitiesValueConditionRating cr
 			ON LTRIM(RTRIM(FACS.[Object_ID])) = LTRIM(RTRIM(cr.[OBJECT_ID]))
 
 	-- StationLocation
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET StationLocation = statloc.AW_StationLoc
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm210ObjectEquipment oe
 			ON FACS.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
-		INNER JOIN #StationLocationLkUp statloc ON LTRIM(RTRIM(oe.CLASS )) = statloc.WICM_Class
+		INNER JOIN tmp.StationLocationLkUp statloc ON LTRIM(RTRIM(oe.CLASS )) = statloc.WICM_Class
 
 	-- Comments
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1] + ' ' + oee.[SPECL-INST2] + ' ' + oee.[SPECL-INST3] + ' ' + oee.[SPECL-INST4]))
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm212ObjectExtensionEquipment oee ON FACS.[Object_ID] = oee.[OBJECT_ID]
 
 	-- Build the auto-incrementing EquipmentID
+	IF OBJECT_ID('tmp.FinalResultSet') IS NOT NULL
+	DROP TABLE tmp.FinalResultSet
+
 	DECLARE Facilities_Cursor CURSOR
 	FOR SELECT SP.RowNum [RowNum]
-	FROM #StagingEquip SP
+	FROM tmp.StagingEquip SP
 	ORDER BY SP.RowNum
 
 	OPEN Facilities_Cursor
@@ -509,13 +518,13 @@ DECLARE
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				INTO #FinalResultSet
-				FROM #StagingEquip SP
+				INTO tmp.FinalResultSet
+				FROM tmp.StagingEquip SP
 				WHERE SP.RowNum = @RowNumInProgress
 			END
 		ELSE
 			BEGIN
-				INSERT INTO #FinalResultSet
+				INSERT INTO tmp.FinalResultSet
 				SELECT
 					SP.[Object_ID],
 					SP.[Control],
@@ -610,7 +619,7 @@ DECLARE
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				FROM #StagingEquip SP
+				FROM tmp.StagingEquip SP
 				WHERE SP.RowNum = @RowNumInProgress
 			END
 
@@ -621,17 +630,20 @@ DECLARE
 	DEALLOCATE Facilities_Cursor;
 
 	-- Handling of duplicate SerialNumbers
+	IF OBJECT_ID('tmp.DuplicateSerialNos') IS NOT NULL
+	DROP TABLE tmp.DuplicateSerialNos
+
 	SELECT FRE.SerialNumber, COUNT(FRE.SerialNumber) [DupeCount]
-	INTO #DuplicateSerialNos
-	FROM #FinalResultSet FRE
+	INTO tmp.DuplicateSerialNos
+	FROM tmp.FinalResultSet FRE
 	GROUP BY FRE.SerialNumber
 	ORDER BY COUNT(FRE.SerialNumber) DESC
 
-	UPDATE #FinalResultSet
+	UPDATE tmp.FinalResultSet
 	SET SerialNumber = 'NSN: ' + FRE.EquipmentID
-	FROM #FinalResultSet FRE
+	FROM tmp.FinalResultSet FRE
 	WHERE FRE.SerialNumber IN (
-		SELECT SerialNumber FROM #DuplicateSerialNos WHERE [DupeCount] > 1
+		SELECT SerialNumber FROM tmp.DuplicateSerialNos WHERE [DupeCount] > 1
 		)
 
 	INSERT INTO TransformEquipment
@@ -681,7 +693,9 @@ DECLARE
 		GrossSalePrice, DisposalReason,
 		DisposalMethod, DisposalAuthority,
 		DisposalComments
-	FROM #FinalResultSet
+	FROM tmp.FinalResultSet
+
+
 
 	-- Create the cross-walk reference for this dataset.
 	INSERT INTO TransformEquipmentLegacyXwalk
@@ -690,15 +704,6 @@ DECLARE
 		'SourceWicm210ObjectEquipment' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.[OBJECT_ID]
-	FROM #FinalResultSet FRS
+	FROM tmp.FinalResultSet FRS
 END
 
--- Clean up
-IF OBJECT_ID('tempdb..#StagingEquip') IS NOT NULL
-	DROP TABLE #StagingEquip
-IF OBJECT_ID('tempdb..#FinalResultSet') IS NOT NULL
-	DROP TABLE #FinalResultSet
-IF OBJECT_ID('tempdb..#StationLocationLkUp') IS NOT NULL
-	DROP TABLE #StationLocationLkUp
-IF OBJECT_ID('tempdb..#DuplicateSerialNos') IS NOT NULL
-	DROP TABLE #DuplicateSerialNos

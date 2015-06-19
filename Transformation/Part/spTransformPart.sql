@@ -23,10 +23,10 @@ BEGIN
 -- =================================================================================================
 -- Build dbo.TransformPart
 -- =================================================================================================
-	IF OBJECT_ID('tempdb..#StagingParts') IS NOT NULL
-		DROP TABLE #StagingParts
+	IF OBJECT_ID('tmp.Parts') IS NOT NULL
+		DROP TABLE tmp.Parts
 
-	CREATE TABLE #StagingParts(
+	CREATE TABLE tmp.Parts(
 		PartID varchar(22) NOT NULL,
 		PartSuffix int NULL,
 		Keyword varchar(15) NULL,
@@ -50,7 +50,7 @@ BEGIN
 	)
 
 	--load common values first
-	INSERT INTO #StagingParts
+	INSERT INTO tmp.Parts
 	(
 		PartId,
 		PartSuffix,
@@ -76,7 +76,7 @@ BEGIN
 		'Y' AS NoMarkupOnPart,
 		000.0 AS MarkupCapAmount,
 		CASE WHEN PH.PART_CAT = '7950' THEN 'Y' END AS ExcludeFromInvLists
-	FROM SourceWicm220PartsHeader PH
+	FROM dbo.SourceWicm220PartsHeader PH
 
 	-- Update chemical parts (not included in Shawns XLS)
 	UPDATE sp
@@ -87,7 +87,7 @@ BEGIN
 		PartClassificationID = 'ST',
 		LongDescription = dbo.TRIM(swph.PART_DESC),
 		VRMSCode = dbo.TRIM(swph.PART_GROUP)		
-	FROM #StagingParts sp
+	FROM tmp.Parts sp
 	INNER JOIN dbo.SourceWicm220PartsHeader swph
 		ON sp.PartId = dbo.TRIM(swph.PART_NO)
 	WHERE LEN (sp.PartId) = 3
@@ -101,40 +101,40 @@ BEGIN
 		PartClassificationID = xls.PartsClassID,
 		LongDescription = xls.CurrentDescription,
 		VRMSCode = xls.[Group]
-	FROM #StagingParts sp
+	FROM tmp.Parts sp
 	INNER JOIN ShawnsXLS xls 
 		ON sp.PartID = xls.PartNo
 	WHERE LEN(sp.PartId) > 3  -- Check w/ S.  There is a single part w/ 3 digit Part
 	
 	-- Remap obsolete ProductCategoryID (see email 06/01/2015 "FW: Product Category 7536 and 7542")
-	UPDATE #StagingParts
+	UPDATE tmp.Parts
 	SET ProductCategoryID = CASE ProductCategoryId WHEN 7536 THEN 7530
 								 WHEN 7542 THEN 7541
 								 ELSE ProductCategoryID
 						    END
 
 	-- Update PartClassificationId for parts with fractional quantities (per spec update v2.0.9)
-	UPDATE #StagingParts
+	UPDATE tmp.Parts
 	SET PartClassificationId = 'FS'
 	WHERE PartId IN 
 	(
 		SELECT DISTINCT dbo.Trim(part_no)
-		FROM sourcewicm221partsdetail
+		FROM dbo.Sourcewicm221partsdetail
 		WHERE QTY_ONHAND not like '%.000'
 	)
 		
 	-- Copy #StagingParts to TransformPart
 	TRUNCATE TABLE TransformPart;
 	INSERT INTO TransformPart
-	SELECT * FROM #StagingParts
+	SELECT * FROM tmp.Parts
 
 -- =================================================================================================
 -- Build dbo.TransformPartLocation
 -- =================================================================================================
-IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
-	DROP TABLE #StagingPartLocation
+IF OBJECT_ID('tmp.PartLocations') IS NOT NULL
+	DROP TABLE tmp.PartLocations
 		
-	CREATE TABLE #StagingPartLocation
+	CREATE TABLE tmp.PartLocations
 	(
 		[PartID] [varchar](22) NOT NULL,
 		[PartSuffix] [int] NOT NULL,
@@ -156,7 +156,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 		[Comments] [varchar](600) NULL
 	)
 	
-	INSERT INTO #StagingPartLocation
+	INSERT INTO tmp.PartLocations
 	(
 		PartID,
 		PartSuffix,
@@ -192,13 +192,13 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	--WHERE ISNULL(invlook.IncludeInLoad, 1) = 1 --moved to spLoadPart to keep exclusion consistent (all records in Transform, exclude in Transform->Target)
 	
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for Chemicals
-	UPDATE #StagingPartLocation
+	UPDATE spl
 	SET
 		UnitOfMeasure = LEFT(dbo.TRIM(ph.UNIT_ISSUE), 10),
 		StockStatus = 'STOCKED',
 		Manufacturer = tpml.TargetValue,		
 		ManufacturerPartNo = LEFT(dbo.TRIM(ph.MFG_NUMBER), 22)
-	FROM #StagingPartLocation spl
+	FROM tmp.PartLocations spl
 	INNER JOIN SourceWicm220PartsHeader ph 
 		ON spl.PartID = ph.PART_NO
 	LEFT JOIN TransformPartManufacturerLookup tpml 
@@ -206,13 +206,13 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	WHERE LEN(spl.PartId) = 3
 
 	-- Set UnitOfMeasure, StockStatus, Manufacturer, ManufacturerPartNo for non Chemicals (using Shawns XLS)
-	UPDATE #StagingPartLocation
+	UPDATE spl
 	SET
 		UnitOfMeasure = LEFT(dbo.TRIM(xls.[U/I]), 10),
 		StockStatus = UPPER(dbo.TRIM(xls.AW_StockStatus)),
 		Manufacturer = tpml.TargetValue,		
 		ManufacturerPartNo = LEFT(dbo.TRIM(xls.NewMfgNo), 22)
-	FROM #StagingPartLocation spl
+	FROM tmp.PartLocations spl
 	INNER JOIN ShawnsXLS xls 
 		ON spl.PartId = xls.PartNo
 	LEFT JOIN TransformPartManufacturerLookup tpml 
@@ -222,8 +222,7 @@ IF OBJECT_ID('tempdb..#StagingPartLocation') IS NOT NULL
 	-- Copy #StagingPartsLocation to TransformPartLocation
 	TRUNCATE TABLE TransformPartLocation;
 	INSERT INTO dbo.TransformPartLocation
-	SELECT *
-	FROM #StagingPartLocation AS spl;
+	SELECT * FROM tmp.PartLocations;
 
 -- =================================================================================================
 -- Build dbo.TransformPartLocationBin
