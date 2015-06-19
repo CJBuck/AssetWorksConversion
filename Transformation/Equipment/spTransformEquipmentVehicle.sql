@@ -13,7 +13,11 @@ GO
 ALTER PROCEDURE dbo.spTransformEquipmentVehicle
 AS
 BEGIN
-	CREATE TABLE #Vehicles(
+
+	IF OBJECT_ID('tmp.Vehicles') IS NOT NULL
+		DROP TABLE tmp.Vehicles
+
+	CREATE TABLE tmp.Vehicles(
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
@@ -105,7 +109,7 @@ BEGIN
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #Vehicles
+	INSERT INTO tmp.Vehicles
 	SELECT
 		LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
 		'[u:1]' [Control],
@@ -232,7 +236,7 @@ BEGIN
 			'006673', '006674', '006675'))
 
 	-- Vehicle specific updates
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
 		AssetCategoryID =
@@ -246,12 +250,12 @@ BEGIN
 		StationLocation = vehdet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10),
 		DeptToNotifyForPM = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM #Vehicles OV
+	FROM tmp.Vehicles OV
 		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
 	-- Updates from the Special Equipment spreadsheet
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ModelYear = LTRIM(RTRIM(sedet.AW_YEAR)),
 		AssetCategoryID = 'SPECIALTY',
@@ -260,16 +264,16 @@ BEGIN
 		StationLocation = sedet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10),
 		DeptToNotifyForPM = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10)
-	FROM #Vehicles OV
+	FROM tmp.Vehicles OV
 		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails sedet
 			ON OV.[Object_ID] = sedet.[WICM_OBJID]
 
 	-- ManufacturerID & ModelID Cleansing
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ManufacturerID = ISNULL(manid.TargetValue, ''),
 		ModelID = ISNULL(modid.CleansedModelID, '')
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue
@@ -280,7 +284,7 @@ BEGIN
 				AND modid.[Source] = 'Vehicles'
 
 	-- EquipmentClass & EquimentType Cleansing
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
 		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
@@ -302,7 +306,7 @@ BEGIN
 		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
 			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
@@ -319,31 +323,31 @@ BEGIN
 				AND vec.EquipmentClassID = vet.EquipmentClass
 
 	-- Meter Types Class
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET MeterTypesClass = 
 		CASE
 			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
 			ELSE 'NO METER'
 		END
-	FROM #Vehicles V
+	FROM tmp.Vehicles V
 		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON V.Maintenance = mtc.EquipmentClassID
 
 	-- EquipmentClass specific updates
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP 1/2 TON 4X4',
 		Standards = 'PICKUP 1/2 TON 4X4',
 		RentalRates = 'PICKUP 1/2 TON 4X4'
 	WHERE [Object_ID] = '006656'
 
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP COMPACT 4X4',
 		Standards = 'PICKUP COMPACT 4X4',
 		RentalRates = 'PICKUP COMPACT 4X4'
 	WHERE [Object_ID] = '006533'
 
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP 1/2 TON EXT CAB 4X4',
 		Standards = 'PICKUP 1/2 TON EXT CAB 4X4',
@@ -440,7 +444,7 @@ BEGIN
 		[DisposalMethod],
 		[DisposalAuthority],
 		[DisposalComments]
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 	ORDER BY vehs.EquipmentID
 
 	-- Vehicles to the crosswalk table.
@@ -450,9 +454,5 @@ BEGIN
 		'SourceWicm210ObjectVehicle' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#Vehicles') IS NOT NULL
-	DROP TABLE #Vehicles
