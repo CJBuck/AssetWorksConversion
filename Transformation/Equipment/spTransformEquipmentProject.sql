@@ -16,10 +16,13 @@ BEGIN
 		@NewID				INT,
 		@RowNumInProgress	INT
 
+	IF OBJECT_ID('tmp.ObjectIDs') IS NOT NULL
+		DROP TABLE tmp.ObjectIDs
+
 	-- Grab the relevant ObjectIDs
 	-- Location = '04'
 	SELECT DISTINCT LTRIM(RTRIM(OP.[OBJECT_ID])) [OBJECT_ID], LTRIM(RTRIM(OP.LOCATION)) [LOCATION]
-	INTO #ObjectIDs
+	INTO tmp.ObjectIDs
 	FROM SourceWicm210ObjectProject OP
 		INNER JOIN SourceWicm250WorkOrderHeaderAdmin woa
 			ON OP.[OBJECT_ID] = woa.[OBJECT_ID] AND woa.[STATUS] IN ('A','P')
@@ -30,7 +33,7 @@ BEGIN
 		AND LTRIM(RTRIM(OP.[CLASS])) NOT IN ('LHTP', 'WRKSTA')
 
 	-- Location = '05'
-	INSERT INTO #ObjectIDs
+	INSERT INTO tmp.ObjectIDs
 	SELECT DISTINCT LTRIM(RTRIM(OP.[OBJECT_ID])) [OBJECT_ID], LTRIM(RTRIM(OP.LOCATION)) [LOCATION]
 	FROM SourceWicm210ObjectProject OP
 	WHERE
@@ -38,17 +41,20 @@ BEGIN
 		AND OP.LOCATION = '05'
 		AND LTRIM(RTRIM(OP.[CLASS])) NOT IN ('LHTP', 'WRKSTA')
 
+	IF OBJECT_ID('tmp.InSvcDate') IS NOT NULL
+		DROP TABLE tmp.InSvcDate
+
 	-- Populate a temp table with the ActualInServiceDate per spec.
 	SELECT DISTINCT
 		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) [OBJECT_ID],
 		CAST(woifp.WORK_PEND_DT AS DATETIME) [ActualInServiceDate]
-	INTO #InSvcDate
+	INTO tmp.InSvcDate
 	FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending woifp
 	WHERE
-		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
+		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) IN (SELECT [OBJECT_ID] FROM tmp.ObjectIDs)
 		AND ((woifp.WORK_PEND_DT IS NOT NULL) AND (LTRIM(RTRIM(woifp.WORK_PEND_DT)) <> '0'))
 
-	INSERT INTO #InSvcDate
+	INSERT INTO tmp.InSvcDate
 	SELECT LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)),
 		CASE
 			WHEN woifp.PL_CMPL_DT_C > woifp.PL_CMPL_DT_W THEN CAST(woifp.PL_CMPL_DT_C AS DATETIME)
@@ -57,12 +63,15 @@ BEGIN
 		END [ActualInServiceDate]
 	FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending woifp
 	WHERE
-		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
-		AND LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) NOT IN (SELECT [OBJECT_ID] FROM #InSvcDate)
+		LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) IN (SELECT [OBJECT_ID] FROM tmp.ObjectIDs)
+		AND LTRIM(RTRIM(woifp.WO_ALT1_OB_ID)) NOT IN (SELECT [OBJECT_ID] FROM tmp.InSvcDate)
 		AND ((woifp.WORK_PEND_DT IS NULL) OR (LTRIM(RTRIM(woifp.WORK_PEND_DT)) = '0'))
 	-- *****
 
-	CREATE TABLE #StagingProjects(
+	IF OBJECT_ID('tmp.StagingProjects') IS NOT NULL
+	DROP TABLE tmp.StagingProjects
+
+	CREATE TABLE tmp.StagingProjects(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Location] [varchar] (2) NULL,
@@ -156,7 +165,7 @@ BEGIN
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #StagingProjects
+	INSERT INTO tmp.StagingProjects
 	SELECT
 		LTRIM(RTRIM(OP.[OBJECT_ID])) [Object_ID],
 		LTRIM(RTRIM(OP.LOCATION)) [Location],
@@ -268,9 +277,9 @@ BEGIN
 		'' [DisposalComments]
 	FROM SourceWicm210ObjectProject OP
 	WHERE
-		LTRIM(RTRIM(OP.[OBJECT_ID])) IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
+		LTRIM(RTRIM(OP.[OBJECT_ID])) IN (SELECT [OBJECT_ID] FROM tmp.ObjectIDs)
 
-	UPDATE #StagingProjects
+	UPDATE tmp.StagingProjects
 	SET ActualDeliveryDate =
 		CASE
 			WHEN (ISDATE(woifp.WORK_PEND_DT) = 1) THEN CAST(woifp.WORK_PEND_DT AS DATETIME)
@@ -282,13 +291,13 @@ BEGIN
 					THEN CAST(woifp.PL_CMPL_DT_C AS DATETIME)
 			ELSE NULL
 		END
-	FROM #StagingProjects SP
+	FROM tmp.StagingProjects SP
 		INNER JOIN SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending woifp
 			ON SP.[Object_ID] = woifp.WO_ALT1_OB_ID
 	WHERE SP.Location = '04'
 
 	-- Asset Category :: Step 1
-	UPDATE #StagingProjects
+	UPDATE tmp.StagingProjects
 	SET
 		EquipmentType = lkup.EquipmentType,
 		Maintenance =
@@ -317,7 +326,7 @@ BEGIN
 				WHEN OP.LOCATION IN ('04') THEN 'D-ADMIN'
 				ELSE 'WATERSHED'
 			END
-	FROM #StagingProjects SP
+	FROM tmp.StagingProjects SP
 		INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentProjectValueAssetCategory lkup ON
 			ISNULL(LTRIM(RTRIM(OP.CLASS)), '') = lkup.CLASS
@@ -325,7 +334,7 @@ BEGIN
 		SP.[Object_ID] NOT IN (SELECT DISTINCT [OBJECT_ID] FROM TransformEquipmentProjectValueAssetCategory)
 
 	-- Asset Category :: Step 2
-	UPDATE #StagingProjects
+	UPDATE tmp.StagingProjects
 	SET
 		EquipmentType = lkup.EquipmentType,
 		Maintenance =
@@ -354,13 +363,13 @@ BEGIN
 				WHEN OP.LOCATION IN ('04') THEN 'D-ADMIN'
 				ELSE 'WATERSHED'
 			END
-	FROM #StagingProjects SP
+	FROM tmp.StagingProjects SP
 		INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentProjectValueAssetCategory lkup ON
 			SP.[Object_ID] = lkup.[OBJECT_ID] AND lkup.[OBJECT_ID] <> 'RSDL'
 
 	-- Asset Category :: Step 3
-	INSERT INTO #StagingProjects
+	INSERT INTO tmp.StagingProjects
 	SELECT
 		sp.[Object_ID],
 		sp.Location,
@@ -453,14 +462,14 @@ BEGIN
 		'' [DisposalAuthority],
 		'' [DisposalComments]
 	FROM TransformEquipmentProjectValueAssetCategory lkup
-		INNER JOIN #StagingProjects sp on lkup.[OBJECT_ID] = sp.[Object_ID]
+		INNER JOIN tmp.StagingProjects sp on lkup.[OBJECT_ID] = sp.[Object_ID]
 	WHERE sp.[Object_ID] = 'RSDL'
 
 	-- Asset Category :: Step 4
-	DELETE #StagingProjects WHERE AssetNumber = 'RSDL' AND EquipmentType = ''
+	DELETE tmp.StagingProjects WHERE AssetNumber = 'RSDL' AND EquipmentType = ''
 
 	-- OriginalCost, VendorID, StationLocation
-	UPDATE #StagingProjects
+	UPDATE tmp.StagingProjects
 	SET
 		OriginalCost =
 			CASE OP.[LOCATION]
@@ -481,27 +490,30 @@ BEGIN
 				WHEN 'Y' THEN 'JURIS YC'
 				WHEN 'W' THEN 'JURIS WB'
 			END
-	FROM #StagingProjects SP
+	FROM tmp.StagingProjects SP
 		INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 		INNER JOIN (
 			SELECT DISTINCT
 				[OBJECT_ID], LTRIM(RTRIM(TOTAL_COST)) [TOTAL_COST],
 				LTRIM(RTRIM(DEVELOPER)) [DEVELOPER], LTRIM(RTRIM(JURISDICTION)) [JURISDICTION]
 			FROM SourceWicm250WorkOrderHeaderAdmin
-			WHERE [OBJECT_ID] IN (SELECT [OBJECT_ID] FROM #ObjectIDs)
+			WHERE [OBJECT_ID] IN (SELECT [OBJECT_ID] FROM tmp.ObjectIDs)
 			) woa ON LTRIM(RTRIM(SP.[Object_ID])) = LTRIM(RTRIM(woa.[OBJECT_ID]))
 
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
 	--     Just commented out for now.
-	--UPDATE #StagingProjects
+	--UPDATE tmp.StagingProjects
 	--SET
 	--	ActualInServiceDate = aisd.ActualInServiceDate
-	--FROM #StagingProjects SP
-	--	INNER JOIN #InSvcDate aisd ON SP.[Object_ID] = aisd.[OBJECT_ID]
+	--FROM tmp.StagingProjects SP
+	--	INNER JOIN tmp.InSvcDate aisd ON SP.[Object_ID] = aisd.[OBJECT_ID]
+
+	IF OBJECT_ID('tmp.ProjectFinalResultSet') IS NOT NULL
+	DROP TABLE tmp.ProjectFinalResultSet
 		
 	DECLARE Projects_Cursor CURSOR
 	FOR SELECT SP.RowNum [RowNum]
-	FROM #StagingProjects SP
+	FROM tmp.StagingProjects SP
 	ORDER BY SP.RowNum
 
 	OPEN Projects_Cursor
@@ -611,14 +623,14 @@ BEGIN
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				INTO #FinalResultSet
-				FROM #StagingProjects SP
+				INTO tmp.ProjectFinalResultSet
+				FROM tmp.StagingProjects SP
 					INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 				WHERE SP.RowNum = @RowNumInProgress
 			END
 		ELSE
 			BEGIN
-				INSERT INTO #FinalResultSet
+				INSERT INTO tmp.ProjectFinalResultSet
 				SELECT
 					SP.[Control],
 					CASE
@@ -714,7 +726,7 @@ BEGIN
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				FROM #StagingProjects SP
+				FROM tmp.StagingProjects SP
 					INNER JOIN SourceWicm210ObjectProject op ON SP.[Object_ID] = LTRIM(RTRIM(op.[OBJECT_ID]))
 				WHERE SP.RowNum = @RowNumInProgress
 			END
@@ -726,10 +738,10 @@ BEGIN
 	DEALLOCATE Projects_Cursor;
 
 	-- CjB 6/2/15:  special circumstance
-	DELETE #FinalResultSet WHERE AssetNumber = 'LCGR' AND StationLocation = ''
+	DELETE tmp.ProjectFinalResultSet WHERE AssetNumber = 'LCGR' AND StationLocation = ''
 
 	INSERT INTO TransformEquipment
-	SELECT DISTINCT * FROM #FinalResultSet
+	SELECT DISTINCT * FROM tmp.ProjectFinalResultSet
 
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
@@ -737,18 +749,8 @@ BEGIN
 		'SourceWicm210ObjectProject' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.AssetNumber [LegacyID]
-	FROM #FinalResultSet FRS
+	FROM tmp.ProjectFinalResultSet FRS
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#StagingProjects') IS NOT NULL
-	DROP TABLE #StagingProjects
-IF OBJECT_ID('tempdb..#FinalResultSet') IS NOT NULL
-	DROP TABLE #FinalResultSet
-IF OBJECT_ID('tempdb..#ObjectIDs') IS NOT NULL
-	DROP TABLE #ObjectIDs
-IF OBJECT_ID('tempdb..#InSvcDate') IS NOT NULL
-	DROP TABLE #InSvcDate
 
 --SELECT *
 --FROM SourceWicm210ObjectProject OP
