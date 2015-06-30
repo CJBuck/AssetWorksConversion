@@ -1,21 +1,21 @@
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TransformWorkOrderWorkOrderPlanning]    Script Date: 06/26/2015 14:55:58 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TransformWorkOrderWorkOrderPlanning]') AND type in (N'U'))
-DROP TABLE [dbo].[TransformWorkOrderWorkOrderPlanning]
+/****** Object:  Table [dbo].[TransformWorkOrderPlanning]    Script Date: 06/26/2015 14:55:58 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TransformWorkOrderPlanning]') AND TYPE IN (N'U'))
+DROP TABLE [dbo].[TransformWorkOrderPlanning]
 GO
 
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TransformWorkOrderWorkOrderPlanning]    Script Date: 06/26/2015 14:55:58 ******/
+/****** Object:  Table [dbo].[TransformWorkOrderPlanning]    Script Date: 06/26/2015 14:55:58 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [dbo].[TransformWorkOrderWorkOrderPlanning](
+CREATE TABLE [dbo].[TransformWorkOrderPlanning](
 	[Control] [varchar](10) NOT NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NULL,
@@ -27,13 +27,13 @@ CREATE TABLE [dbo].[TransformWorkOrderWorkOrderPlanning](
 	[EmployeeID] [varchar](9) NULL,
 	[Approved] [varchar](9) NULL,
 	[PMService] [varchar](12) NULL,
-	[PMScheduled] [datetime] NULL,
+	[PMScheduledDt] [datetime] NULL,
 	[RepairReasonID] [varchar](4) NULL,
 	[WorkClass] [char](1) NULL,
 	[WarrantyWork] [varchar](15) NULL,
-	[DateTimeOutOfService] [datetime] NULL,
-	[DateTimeIn] [datetime] NULL,
-	[DateTimeDue] [datetime] NULL,
+	[OutOfServiceDt] [datetime] NULL,
+	[InDt] [datetime] NULL,
+	[DueDt] [datetime] NULL,
 	[RepairSite] [varchar](2) NULL,
 	[JobStatus] [varchar](15) NULL,
 	[Tasks] [varchar](30) NOT NULL,

@@ -1,21 +1,21 @@
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TransformWorkOrderWorkOrdersOpen] Script Date: 06/29/2015 10:22:19 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TransformWorkOrderWorkOrdersOpen]') AND TYPE IN (N'U'))
-DROP TABLE [dbo].[TransformWorkOrderWorkOrdersOpen]
+/****** Object:  Table [dbo].[TransformWorkOrderCenterClosed] Script Date: 06/29/2015 10:22:19 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TransformWorkOrderCenterClosed]') AND TYPE IN (N'U'))
+DROP TABLE [dbo].[TransformWorkOrderCenterClosed]
 GO
 
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TransformWorkOrderWorkOrdersOpen] Script Date: 06/29/2015 10:22:19 ******/
+/****** Object:  Table [dbo].[TransformWorkOrderCenterClosed] Script Date: 06/29/2015 10:22:19 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [dbo].[TransformWorkOrderWorkOrdersOpen](
+CREATE TABLE [dbo].[TransformWorkOrderCenterClosed](
 	[Control] [varchar](10) NOT NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NULL,
@@ -27,18 +27,18 @@ CREATE TABLE [dbo].[TransformWorkOrderWorkOrdersOpen](
 	[Meter2] [int] NULL,
 	[PriorityID] [varchar](2) NULL,
 	[RepairReasonID] [varchar](4) NULL,
-	[DateTimeOutOfService] [datetime] NULL,
-	[DateTimeIn] [datetime] NULL,
-	[DateTimeDue] [datetime] NULL,
-	[DateTimeOpened] [datetime] NULL,
-	[DateTimeFirstLabor] [datetime] NULL,
-	[ShowDowntimeBegin] [datetime] NULL,
+	[OutOfServiceDt] [datetime] NULL,
+	[InDt] [datetime] NULL,
+	[DueDt] [datetime] NULL,
+	[OpenedDt] [datetime] NULL,
+	[FirstLaborDt] [datetime] NULL,
+	[ShowDowntimeBeginDt] [datetime] NULL,
 	[FinishWorkOrder] [char](1) NULL,
-	[DateTimeFinished] [datetime] NULL,
+	[FinishedDt] [datetime] NULL,
 	[CloseWorkOrder] [char](1) NULL,
-	[DateTimeClosed] [datetime] NULL,
+	[ClosedDt] [datetime] NULL,
 	[InService] [char](1) NULL,
-	[DateTimeInService] [datetime] NULL,
+	[InServiceDt] [datetime] NULL,
 	[AccountID] [varchar](30) NULL,
 	[WorkClass] [char](1) NULL,
 	[WarrantyWork] [varchar](15) NULL,

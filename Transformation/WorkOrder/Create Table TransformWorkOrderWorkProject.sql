@@ -2,7 +2,7 @@ USE [AssetWorksConversion]
 GO
 
 /****** Object:  Table [dbo].[TransformWorkOrderWorkProject]    Script Date: 06/26/2015 13:52:58 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TransformWorkOrderWorkProject]') AND type in (N'U'))
+IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TransformWorkOrderWorkProject]') AND TYPE IN (N'U'))
 DROP TABLE [dbo].[TransformWorkOrderWorkProject]
 GO
 
