@@ -4,8 +4,8 @@
 -- Description: Creates/modifies the spCreateTargetEquipmentManufacturerModel stored
 --				procedure.
 -- Updated: 05/28/2015 (Gerald Davis)
---			Changed output to reflect final export structure to prevent transform being spread
---			across SSIS package and SQL Server
+--			Changed output to reflect final export structure to prevent transform being
+--			spread across SSIS package and SQL Server.
 -- =====================================================================================
 
 IF OBJECT_ID('spCreateTargetEquipmentManufacturerModel') IS NULL
@@ -34,7 +34,7 @@ BEGIN
 		[ModelName] varchar(30) NOT NULL,
 		[Active] char(1) NOT NULL
 	) ON [PRIMARY]
-	
+
 	INSERT INTO TargetEquipmentManufacturerModel
 	SELECT DISTINCT
 		TEMM.[Control],
