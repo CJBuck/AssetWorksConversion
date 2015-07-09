@@ -3,6 +3,8 @@
 -- Create Date:	01/30/2015
 -- Description: Creates/modifies the spTransformEquipmentDistributionValve
 --              stored procedure.
+-- Updated:		07/06/2015 Gerald Davis
+--				Seperate out bypass valves as distinct entities
 -- =============================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
@@ -14,6 +16,10 @@ GO
 ALTER PROCEDURE dbo.spTransformEquipmentDistributionValve
 AS
 BEGIN
+	--Prevent duplicates if SP is run multiple times
+	DELETE FROM TransformEquipment WHERE EquipmentId LIKE 'VLV%'
+	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'VLV%'
+
 	IF OBJECT_ID('tmp.Valves') IS NOT NULL
 		DROP TABLE tmp.Valves
 
@@ -324,6 +330,124 @@ BEGIN
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
 	UPDATE tmp.Valves SET ActualInServiceDate = NULL
 
+    -- Used in Bypass valves to ensure distinct EquipmentId
+	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves)
+
+	-- Add Bypass valves as seperate entity
+	INSERT INTO tmp.Valves
+	(
+		Valve_No
+		,Control
+		,EquipmentID
+		,AssetType
+		,Description
+		,AssetNumber
+		,SerialNumber
+		,EquipmentType
+		,PMProgramType
+		,ModelYear
+		,ManufacturerID
+		,ModelID
+		,MeterTypesClass
+		,Maintenance
+		,PMProgram
+		,Standards
+		,RentalRates
+		,Resources
+		,AssetCategoryID
+		,AssignedPM
+		,AssignedRepair
+		,StationLocation
+		,PreferredPMShift
+		,DepartmentID
+		,DeptToNotifyForPM
+		,AccountIDAssignmentWO
+		,AccountIDLaborPosting
+		,AccountIDPartIssues
+		,AccountIDCommercialWork
+		,AccountIDFuelTickets
+		,AccountIDUsageTickets
+		,EquipmentStatus
+		,LifeCycleStatusCodeID
+		,ConditionRating
+		,WorkOrders
+		,UsageTickets
+		,FuelTickets
+		,Comments
+		,DefaultWOPriorityID
+		,ActualDeliveryDate
+		,ActualInServiceDate
+		,OriginalCost
+		,DepreciationMethod
+		,LifeMonths
+		,MonthsRemaining
+		,Ownership
+		,VendorID
+		,ExpirationDate
+		,Meter1Expiration
+		,Meter2Expiration
+		,Deductible
+		,WarrantyType
+	)
+	SELECT 
+		v.Valve_No AS Valve_No,
+		'[i]' AS Control,
+		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS EquipmentId,
+		'STATIONARY' AS AssetType,
+		LEFT('BYPASS TO: ' + v.Description, 40) AS Description, --TRUNCATED TO FIT FOR NOW.  Description is varchar(40)
+		'BYPASS TO:' + v.EquipmentId AS AssetNumber, --SPACE REMOVED TO reduce length to fit.  AssetNumber is varchar(20)
+		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS SerialNumber,
+		'DVL ISO GATE SMALL DIA' AS EquipmentType,
+		'BOTH' AS PMProgramType,
+		v.ModelYear AS ModelYear,
+		'UNKNOWN' AS ManufacturerID,
+		'GENERIC VALVE' AS ModelID,
+		'NO METER' AS MeterTypesClass,
+		v.Maintenance AS Maintenance,
+		v.PMProgram AS PMProgram,
+		v.Standards AS Standards,
+		'DNA' AS RentalRate,
+		v.Resources AS Resources,
+		'VALVE' AS AssetCategoryId,
+		'D-HYD VAL' AS AssignedPM,
+		'D-REPAIR' AS AssignedRepair,
+		v.StationLocation AS StationLocation,
+		'DAY' AS PreferredPMShift,
+		'413505' AS DepartmentID,
+		'41305' AS DeptToNotifyForPM,
+		NULL AS AccountIDAssignmentWO, -- Open issue
+		NULL AS AccountIDLaborPosting, -- Open issue
+		NULL AS AccountIDPartIssues, -- Open issue
+		NULL AS AccountIDCommercialWork, -- Open issue
+		NULL AS AccountIDFuelTickets, -- Open issue
+		NULL AS AccountIDUsageTickets, -- Open issue
+		'IN SERVICE' AS EquipmentStatus,
+		'A' AS LifeCycleStatusCodeID,
+		NULL AS ConditionRating, -- Open issue
+		'Y' AS WorkOrders,
+		'N' AS UsageTickets,
+		'N' AS FuelTickets,
+		'' AS Comments, --Unknown source per spec
+		'D4' AS DefaultWOPriorityID,
+		NULL AS ActualDeliveryDate, -- Open issue
+		NULL AS ActualInServiceDate, -- Open issue
+		NULL AS OriginalCost, -- Open issue
+		NULL AS DepreciationMethod, -- Open issue
+		'1200' AS LifeMonths,
+		NULL AS MonthsRemaining,
+		'OWNED' AS Ownership,
+		NULL AS VendorID, -- Open issue
+		NULL AS ExpirationDate, -- Open issue
+		NULL AS Meter1Expiration, -- Open issue
+		NULL AS Meter2Expiration, -- Open issue
+		NULL AS Deductible, -- Open issue
+		NULL AS WarrantyType -- Open issue
+	FROM dbo.SourcePups201Valve	s
+	INNER JOIN tmp.Valves v
+		ON s.VALVE_NO = v.Valve_No
+	WHERE s.BYPASS_CD = 'Y'
+	ORDER BY v.Valve_No --Required to ensure proper row_number for sequential EquipmentId
+
 	-- Move data from the temp table to TransformEquipment.
 	INSERT INTO TransformEquipment
 	SELECT
@@ -418,12 +542,12 @@ BEGIN
 	FROM tmp.Valves vehs
 	ORDER BY vehs.EquipmentID
 
-	-- Vehicles to the crosswalk table.
+	-- Valves to the crosswalk table.
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
-		vehs.EquipmentID [EquipmentID],
+		v.EquipmentID [EquipmentID],
 		'SourcePups201Valve' [Source],
 		'VALVE_NO' [LegacyIDSource],
-		vehs.Valve_No [LegacyID]
-	FROM tmp.Valves vehs
+		v.Valve_No [LegacyID]
+	FROM tmp.Valves v
 END
