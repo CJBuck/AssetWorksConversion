@@ -128,7 +128,7 @@ BEGIN
 							-- Spreadsheet" - Chris Basford.
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [SerialNumber],
 		'' [EquipmentType],
-		'CLASS' [PMProgramType],
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		CASE
