@@ -17,27 +17,21 @@ BEGIN
 		DROP TABLE tmp.EquipSvc
 
 	CREATE TABLE tmp.EquipSvc(
-		[Object_ID] [varchar] (10) NOT NULL,
+		[Object_ID] nvarchar(30) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
 		[AssetType] [varchar](20) NOT NULL,
 		[Description] [varchar](40) NOT NULL,
 		[AssetNumber] [varchar](20) NULL,
 		[SerialNumber] [varchar](50) NOT NULL,
-		[EquipmentType] [varchar](30) NOT NULL,
+		[EquipmentType] [varchar](30) NULL,
 		[PMProgramType] [varchar](10) NOT NULL,
 		[ModelYear] [int] NOT NULL,
 		[ManufacturerID] [varchar](15) NOT NULL,
 		[ModelID] [varchar](15) NOT NULL,
 		[MeterTypesClass] [varchar](30) NOT NULL,
-		[Meter1Type] [varchar](10) NULL,
-		[Meter2Type] [varchar](10) NULL,
-		[Meter1AtDelivery] [int] NULL,
-		[Meter2AtDelivery] [int] NULL,
 		[LatestMeter1Reading] [int] NULL,
 		[LatestMeter2Reading] [int] NULL,
-		[MaxMeter1Value] [int] NULL,
-		[MaxMeter2Value] [int] NULL,
 		[Maintenance] [varchar](30) NOT NULL,
 		[PMProgram] [varchar](30) NOT NULL,
 		[Standards] [varchar](30) NOT NULL,
@@ -57,7 +51,7 @@ BEGIN
 		[AccountIDCommercialWork] [varchar](10) NULL,
 		[AccountIDFuelTickets] [varchar](10) NULL,
 		[AccountIDUsageTickets] [varchar](10) NULL,
-		[LifeCycleStatusCodeID] [varchar](2) NOT NULL,
+		[LifeCycleStatusCodeID] [varchar](2) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NOT NULL,
@@ -71,186 +65,192 @@ BEGIN
 		[DepreciationMethod] [varchar](25) NULL,
 		[LifeMonths] [int] NULL,
 		[Ownership] [varchar](8) NULL,
-		[VendorID] [varchar](15) NULL,
-		[ExpirationDate] [datetime] NULL,
-		[Meter1Expiration] [int] NULL,
-		[Meter2Expiration] [int] NULL,
-		[Deductible] [decimal](22, 2) NULL,
-		[WarrantyType] [varchar](60) NULL,
-		[Comments2] [varchar](60) NULL,
-		[EstimatedReplacementMonth] [int] NULL,
-		[EstimatedReplacementYear] [int] NULL,
-		[EstimatedReplacementCost] [decimal](22, 2) NULL,
-		[PlannedRetirementDate] [datetime] NULL,
-		[RetirementDate] [datetime] NULL,
-		[DispositionDate] [datetime] NULL,
-		[GrossSalePrice] [decimal](22, 2) NULL,
-		[DisposalReason] [varchar](30) NULL,
-		[DisposalMethod] [varchar](20) NULL,
-		[DisposalAuthority] [varchar](6) NULL,
-		[DisposalComments] [varchar](60) NULL
+		[ExpirationDate] [datetime] NULL
+
+		--[Meter1Expiration] [int] NULL,
+		--[Meter2Expiration] [int] NULL,
+		--[Deductible] [decimal](22, 2) NULL,
+		--[WarrantyType] [varchar](60) NULL,
+		--[Comments2] [varchar](60) NULL,
+		--[EstimatedReplacementMonth] [int] NULL,
+		--[EstimatedReplacementYear] [int] NULL,
+		--[EstimatedReplacementCost] [decimal](22, 2) NULL,
+		--[PlannedRetirementDate] [datetime] NULL,
+		--[RetirementDate] [datetime] NULL,
+		--[DispositionDate] [datetime] NULL,
+		--[GrossSalePrice] [decimal](22, 2) NULL,
+		--[DisposalReason] [varchar](30) NULL,
+		--[DisposalMethod] [varchar](20) NULL,
+		--[DisposalAuthority] [varchar](6) NULL,
+		--[DisposalComments] [varchar](60) NULL
 	)
 
 	INSERT INTO tmp.EquipSvc
 	SELECT
-		LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
-		'[i]' [Control],
-		'SVC' + RIGHT(('0000000' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR)), 7) [EquipmentID],
-		'STATIONARY' [AssetType],
-		LTRIM(RTRIM(OV.VEH_DESC)) [Description],
-		'' [AssetNumber],
-		'SVC' + RIGHT(('0000000' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR)), 7) [SerialNumber],
-		'' [EquipmentType],
+		sl.CONNECTIONOBJECTID AS [Object_ID],
+		'[i]' AS [Control],
+		'SVC' + RIGHT(('0000000' + CAST((CAST(sl.CONNECTIONOBJECTID AS BIGINT)) AS VARCHAR)), 7) AS [EquipmentID], -- Needs to be changed to SAP Extract (EQUI.EQUNR) on available
+		'STATIONARY' AS [AssetType],
+		'' AS [Description], -- SAP EXTRACT (HOUSE_NUM1 + STREET + CITY1 + REGION)
+		NULL AS [AssetNumber], -- SAP EXTRACT (EQUI.TPLNR)
+		'SVC' + RIGHT(('0000000' + CAST((CAST(sl.CONNECTIONOBJECTID AS BIGINT)) AS VARCHAR)), 7) AS [SerialNumber],
+		CASE l.TAPDIAMETER
+			WHEN '1' THEN 'DSV 01 (5/8 INCH)'
+			WHEN '2' THEN 'DSV 02 (3/4 INCH)'
+			WHEN '3' THEN 'DSV 03 (1 INCH)'
+			WHEN '4' THEN 'DSV 04 (1-1/2 INCH)'
+			WHEN '5' THEN 'DSV 05 (2 INCH)'
+			WHEN '6' THEN 'DSV 06 (3 INCH)'
+			WHEN '7' THEN 'DSV 07 (4 INCH)'
+			WHEN '8' THEN 'DSV 08 (6 INCH)'
+			WHEN '9' THEN 'DSV 09 (8 INCH)'
+			WHEN '10' THEN 'DSV 10 (10 INCH)'
+			WHEN '12' THEN 'DSC 12 (12 INCH)'
+		END AS [EquipmentType],
 		'NONE' [PMProgramType],
-		NULL [ModelYear],
-		'' [ManufacturerID],
-		'' [ModelID],
-		'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR) [AssetNumber],
-		'HFC' [MeterTypesClass],
-		'' [Meter1Type],
-		NULL [Meter1AtDelivery],
-		ISNULL(OV.MILES_CURR, NULL) [LatestMeter1Reading],
-		NULL [MaxMeter1Value],
-		'' [Meter2Type],
-		NULL [Meter2AtDelivery],
-		NULL [MaxMeter2Value],
-		'' [Maintenance],
-		'' [PMClass],
-		'' [Standards],
-		'' [RentalRates],
-		'' [Resources],
-		'SPECIALTY' AssetCategoryID,
-		'SE SHOP' AssignedPM,
-		'SE SHOP' AssignedRepair,
-		'' [StoredLocation],
+		1900 AS [ModelYear], -- SAP EXTRACT (AUFK.MODEL_YEAR)
+		'NA' [ManufacturerID],
+		'NA' [ModelID],
+		'WATER METER' [MeterTypesClass],
+		NULL AS [LatestMeter1Reading], -- Needs to be provided as extract from deloitte
+		NULL AS [LatestMeter2Reading], -- Needs to be provided as extract from deloitte
+		'DMAINT SERVICE' [Maintenance],
+		'DNA' [PMProgram],
+		'DMAINT SERVICE' [Standards],
+		'DNA' [RentalRates],
+		'DMAINT SERVICE' [Resources],
+		'SERVICE' AssetCategoryID,
+		'D-INSTALL' AssignedPM,
+		'D-INSTALL' AssignedRepair,
+		'' AS [StationLocation], -- SAP EXTRACT (ADRC.CITY1)
 		'DAY' [PreferredPMShift],
-		'' [StationLocation],
-		'' [DepartmentID],
-		'' [DepartmentForPM],
-		'' [AccountIDWO],
-		'' [AccountIDLabor],
-		'' [AccountIDPart],
-		'' [AccountIDCommercial],
-		'' [AccountIDFuel],
-		'' [AccountIDUsage],
-		CASE
-			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
-			ELSE 'A'
-		END [LifeCycleStatusCodeID],
-		'' [ConditionRating],
+		'413505' [DepartmentID],
+		'413505' [DDeptToNotifyForPM],
+		NULL AS [CompanyID], -- OPEN ISSUE
+		NULL AS [AccountIDWO], -- OPEN ISSUE
+		NULL AS [AccountIDLabor], -- OPEN ISSUE
+		NULL AS [AccountIDPart], -- OPEN ISSUE
+		NULL AS [AccountIDCommercial], -- OPEN ISSUE
+		NULL AS [AccountIDFuel], -- OPEN ISSUE
+		NULL AS [AccountIDUsage], -- OPEN ISSUE
+		NULL AS [LifeCycleStatusCodeID], -- OPEN ISSUE
+		NULL AS [ConditionRating],
+		NULL AS [StatusCodes],  -- Intentionally set blank per spec
 		'Y' [WorkOrders],
 		'N' [UsageTickets],
 		'N' [FuelTickets],
-		'' [FuelCardID],
-		NULL [NextPMServiceNumber],
-		NULL [NextPMDueDate],
-		'V3' [DefaultWOPriorityID],
-		CASE
-			WHEN ISDATE(OV.ACQ_DATE) = 1 THEN CAST(OV.ACQ_DATE AS DATETIME)
-			ELSE NULL
-		END [ActualDeliveryDate],
-		NULL [ActualInServiceDate],
-		ISNULL(OV.ACQ_COST, NULL) [OriginalCost],
-		'' [DepreciationMethod],
-		ISNULL(OV.LIFE_EXP, NULL) [LifeMonths],
-		'OWNED' [Ownership]
-	FROM SourceWicm210ObjectVehicle OV
-	WHERE
-		(OV.[OBJECT_ID] NOT IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
-		AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
-			'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
-			'006673', '006674', '006675'))
+		NULL  AS [Comments], -- Open Issue
+		'D3' AS [DefaultWOPriorityID],
+		NULL AS [ActualDeliveryDate], -- SAP Extract (AUFK.ERDAT)
+		NULL AS [ActualInServiceDate], -- Open Issue
+		NULL AS [OriginalCost], -- Intentionally set blank per spec
+		NULL AS [DepreciationMethod], -- Open Issue
+		NULL AS [LifeMonths], -- Open Issue
+		'OWNED' AS [Ownership],
+		NULL AS [ExpirationDate] -- Intentionally set blank per spec
+	FROM srcGis.ServiceLocation sl
+	INNER JOIN srcGis.Lateral l
+		ON sl.SERVICELOCATIONID = l.SERVICELOCATIONID
+	WHERE sl.CONNECTIONOBJECTID IS NOT NULL
 
-	-- Special Equipment specific updates
-	UPDATE tmp.EquipSvc
+	---- ManufacturerID & ModelID Cleansing
+	UPDATE e
 	SET
-		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
-		AssetCategoryID = 'SPECIALTY',
-		StationLocation = vehdet.AW_LOCATION,
-		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM tmp.EquipSvc OV
-		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails vehdet
-			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
-
-	UPDATE tmp.EquipSvc
-	SET
-		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
-		AssetCategoryID = 'SPECIALTY',
-		StationLocation = vehdet.AW_LOCATION,
-		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM tmp.EquipSvc OV
-		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
-			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
-
-	-- ManufacturerID & ModelID Cleansing
-	UPDATE tmp.EquipSvc
-	SET
-		ManufacturerID = ISNULL(manid.TargetValue, ''),
-		ModelID = ISNULL(modid.CleansedModelID, '')
-	FROM tmp.EquipSvc vehs
-		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
-		INNER JOIN TransformEquipmentManufacturer manid
-			ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue
-				AND manid.[Source] LIKE '%Vehicles%'
-		INNER JOIN TransformEquipmentManufacturerModel modid
-			ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
-				AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
-				AND modid.[Source] = 'Vehicles'
-					
-	-- EquipmentClass & EquimentType Cleansing
-	UPDATE tmp.EquipSvc
-	SET
-		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
-		MeterTypesClass = 
-			CASE
-				WHEN tec.MeterTypes = 'Y' THEN LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30)
-				ELSE 'NO METER'
-			END,
-		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
-		MaxMeter1Value =
-			CASE
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Miles' THEN '999999'
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Hours' THEN '99999'
-				ELSE NULL
-			END,
-		Meter2Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10),
-		MaxMeter2Value =
-			CASE
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Miles' THEN '999999'
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Hours' THEN '99999'
-				ELSE NULL
-			END,
-		Maintenance = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
-		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
-		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
-		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
-	FROM tmp.EquipSvc vehs
-		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
-		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
-			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
-				AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
-				AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
-		INNER JOIN TransformEquipmentClass tec ON vec.EquipmentClassID = tec.EquipmentClassID
-		INNER JOIN (
-			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
-			FROM TransformEquipmentVehicleValueEquipmentType
-			) vet
-			ON vehs.ManufacturerID = vet.VEH_MAKE
-				AND vehs.ModelID = vet.VEH_MODEL
-				AND vehs.ModelYear = vet.VEH_YEAR
-				AND vec.EquipmentClassID = vet.EquipmentClass
+		ManufacturerID = manid.TargetValue,
+		ModelID = modid.CleansedModelID
+	FROM tmp.EquipSvc e
+	LEFT JOIN TransformEquipmentManufacturer manid
+		ON e.ManufacturerID = manid.SourceValue
+		AND manid.Source = 'Facilities'
+	LEFT JOIN TransformEquipmentManufacturerModel modid
+		ON manid.TargetValue = modid.CleansedManufacturerID
+		AND e.ModelID = modid.SourceModelID
+		AND modid.Source = 'Facilities'
+	
+	--EquipmentId Clensing
+	UPDATE e
+	SET e.EquipmentType = et.EquipmentType
+	FROM tmp.EquipSvc e
+	LEFT JOIN TransformEquipmentTypeAdditionalStableValues et
+		ON e.EquipmentType = et.EquipmentType
+	WHERE et.Source = 'Distribution'
 				
-	-- Meter Types Class
-	UPDATE tmp.EquipSvc
-	SET MeterTypesClass = 
-		CASE
-			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
-			ELSE 'NO METER'
-		END
-	FROM tmp.EquipSvc C
-		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON C.Maintenance = mtc.EquipmentClassID
-
-	INSERT INTO TransformEquipmentService
+	--INSERT INTO TransformEquipmentService
+	INSERT INTO [dbo].[TransformEquipmentService]
+    (
+		[Control]
+        ,[EquipmentID]
+        ,[AssetType]
+        ,[Description]
+        ,[AssetNumber]
+        ,[SerialNumber]
+        ,[EquipmentType]
+        ,[PMProgramType]
+        ,[ModelYear]
+        ,[ManufacturerID]
+        ,[ModelID]
+        ,[MeterTypesClass]
+        --,[Meter1Type]
+        --,[Meter2Type]
+        --,[Meter1AtDelivery]
+        --,[Meter2AtDelivery]
+        ,[LatestMeter1Reading]
+        ,[LatestMeter2Reading]
+        --,[MaxMeter1Value]
+        --,[MaxMeter2Value]
+        ,[Maintenance]
+        ,[PMProgram]
+        ,[Standards]
+        ,[RentalRates]
+        ,[Resources]
+        ,[AssetCategoryID]
+        ,[AssignedPM]
+        ,[AssignedRepair]
+        ,[StationLocation]
+        ,[PreferredPMShift]
+        ,[DepartmentID]
+        ,[DeptToNotifyForPM]
+        ,[CompanyID]
+        ,[AccountIDAssignmentWO]
+        ,[AccountIDLaborPosting]
+        ,[AccountIDPartIssues]
+        ,[AccountIDCommercialWork]
+        ,[AccountIDFuelTickets]
+        ,[AccountIDUsageTickets]
+        ,[LifeCycleStatusCodeID]
+        ,[ConditionRating]
+        ,[StatusCodes]
+        ,[WorkOrders]
+        ,[UsageTickets]
+        ,[FuelTickets]
+        ,[Comments]
+        ,[DefaultWOPriorityID]
+        ,[ActualDeliveryDate]
+        ,[ActualInServiceDate]
+        ,[OriginalCost]
+        ,[DepreciationMethod]
+        ,[LifeMonths]
+        ,[Ownership]
+        --,[VendorID]
+        ,[ExpirationDate]
+        --,[Meter1Expiration]
+        --,[Meter2Expiration]
+        --,[Deductible]
+        --,[WarrantyType]
+        --,[Comments2]
+        --,[EstimatedReplacementMonth]
+        --,[EstimatedReplacementYear]
+        --,[EstimatedReplacementCost]
+        --,[PlannedRetirementDate]
+        --,[RetirementDate]
+        --,[DispositionDate]
+        --,[GrossSalePrice]
+        --,[DisposalReason]
+        --,[DisposalMethod]
+        --,[DisposalAuthority]
+        --,[DisposalComments]
+        ,[CreateDt]
+	)
 	SELECT
 		ES.[Control],
 		[EquipmentID],
@@ -264,14 +264,8 @@ BEGIN
 		[ManufacturerID],
 		[ModelID],
 		[MeterTypesClass],
-		[Meter1Type],
-		[Meter2Type],
-		[Meter1AtDelivery],
-		[Meter2AtDelivery],
 		[LatestMeter1Reading],
 		[LatestMeter2Reading],
-		[MaxMeter1Value],
-		[MaxMeter2Value],
 		[Maintenance],
 		[PMProgram],
 		[Standards],
@@ -305,34 +299,17 @@ BEGIN
 		[DepreciationMethod],
 		[LifeMonths],
 		[Ownership],
-		[VendorID],
 		[ExpirationDate],
-		[Meter1Expiration],
-		[Meter2Expiration],
-		[Deductible],
-		[WarrantyType],
-		[Comments2],
-		[EstimatedReplacementMonth],
-		[EstimatedReplacementYear],
-		[EstimatedReplacementCost],
-		[PlannedRetirementDate],
-		[RetirementDate],
-		[DispositionDate],
-		[GrossSalePrice],
-		[DisposalReason],
-		[DisposalMethod],
-		[DisposalAuthority],
-		[DisposalComments],
 		GETDATE()
 	FROM tmp.EquipSvc ES
 	ORDER BY ES.EquipmentID
 
-	-- Components to the crosswalk table.
-	INSERT INTO TransformComponentLegacyXwalk
-	SELECT
-		vehs.EquipmentID [EquipmentID],
-		'SourceWicm210ObjectVehicle' [Source],
-		'OBJECT_ID' [LegacyIDSource],
-		vehs.[Object_ID] [LegacyID]
-	FROM tmp.EquipSvc vehs
+	---- Components to the crosswalk table.
+	--INSERT INTO TransformComponentLegacyXwalk
+	--SELECT
+	--	vehs.EquipmentID [EquipmentID],
+	--	'SourceWicm210ObjectVehicle' [Source],
+	--	'OBJECT_ID' [LegacyIDSource],
+	--	vehs.[Object_ID] [LegacyID]
+	--FROM tmp.EquipSvc vehs
 END
