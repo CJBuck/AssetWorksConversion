@@ -414,7 +414,7 @@ BEGIN
 		v.StationLocation AS StationLocation,
 		'DAY' AS PreferredPMShift,
 		'413505' AS DepartmentID,
-		'41305' AS DeptToNotifyForPM,
+		'415305' AS DeptToNotifyForPM,
 		NULL AS AccountIDAssignmentWO, -- Open issue
 		NULL AS AccountIDLaborPosting, -- Open issue
 		NULL AS AccountIDPartIssues, -- Open issue
