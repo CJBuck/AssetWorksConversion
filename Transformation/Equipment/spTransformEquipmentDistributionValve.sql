@@ -121,9 +121,9 @@ BEGIN
 		'[i]' [Control],
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [EquipmentID],
 		'STATIONARY' [AssetType],
-		LEFT((LTRIM(RTRIM(STREET_NAME)) + ' (' + 
+		LEFT(LTRIM(RTRIM(STREET_NAME)) + ' (' + 
 			LTRIM(RTRIM(XSTREET_NAME)) + '-' + 
-			LTRIM(RTRIM(TO_STREET)) + ')'), 40) [Description],
+			LTRIM(RTRIM(TO_STREET)), 39) + ')' [Description],
 		'' [AssetNumber],	-- Open Issue: populate from "Source Water Isolation Valve
 							-- Spreadsheet" - Chris Basford.
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(SPV.VALVE_NO)), 7) [SerialNumber],
@@ -394,7 +394,10 @@ BEGIN
 		'[i]' AS Control,
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS EquipmentId,
 		'STATIONARY' AS AssetType,
-		LEFT('BYPASS TO: ' + v.Description, 40) AS Description, --TRUNCATED TO FIT FOR NOW.  Description is varchar(40)
+		--LEFT(v.Description, 36) + ') BP' AS Description, --TRUNCATED TO FIT FOR NOW.  Description is varchar(40)
+		LEFT(LTRIM(RTRIM(s.STREET_NAME)) + ' (' + 
+			LTRIM(RTRIM(s.XSTREET_NAME)) + '-' + 
+			LTRIM(RTRIM(s.TO_STREET)), 36) + + ') BP' [Description],
 		'BYPASS TO:' + v.EquipmentId AS AssetNumber, --SPACE REMOVED TO reduce length to fit.  AssetNumber is varchar(20)
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS SerialNumber,
 		'DVL ISO GATE SMALL DIA' AS EquipmentType,
@@ -414,7 +417,7 @@ BEGIN
 		v.StationLocation AS StationLocation,
 		'DAY' AS PreferredPMShift,
 		'413505' AS DepartmentID,
-		'415305' AS DeptToNotifyForPM,
+		'413505' AS DeptToNotifyForPM,
 		NULL AS AccountIDAssignmentWO, -- Open issue
 		NULL AS AccountIDLaborPosting, -- Open issue
 		NULL AS AccountIDPartIssues, -- Open issue
