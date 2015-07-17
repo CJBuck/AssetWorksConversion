@@ -19,8 +19,10 @@ GO
 
 CREATE TABLE [dbo].[TargetLinearAssetShapePts](
 	[Control] [varchar](10) NOT NULL,
-	[ShapeID] [varchar](12) NOT NULL,
-	[GroupRow] [varchar](25) NOT NULL,
+	[ShapeID] [varchar](30) NOT NULL,
+	[Latitude] [varchar](20) NOT NULL,
+	[Longitude] [varchar](20) NOT NULL,
+	[Index] [int] NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 
