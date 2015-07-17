@@ -21,9 +21,9 @@ GO
 
 CREATE TABLE [dbo].[TransformLinearAssetSegmentMarkerUpdate](
 	[Control] [varchar](10) NOT NULL,
-	[SegmentToUpdate] [varchar](12) NOT NULL,
-	[BeginningMarkerID] [varchar](15) NOT NULL,
-	[EndingMarkerID] [varchar](15) NOT NULL,
+	[SegmentToUpdate] [varchar](10) NOT NULL,
+	[BeginningMarkerID] [varchar](20) NOT NULL,
+	[EndingMarkerID] [varchar](20) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 

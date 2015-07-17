@@ -21,9 +21,9 @@ GO
 
 CREATE TABLE [dbo].[TransformLinearAssetSegment](
 	[Control] [varchar](10) NOT NULL,
-	[SegmentID] [varchar](12) NOT NULL,
-	[SegmentDescription] [varchar](20) NOT NULL,
-	[Length] [decimal](18, 10) NOT NULL,
+	[SegmentID] [varchar](10) NOT NULL,
+	[SegmentDescription] [varchar](30) NOT NULL,
+	[Length] [decimal](12, 4) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 
