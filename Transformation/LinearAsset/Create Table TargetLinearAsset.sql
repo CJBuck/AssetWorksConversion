@@ -1,15 +1,15 @@
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetLinearAssetDistPipe]    Script Date: 07/16/2015 10:32:45 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TargetLinearAssetDistPipe]') AND TYPE IN (N'U'))
-DROP TABLE [dbo].[TargetLinearAssetDistPipe]
+/****** Object:  Table [dbo].[TargetLinearAsset]    Script Date: 07/16/2015 10:32:45 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE OBJECT_ID = OBJECT_ID(N'[dbo].[TargetLinearAsset]') AND TYPE IN (N'U'))
+DROP TABLE [dbo].[TargetLinearAsset]
 GO
 
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetLinearAssetDistPipe]    Script Date: 07/16/2015 10:32:45 ******/
+/****** Object:  Table [dbo].[TargetLinearAsset]    Script Date: 07/16/2015 10:32:45 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -17,7 +17,7 @@ GO
 SET ANSI_PADDING ON
 GO
 
-CREATE TABLE [dbo].[TargetLinearAssetDistPipe](
+CREATE TABLE [dbo].[TargetLinearAsset](
 	[Control] [varchar](10) NOT NULL,
 	[EquipmentID] [varchar](20) NOT NULL,
 	[AssetType] [varchar](20) NULL,
