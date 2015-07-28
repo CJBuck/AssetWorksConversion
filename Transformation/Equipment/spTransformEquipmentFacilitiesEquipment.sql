@@ -15,6 +15,7 @@ ALTER PROCEDURE [dbo].[spTransformEquipmentFacilitiesEquipment]
 AS
 BEGIN
 DECLARE
+	@GoLiveDate Date = '09/01/2015', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
 	@NewID				INT,
 	@RowNumInProgress	INT
 	
@@ -695,8 +696,6 @@ DECLARE
 		DisposalComments
 	FROM tmp.FinalResultSet
 
-
-
 	-- Create the cross-walk reference for this dataset.
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
@@ -705,5 +704,32 @@ DECLARE
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.[OBJECT_ID]
 	FROM tmp.FinalResultSet FRS
+
+	INSERT INTO dbo.TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT 
+		x.EquipmentID AS PMKey, 
+		s.SCH_OPCODE AS PMService, 
+		CASE 
+			WHEN CAST(s.NXT_DUE_DATE AS date) < @GoLiveDate THEN @GoLiveDate --For already overdue PMs reset to go live date
+			ELSE CAST(s.NXT_DUE_DATE AS date) 
+		END AS NextDueDate,
+		NULL AS NumberOfTimeUnits,	--Not used per BA (used to override defaults)
+		NULL AS TimeUnit			--Not used per BA (used to override defaults)
+	FROM SourceWicm230TableLookupMaintenanceSchedules s
+	--INNER JOIN SourceWicm210ObjectEquipment e
+	--	ON s.SCH_OBJECT = e.OBJECT_ID
+	INNER JOIN TransformEquipmentLegacyXwalk x
+		ON s.SCH_OBJECT = x.LegacyID
+	--INNER JOIN TransformEquipment t
+	--	ON x.EquipmentID = t.EquipmentID
+	WHERE x.EquipmentId LIKE 'EQP%'
+	ORDER BY x.EquipmentID
 END
 
