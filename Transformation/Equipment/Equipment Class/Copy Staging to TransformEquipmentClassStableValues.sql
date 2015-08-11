@@ -31,3 +31,4 @@ SELECT
 	LEFT(LTRIM(RTRIM(TESV.[Source])), 100),
 	GETDATE()
 FROM Staging_TransformEquipmentClassStableValues TESV
+WHERE [Equipment Class ID] IS NOT NULL
