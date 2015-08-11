@@ -321,6 +321,67 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
+				
+	-- Special EquipmentType exceptions.
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP COMPACT 4X4'
+	WHERE vehs.[Object_ID] = '006533'
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP COMPACT EXT CAB 4X4'
+	WHERE vehs.[Object_ID] IN ('006565', '006572', '006573', '006678')
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP 1/2 TON 4X4'
+	WHERE vehs.[Object_ID] = '006656'
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP 1/2 TON EXT CAB 4X4'
+	WHERE vehs.[Object_ID] = '006657'
 
 	-- Meter Types Class
 	UPDATE tmp.Vehicles
