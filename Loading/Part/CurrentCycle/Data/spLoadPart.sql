@@ -119,6 +119,7 @@ BEGIN
 		AdjustmentType nvarchar(25) NOT NULL,
 		Quantity nvarchar(22) NOT NULL,
 		UnitPrice nvarchar(22) NOT NULL,
+		ReasonCode nvarchar(10) NOT NULL,
 		CONSTRAINT PK_TargetPartAdjustment PRIMARY KEY CLUSTERED(PartID, LocationId),
 		CONSTRAINT FK_TargetPartAdjustment_TargetPartLocation FOREIGN KEY(PartID, LocationId)
 			REFERENCES dbo.TargetPartLocation(PartID, InventoryLocation) ON UPDATE NO ACTION ON DELETE NO ACTION 

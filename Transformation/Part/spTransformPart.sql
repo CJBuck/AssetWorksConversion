@@ -309,15 +309,16 @@ IF OBJECT_ID('tmp.PartLocations') IS NOT NULL
 		LTRIM(RTRIM(PH.PART_NO)) AS [PartID],
 		ISNULL(invLook.AW_InventoryLocation,'') [LocationID],
 		0 [PartSuffix],
-		'ADD' [Action],
+		'CHANGE' [Action],
 		'QTY AT A DIFFERENT PRICE' [Adjustment Type],
 		PD.QTY_ONHAND [Quantity],
-		PH.PART_COST [UnitPrice]
+		PH.PART_COST [UnitPrice],
+		'INITIAL' ReasonCode
 	FROM SourceWicm220PartsHeader PH
 	INNER JOIN SourceWicm221PartsDetail PD
 		ON dbo.TRIM(PH.PART_NO) = dbo.TRIM(PD.PART_NO)
 	LEFT JOIN TransformPartInventoryLocationLookup invLook
 		ON PD.LOCATION = invLook.WICM_Location
-	WHERE CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0 
+	--WHERE CAST(PD.QTY_ONHAND AS NUMERIC(18,3)) > 0  REMOVED PER BA 08/08/2015
 	--AND ISNULL(invLook.IncludeInLoad,1) = 1 --moved to spLoadPart to keep exclusion consistent (all records in Transform, exclude in Transform->Target)
 END
