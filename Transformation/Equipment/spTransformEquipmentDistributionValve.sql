@@ -285,7 +285,21 @@ BEGIN
 				ELSE 'VALVE'
 			END
 	FROM tmp.Valves vlvs
-		INNER JOIN SourcePups201Valve spv ON vlvs.Valve_No = spv.VALVE_NO
+	INNER JOIN SourcePups201Valve spv 
+		ON vlvs.Valve_No = spv.VALVE_NO
+
+	UPDATE tmp.Valves
+	SET 
+		EquipmentId = REPLACE(EquipmentID,'VLV','ARV'),
+		SerialNumber = REPLACE(EquipmentID,'VLV','ARV')
+	FROM tmp.Valves vlvs
+	WHERE vlvs.EquipmentType LIKE 'DAR%'
+
+	UPDATE tmp.Valves
+	SET EquipmentId = REPLACE(EquipmentID,'VLV','BLF'),
+		SerialNumber = REPLACE(EquipmentID,'VLV','BLF')
+	FROM tmp.Valves vlvs
+	WHERE vlvs.EquipmentType LIKE 'DBF%'
 
 	-- Maintenance, Standards, Resources, and AssetCategoryID
 	UPDATE tmp.Valves
