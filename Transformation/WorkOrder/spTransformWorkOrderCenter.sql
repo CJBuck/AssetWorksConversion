@@ -1,19 +1,19 @@
 --	=================================================================================================
---	Created By:	Chris Buck
+--	Created By:		Chris Buck
 --	Create Date:	07/29/2015
---	Breaking Updates:
+--	Updates:
 -- 
---	Description: Creates/modifies the spTransformWorkOrder stored procedure.  Populates
---				 the ... tables.
+--	Description:	Creates/modifies the spTransformWorkOrderCenter stored procedure.  Populates
+--					the TransportWorkOrderCenter tables.
 --	=================================================================================================
 
 --	In order to persist security settings if the SP already exists, we check if
 --	it exists and do an ALTER, or a CREATE if it does not.
-IF OBJECT_ID('spTransformWorkOrder') IS NULL
-    EXEC ('CREATE PROCEDURE dbo.spTransformWorkOrder AS SELECT 1')
+IF OBJECT_ID('spTransformWorkOrderCenter') IS NULL
+    EXEC ('CREATE PROCEDURE dbo.spTransformWorkOrderCenter AS SELECT 1')
 GO
 
-ALTER PROCEDURE dbo.spTransformWorkOrder
+ALTER PROCEDURE dbo.spTransformWorkOrderCenter
 AS
 BEGIN
 --	=================================================================================================
