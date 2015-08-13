@@ -79,7 +79,7 @@ BEGIN
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HA.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HA.[STATUS] IN ('A','P') THEN NULL
 			WHEN HA.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HA.WO_OUTDATE) = 1
@@ -159,7 +159,7 @@ BEGIN
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HP.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
 			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HP.WO_OUTDATE) = 1
@@ -243,7 +243,7 @@ BEGIN
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HV.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HV.[STATUS] IN ('A','P') THEN NULL
 			WHEN HV.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HV.WO_OUTDATE) = 1
@@ -324,7 +324,7 @@ BEGIN
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HA.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HA.[STATUS] IN ('A','P') THEN NULL
 			WHEN HA.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HA.WO_OUTDATE) = 1
@@ -405,7 +405,7 @@ BEGIN
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HP.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
 			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HP.WO_OUTDATE) = 1
@@ -490,7 +490,7 @@ BEGIN
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HV.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HV.[STATUS] IN ('A','P') THEN NULL
 			WHEN HV.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HV.WO_OUTDATE) = 1
@@ -572,7 +572,7 @@ BEGIN
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HA.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HA.[STATUS] IN ('A','P') THEN NULL
 			WHEN HA.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HA.WO_OUTDATE) = 1
@@ -653,7 +653,7 @@ BEGIN
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HP.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
 			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HP.WO_OUTDATE) = 1
@@ -735,7 +735,7 @@ BEGIN
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HV.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HV.[STATUS] IN ('A','P') THEN NULL
 			WHEN HV.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HV.WO_OUTDATE) = 1
@@ -805,7 +805,7 @@ BEGIN
 			WHEN HP.SHOP_NUMBER IN ('M', 'M.') THEN 'FACMECH'
 		END [WorkOrderLocationID],		-- How are other values handled?
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
-		HP.WO_NUMBER [WorkOrderNumber],
+		LEFT(LTRIM(RTRIM(HP.WO_NUMBER)), 15) [WorkOrderNumber],
 		CASE
 			WHEN HP.[STATUS] = 'A' THEN 'OPEN'
 			WHEN HP.[STATUS] = 'P' THEN 'PENDING'
@@ -854,7 +854,7 @@ BEGIN
 			ELSE NULL
 		END [InDt],
 		CASE
-			WHEN HP.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
 			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HP.WO_OUTDATE) = 1
@@ -922,7 +922,6 @@ BEGIN
 	FROM SourceWicm250WorkOrderHeaderPlant HP
 		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HP.[OBJECT_ID] = xwalk.LegacyID
 			AND [Source] = 'SourceWicm210ObjectEquipment'
-	WHERE HP.[OBJECT_ID] NOT LIKE 'LV%'
 	
 	-- General Services
 	---- Vehicles
@@ -963,7 +962,7 @@ BEGIN
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HV.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HV.[STATUS] IN ('A','P') THEN NULL
 			WHEN HV.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HV.WO_OUTDATE) = 1
@@ -1025,7 +1024,7 @@ BEGIN
 		'[195:1;COMMERCIAL;1-3:1-3]' [Commercial]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderOpCode opc ON HV.OP_CODE1 = opc.OpCode
-		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID
+		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID AND xwalk.EquipmentID LIKE 'GS%'
 	WHERE
 		HV.[LOCATION] = '01'
 		AND HV.WO_NUMBER NOT IN (SELECT WorkOrderNumber FROM [tmp].[WorkOrderCenter])
@@ -1068,7 +1067,7 @@ BEGIN
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
-			WHEN HV.[STATUS] IN ('A','P') THEN NULL		-- TBD
+			WHEN HV.[STATUS] IN ('A','P') THEN NULL
 			WHEN HV.[STATUS] IN ('C','D','U','I') THEN
 				CASE
 					WHEN ISDATE(HV.WO_OUTDATE) = 1
@@ -1130,7 +1129,7 @@ BEGIN
 		'[195:1;COMMERCIAL;1-3:1-3]' [Commercial]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderOpCode opc ON HV.OP_CODE1 = opc.OpCode
-		INNER JOIN TransformComponentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID
+		INNER JOIN TransformComponentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID AND xwalk.AssetID LIKE 'GS%'
 	WHERE
 		HV.[LOCATION] = '01'
 		AND HV.WO_NUMBER NOT IN (SELECT WorkOrderNumber FROM [tmp].[WorkOrderCenter])
