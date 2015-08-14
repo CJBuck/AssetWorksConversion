@@ -2,9 +2,8 @@
 --	Created By:		Chris Buck
 --	Create Date:	07/29/2015
 --	Updates:
--- 
 --	Description:	Creates/modifies the spTransformWorkOrderCenter stored procedure.  Populates
---					the TransportWorkOrderCenter tables.
+--					the TransportWorkOrderCenter table.
 --	=================================================================================================
 
 --	In order to persist security settings if the SP already exists, we check if
@@ -1134,4 +1133,40 @@ BEGIN
 		HV.[LOCATION] = '01'
 		AND HV.WO_NUMBER NOT IN (SELECT WorkOrderNumber FROM [tmp].[WorkOrderCenter])
 
+	-- Copy temp to TransformWorkOrderCenter
+	INSERT INTO TransformWorkOrderCenter
+	SELECT
+		'[i]' [Control],
+		tmp.WorkOrderLocationID,
+		tmp.WorkOrderYear,
+		tmp.WorkOrderNumber,
+		tmp.JobStatus,
+		tmp.JobType,
+		tmp.EquipmentID,
+		tmp.Meter1,
+		tmp.Meter2,
+		tmp.PriorityID,
+		tmp.PMService,
+		tmp.RepairReasonID,
+		tmp.OutOfServiceDt,
+		tmp.InDt,
+		tmp.DueDt,
+		tmp.OpenedDt,
+		tmp.FirstLaborDt,
+		tmp.ShowDowntimeBeginDt,
+		tmp.FinishWorkOrder,
+		tmp.FinishedDt,
+		tmp.CloseWorkOrder,
+		tmp.ClosedDt,
+		tmp.InService,
+		tmp.InServiceDt,
+		tmp.AccountID,
+		tmp.WorkClass,
+		tmp.WarrantyWork,
+		tmp.Tasks,
+		tmp.Labor,
+		tmp.Parts,
+		tmp.Commercial,
+		GETDATE()
+	FROM tmp.WorkOrderCenter tmp
 END
