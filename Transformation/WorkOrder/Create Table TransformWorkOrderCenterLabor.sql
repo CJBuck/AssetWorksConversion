@@ -24,7 +24,7 @@ CREATE TABLE [dbo].[TransformWorkOrderCenterLabor](
 	[WorkAccomplishedCode] [varchar](4) NULL,
 	[LaborDt] [datetime] NULL,
 	[EmployeeID] [varchar](9) NULL,
-	[LaborHours] [int] NULL,
+	[LaborHours] [decimal](5,2) NULL,
 	[TimeCode] [varchar](8) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]

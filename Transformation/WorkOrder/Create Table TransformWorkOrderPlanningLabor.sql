@@ -21,7 +21,7 @@ CREATE TABLE [dbo].[TransformWorkOrderPlanningLabor](
 	[WorkOrderYear] [int] NULL,
 	[WorkOrderNumber] [int] NULL,
 	[TaskID] [varchar](12) NULL,
-	[LaborHours] [int] NULL,
+	[LaborHours] [decimal](5,2) NULL,
 	[EmployeeID] [varchar](9) NULL,
 	[AccountID] [varchar](30) NULL,
 	[CreateDt] [datetime] NOT NULL

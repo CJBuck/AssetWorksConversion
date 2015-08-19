@@ -16,7 +16,7 @@ ALTER PROCEDURE dbo.spTransformWorkOrderCenter
 AS
 BEGIN
 --	=================================================================================================
---	Build dbo.TransformPart
+--	Build dbo.spTransformWorkOrderCenter
 --	=================================================================================================
 	IF OBJECT_ID('tmp.WorkOrderCenter') IS NOT NULL
 		DROP TABLE tmp.WorkOrderCenter
@@ -1022,7 +1022,7 @@ BEGIN
 		'[194:1;PARTS;1-3:1-3]' [Parts],
 		'[195:1;COMMERCIAL;1-3:1-3]' [Commercial]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
-		INNER JOIN TransformWorkOrderOpCode opc ON HV.OP_CODE1 = opc.OpCode
+		INNER JOIN TransformWorkOrderGSOpCode opc ON HV.OP_CODE1 = opc.OpCode
 		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID AND xwalk.EquipmentID LIKE 'GS%'
 	WHERE
 		HV.[LOCATION] = '01'
@@ -1127,7 +1127,7 @@ BEGIN
 		'[194:1;PARTS;1-3:1-3]' [Parts],
 		'[195:1;COMMERCIAL;1-3:1-3]' [Commercial]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
-		INNER JOIN TransformWorkOrderOpCode opc ON HV.OP_CODE1 = opc.OpCode
+		INNER JOIN TransformWorkOrderGSOpCode opc ON HV.OP_CODE1 = opc.OpCode
 		INNER JOIN TransformComponentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID AND xwalk.AssetID LIKE 'GS%'
 	WHERE
 		HV.[LOCATION] = '01'

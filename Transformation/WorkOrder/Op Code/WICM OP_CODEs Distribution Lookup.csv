@@ -1,0 +1,444 @@
+OpCode,Description,TaskIDAlignment,RepairPM
+0351,BODY REPAIR                                         ,DGR,Repair
+0453,BODY/CHASSIS PAINTING                               ,DGR,Repair
+0806,EMERGENCY DUTY                                      ,DGR,Repair
+0951,PERSONAL LEAVE TIME                                 ,DGR,Repair
+0952,SICK LEAVE TIME                                     ,DGR,Repair
+0953,I.O.D.                                              ,DGR,Repair
+0954,VACATION TIME                                       ,DGR,Repair
+0956,LEAVE WITH PAY                                      ,DGR,Repair
+0957,HOLIDAY                                             ,DGR,Repair
+1000,RODEO                                               ,DGR,Repair
+2020,DRAWING PKG TO DO - CONT                            ,DGR,Repair
+2030,DRAW PKG: WW                                        ,DGR,Repair
+3002,HANDLING                                            ,DGR,Repair
+7115,BUSHOGGING                                          ,DGR,Repair
+0914,TRAINING                                            ,IND-ADMIN,Repair
+0918,MAINTENANCE OF TOOLS AND EQUIPMENT                  ,IND-ADMIN,Repair
+2903,FIELD PROJECTS - SHUT OFF DETERMINATION             ,DVL-TRIALSH,Repair
+2923,TRIAL SHUT OFF                                      ,DVL-TRIALSH,Repair
+2644,REMOVE VALVE                                        ,DVL-RMV,Repair
+2704,REMOVE VALVE BOX                                    ,DVL-RMV,Repair
+2785,REMOVE TEE & VALVE                                  ,DVL-RMV,Repair
+2780,REPLACE VALVE BOX                                   ,DVL-REPLBOX,Repair
+2816,REPLACE HYDRANT VALVE BOX                           ,DVL-REPLBOX,Repair
+2917,REPLACE VALVE BOX                                   ,DVL-REPLBOX,Repair
+2701,REPAIR/REPLACE GATE VALVE                           ,DVL-REPL,Repair
+2708,REPLACE TEE & VALVE                                 ,DVL-REPL,Repair
+2781,REPLACE MAIN LINE VALVE                             ,DVL-REPL,Repair
+2799,REPLACE TAPPING SLEEVE AND VALVE                    ,DVL-REPL,Repair
+2809,REPLACE/REPAIR HYD BRANCH VALVE                     ,DVL-REPL,Repair
+2916,REPLACE VALVE                                       ,DVL-REPL,Repair
+2735,"LEAK REPAIR, MAIN LINE VALVE                        ",DVL-REPAIR,Repair
+2912,REPAIR VALVE                                        ,DVL-REPAIR,Repair
+2814,RAISE HYDRANT VALVE BOX                             ,DVL-RAISBOX,Repair
+2629,CAP TAPPING SLEEVE & VALVE                          ,DVL-PLUG,Repair
+2706,CAP TAPPING SLEEVE & VALVE                          ,DVL-PLUG,Repair
+2815,LOWER HYDRANT VALVE BOX                             ,DVL-LWRBOX,Repair
+2828,LOCATE HYDRANT BRANCH VALVE BOX                     ,DVL-LOCBOX,Repair
+2906,LOCATE VALVE                                        ,DVL-LOCBOX,Repair
+2907,LOCATE VALVE BOX                                    ,DVL-LOCBOX,Repair
+2908,LOCATE INACCESSABLE VALVE                           ,DVL-LOCBOX,Repair
+2603,INSTALL VALVE-(ALL)                                 ,DVL-INST,Repair
+2612,INSTALL GATE VALVE                                  ,DVL-INST,Repair
+2633,INSTALL TEE & VALVE                                 ,DVL-INST,Repair
+2646,INSTALL BUTTERFLY VALVE                             ,DVL-INST,Repair
+2795,INSTALL VALVE (ALL)                                 ,DVL-INST,Repair
+2909,INSTALL VALVE                                       ,DVL-INST,Repair
+2913,REPAIR VALVE LEAK                                   ,DVL-INST,Repair
+2626,INSTALL A MAIN LINE VALVE BOX                       ,DVL-INSBOX,Repair
+2829,INSTALL HYDRANT BRANCH VALVE BOX                    ,DVL-INSBOX,Repair
+2910,INSTALL VALVE BOX                                   ,DVL-INSBOX,Repair
+2911,INSTALL TRUSS PIPE                                  ,DVL-INSBOX,Repair
+2933,CLEAN OUT TRUSS PIPE                                ,DVL-CLNBOX,Repair
+2787,REPLACE VALVE BOX TOP                               ,DVL-BOXLID,Repair
+2825,REPLACE VALVE BOX TOP                               ,DVL-BOXLID,Repair
+2928,INSTALL VALVE BOX TOP                               ,DVL-BOXLID,Repair
+2613,RESET VALVE BOX FOR DEVELOPER                       ,DVL-ADJBOX,Repair
+2715,ADJUST TRUSS PIPE                                   ,DVL-ADJBOX,Repair
+2750,RESET VALVE BOX                                     ,DVL-ADJBOX,Repair
+2793,RESET VALVE BOX-CONTRACTOR                          ,DVL-ADJBOX,Repair
+2918,ADJUST VALVE BOX                                    ,DVL-ADJBOX,Repair
+2931,ADJUST TRUSS PIPE                                   ,DVL-ADJBOX,Repair
+2401,TAP: INCLUDING PRESSURE TEST FOR TAP                ,DVL -TSV,Repair
+2607,INSTALL TAPPING SLEEVE AND VALVE                    ,DVL -TSV,Repair
+2904,VALVE DATA RESEARCH                                 ,DVL,Repair
+2929,VALVE MAINTENANCE                                   ,DVL,Repair
+2530,"TRF SERVICE TO NEW OR EXISTING MAIN,  1/2""          ",DSV-XFER,Repair
+2531,"TRF SERVICE TO NEW OR EXISTING MAIN,  3/4""          ",DSV-XFER,Repair
+2532,"TRF SERVICE TO NEW OR EXISTING MAIN,  1""            ",DSV-XFER,Repair
+2533,"TRF SERVICE TO NEW OR EXISTING MAIN,  1 1/2""        ",DSV-XFER,Repair
+2534,"TRF SERVICE TO NEW OR EXISTING MAIN,  2""            ",DSV-XFER,Repair
+2535,"TRF SERVICE TO NEW OR EXISTING MAIN,  3""            ",DSV-XFER,Repair
+2536,"TRF SERVICE TO NEW OR EXISTING MAIN,  4""            ",DSV-XFER,Repair
+2537,"TRF SERVICE TO NEW OR EXISTING MAIN,  6""            ",DSV-XFER,Repair
+2538,"TRF SERVICE TO NEW OR EXISTING MAIN,  8""            ",DSV-XFER,Repair
+2583,"TRSF METER, SVC INST BY CONTRACTOR, 5/8""            ",DSV-XFER,Repair
+2585,"TRSF METER, SVC INST BY CONTRACTOR, 1""              ",DSV-XFER,Repair
+2586,"TRSF METER, SVC INST BY CONTRACTOR, 1 1/2""          ",DSV-XFER,Repair
+2587,"TRSF METER, SVC INST BY CONTRACTOR, 2""              ",DSV-XFER,Repair
+2616,TRSF DETECTO CHECK TO NEW MAIN                      ,DSV-XFER,Repair
+2789,RESET METER BOX                                     ,DSV-RSTMTRBX,Repair
+2598,REMOVE YOKE & BOX                                   ,DSV-RMVYOKE,Repair
+DYB1,"DISCONTINUE YOKE & BOX, 5/8""                        ",DSV-RMVYOKE,Repair
+2711,REMOVE GALV SVC PIPE                                ,DSV-RMVSVC,Repair
+2703,REMOVE OR REPLACE DETECTO CHECK                     ,DSV-RMVSPR,Repair
+2738,REMOVE CORPORATION STOP                             ,DSV-RMVCORP,Repair
+8012,10 PULL METER                                       ,DSV-RMMTR,Repair
+9012,"12"" PULL METER                                      ",DSV-RMMTR,Repair
+2712,REPAIR DETECTO CHECK ASSEMBLY                       ,DSV-REPSPR,Repair
+2462,SERVICE REPAIR - CONTRACTOR INSTALLED SERVICE       ,DSV-REPRPIP,Repair
+2527,"LEAK REPAIR, SERVICE (BBO)                          ",DSV-REPRPIP,Repair
+2529,"LEAK REPAIR, SERVICE LINE                           ",DSV-REPRPIP,Repair
+2739,"LEAK REPAIR, SERVICE (BBO)                          ",DSV-REPRPIP,Repair
+2740,"LEAK REPAIR, SERVICE LINE                           ",DSV-REPRPIP,Repair
+2581,"LEAK REPAIR, BROKEN YOKE                            ",DSV-REPLYOKE,Repair
+2582,REPLACE YOKE                                        ,DSV-REPLYOKE,Repair
+2700,YOKE-REPLACE STRAIGHT CONNECTION                    ,DSV-REPLYOKE,Repair
+2743,"LEAK REPAIR, BROKEN YOKE                            ",DSV-REPLYOKE,Repair
+2751,"REPLACE YOKE & BOX     5/8""                         ",DSV-REPLYOKE,Repair
+2752,"REPLACE YOKE & BOX      3/4""                        ",DSV-REPLYOKE,Repair
+2753,"REPLACE YOKE & BOX        1""                        ",DSV-REPLYOKE,Repair
+2782,REPLACE YOKE                                        ,DSV-REPLYOKE,Repair
+2551,"LEAK REPAIR, 6"" NIPPLE                              ",DSV-REPLNIP,Repair
+2741,"LEAK REPAIR, 6"" NIPPLE                              ",DSV-REPLNIP,Repair
+2757,"REPLACE 6"" NIPPLE                                   ",DSV-REPLNIP,Repair
+2555,"LEAK REPAIR, METER                                  ",DSV-REPLMTR,Repair
+2558,"METER, CHANGE                                       ",DSV-REPLMTR,Repair
+2745,"LEAK REPAIR, METER                                  ",DSV-REPLMTR,Repair
+2784,CHANGE/REPLACE MISSING METER                        ,DSV-REPLMTR,Repair
+2790,"CHANGE/REPLACE METER, CLOGGED                       ",DSV-REPLMTR,Repair
+2791,"CHANGE, REPLACE METER, DAMAGED                      ",DSV-REPLMTR,Repair
+2794,CHANGE METER                                        ,DSV-REPLMTR,Repair
+8601,3 REGULAR CHANGE METER                              ,DSV-REPLMTR,Repair
+8715,4 CHANGE OUT PROGRAM                                ,DSV-REPLMTR,Repair
+8801,6 REGULAR CHANGE METER                              ,DSV-REPLMTR,Repair
+2552,"LEAK REPAIR, CORPORATION                            ",DSV-REPLCORP,Repair
+2744,"LEAK REPAIR, CORPORATION                            ",DSV-REPLCORP,Repair
+2749,REPLACE CORPORATION                                 ,DSV-REPLCORP,Repair
+2718,REPLACE METER BOX TOP                               ,DSV-REPLBXTP,Repair
+2554,"METER BOX, REPLACE-BROKEN                           ",DSV-REPLBX,Repair
+2754,"REPLACE BOX           1 1/2""                        ",DSV-REPLBX,Repair
+2755,"REPLACE BOX              2""                         ",DSV-REPLBX,Repair
+2792,REPLACE METER BOX                                   ,DSV-REPLBX,Repair
+8111,"5/8"" METER RESET BOX                                ",DSV-REPLBX,Repair
+2559,"LEAK REPAIR, ANGLE VALVE                            ",DSV-REPLAV,Repair
+2737,REPLACE ANGLE VALVE                                 ,DSV-REPLAV,Repair
+2742,"LEAK REPAIR, ANGLE VALVE                            ",DSV-REPLAV,Repair
+2540,"RENEW SERVICE,     1/2""                             ",DSV-RENEW,Repair
+2541,"RENEW SERVICE,     3/4""                             ",DSV-RENEW,Repair
+2542,"RENEW SERVICE,     1""                               ",DSV-RENEW,Repair
+2543,"RENEW SERVICE,     1 1/2""                           ",DSV-RENEW,Repair
+2544,"RENEW SERVICE,     2""                               ",DSV-RENEW,Repair
+2546,"RENEW SERVICE,     4""                               ",DSV-RENEW,Repair
+2549,"RENEW SERVICE,     10""                              ",DSV-RENEW,Repair
+2588,"REPAIR FOR LOW PRESSURE 1/2""                        ",DSV-RENEW,Repair
+2589,"REPAIR FOR LOW PRESSURE 3/4""                        ",DSV-RENEW,Repair
+2590,"REPAIR FOR LOW PRESSURE 1""                          ",DSV-RENEW,Repair
+2591,"REPAIR FOR LOW PRESSURE 1 1/2""                      ",DSV-RENEW,Repair
+2592,"REPAIR FOR LOW PRESSURE 2""                          ",DSV-RENEW,Repair
+2597,"REPAIR FOR LOW PRESSURE 10""                         ",DSV-RENEW,Repair
+2758,"LEAK REPAIR, RENEW SERVICE                          ",DSV-RENEW,Repair
+2770,"RENEW SERVICE,LOW PRESSURE     1/2""                 ",DSV-RENEW,Repair
+2771,"RENEW SERVICE, LOW PRESSURE     3/4""                ",DSV-RENEW,Repair
+2772,"RENEW SERVICE, LOW PRESSURE        1""               ",DSV-RENEW,Repair
+2773,"RENEW SERVICE, LOW PRESSURE   1 1/2""                ",DSV-RENEW,Repair
+2774,"RENEW SERVICE, LOW PRESSURE       2""                ",DSV-RENEW,Repair
+LEAD,LEAD FOUND                                          ,DSV-RENEW,Repair
+2528,ABANDON & MOVE SERVICE                              ,DSV-RELOSVC,Repair
+2786,RELOCATE METER & BOX                                ,DSV-RELOSVC,Repair
+9010,"12"" READ METER                                      ",DSV-READMTR,Repair
+2650,REDUCE SERVICE WITHOUT A METER                      ,DSV-RDUCE,Repair
+DOSZ,DOWNSIZING LARGE METERS                             ,DSV-RDUCE,Repair
+R201,"REDUCE SERVICE & METER 3/4"" TO 5/8""                 ",DSV-RDUCE,Repair
+R301,"REDUCE SERVICE & METER 1"" TO 5/8""                   ",DSV-RDUCE,Repair
+R302,"REDUCE SERVICE & METER 1"" TO 3/4""                   ",DSV-RDUCE,Repair
+R401,"REDUCE SERVICE & METER 1 1/2"" TO 5/8""               ",DSV-RDUCE,Repair
+R402,"REDUCE SERVICE & METER 1 1/2"" TO 3/4""               ",DSV-RDUCE,Repair
+R403,"REDUCE SERVICE & METER 1 1/2"" TO 1""                 ",DSV-RDUCE,Repair
+R501,"REDUCE SERVICE & METER 2"" TO 5/8""                   ",DSV-RDUCE,Repair
+R502,"REDUCE SERVICE & METER 2"" TO 3/4""                   ",DSV-RDUCE,Repair
+R503,"REDUCE SERVICE & METER 2"" TO 1""                     ",DSV-RDUCE,Repair
+R504,"REDUCE SERVICE & METER 2"" TO 1 1/2""                 ",DSV-RDUCE,Repair
+R705,"REDUCE SERVICE & METER 4"" TO 2""                     ",DSV-RDUCE,Repair
+R706,"REDUCE SERVICE & METER FROM 4"" TO 1/2""              ",DSV-RDUCE,Repair
+2510,"METER INSTALLATION,        5/8""                     ",DSV-PLMTR,Repair
+2511,"METER INSTALLATION,        3/4""                     ",DSV-PLMTR,Repair
+2512,"METER INSTALLATION,        1""                       ",DSV-PLMTR,Repair
+2513,"METER INSTALLATION,        1 1/2""                   ",DSV-PLMTR,Repair
+2514,"METER INSTALLATION,        2""                       ",DSV-PLMTR,Repair
+2516,"METER INSTALLATION,        4""                       ",DSV-PLMTR,Repair
+2517,"METER INSTALLATION,        6""                       ",DSV-PLMTR,Repair
+2518,"METER INSTALLATION,        8""                       ",DSV-PLMTR,Repair
+2519,"METER INSTALLATION,        10""                      ",DSV-PLMTR,Repair
+2556,"METER, PLACE (MISSING)                              ",DSV-PLMTR,Repair
+2570,"METER INSTALLATION, AFTER YOKE & BOX, 5/8""          ",DSV-PLMTR,Repair
+2571,"METER INSTALLATION, AFTER YOKE & BOX, 3/4""          ",DSV-PLMTR,Repair
+2572,"METER INSTALLATION, AFTER YOKE & BOX, 1""            ",DSV-PLMTR,Repair
+2573,"METER INSTALLATION, AFTER YOKE & BOX, 1 1/2""        ",DSV-PLMTR,Repair
+3105,"PLACE METER, 5/8""                                   ",DSV-PLMTR,Repair
+3111,"PLACE DISC. METER, 5/8""                             ",DSV-PLMTR,Repair
+3112,"PLACE DISC. METER, 3/4""                             ",DSV-PLMTR,Repair
+9013,"12"" PLACE METER                                     ",DSV-PLMTR,Repair
+2736,EMERGENCY TURN ON/CUT OFF                           ,DSV-ON/OFF,Repair
+3102,"TURN-ON'S, 1""                                       ",DSV-ON/OFF,Repair
+2557,"METER, LOCATE                                       ",DSV-LOCMTR,Repair
+9014,"12"" LOCATE METER                                    ",DSV-LOCMTR,Repair
+2576,"YOKE, BOX & METER, 1/2""                             ",DSV-INSTYOKE,Repair
+2577,"YOKE, BOX & METER, 3/4""                             ",DSV-INSTYOKE,Repair
+2578,"YOKE, BOX & METER, 1""                               ",DSV-INSTYOKE,Repair
+2579,"YOKE, BOX & METER, 1-1/2""                           ",DSV-INSTYOKE,Repair
+2580,"YOKE, BOX & METER, 2""                               ",DSV-INSTYOKE,Repair
+YB01,"PLACE YOKE & BOX 5/8""                               ",DSV-INSTYOKE,Repair
+YB02,"PLACE YOKE & BOX 3/4""                               ",DSV-INSTYOKE,Repair
+YB03,"PLACE YOKE & BOX 1""                                 ",DSV-INSTYOKE,Repair
+YB04,"PLACE YOKE & BOX 1 1/2""                             ",DSV-INSTYOKE,Repair
+YB05,"PLACE YOKE & BOX 2""                                 ",DSV-INSTYOKE,Repair
+2553,"METER BOX, PLACE                                    ",DSV-INSTBOX,Repair
+2500,"SERVICE TAP INSTALLATION,    1/2""                   ",DSV-INSTAP,Repair
+2501,"SERVICE TAP INSTALLATION,    3/4""                   ",DSV-INSTAP,Repair
+2502,"SERVICE TAP INSTALLATION,    1""                     ",DSV-INSTAP,Repair
+2503,"SERVICE TAP INSTALLATION,    1 1/2""                 ",DSV-INSTAP,Repair
+2504,"SERVICE TAP INSTALLATION,    2""                     ",DSV-INSTAP,Repair
+2505,"SERVICE TAP INSTALLATION,    3""                     ",DSV-INSTAP,Repair
+2506,"SERVICE TAP INSTALLATION,    4""                     ",DSV-INSTAP,Repair
+2509,"SERVICE TAP INSTALLATION,    10""                    ",DSV-INSTAP,Repair
+2520,"SPRINKLER TAP INSTALLATION,  4""                     ",DSV-INSTAP,Repair
+2521,"SPRINKLER TAP INSTALLATION,  6""                     ",DSV-INSTAP,Repair
+2522,"SPRINKLER TAP INSTALLATION,  8""                     ",DSV-INSTAP,Repair
+2523,"SPRINKLER TAP INSTALLATION,  10""                    ",DSV-INSTAP,Repair
+2524,"SPRINKLER TAP INSTALLATION,  2""                     ",DSV-INSTAP,Repair
+2525,"SPRINKLER TAP INSTALLATION,  3""                     ",DSV-INSTAP,Repair
+2526,"SPRINKLER TAP INSTALLATION,  12""                    ",DSV-INSTAP,Repair
+2499,DET. CK. INVESTIGATION                              ,DSV-INSPECT,Repair
+2550,"METER BOX, RESET                                    ",DSV-BOXRESET,Repair
+2560,"MOVE/ADJUST SVC FOR RD CONSTR,  1/2""                ",DSV-ADJPIPE,Repair
+2561,"MOVE/ADJUST SVC FOR RD CONSTR,  3/4""                ",DSV-ADJPIPE,Repair
+2562,"MOVE/ADJUST SVC FOR RD CONSTR,  1""                  ",DSV-ADJPIPE,Repair
+2563,"MOVE/ADJUST SVC FOR RD CONSTR,  1 1/2""              ",DSV-ADJPIPE,Repair
+2564,"MOVE/ADJUST SVC FOR RD CONSTR,  2""                  ",DSV-ADJPIPE,Repair
+2566,"MOVE/ADJUST SVC FOR RD CONSTR,  4""                  ",DSV-ADJPIPE,Repair
+2567,"MOVE/ADJUST SVC FOR RD CONSTR,  6""                  ",DSV-ADJPIPE,Repair
+2568,"MOVE/ADJUST SVC FOR RD CONSTR,  8""                  ",DSV-ADJPIPE,Repair
+2760,"ADJUST SERVICE      1/2""                            ",DSV-ADJPIPE,Repair
+2761,"ADJUST SERVICE      3/4""                            ",DSV-ADJPIPE,Repair
+2762,"ADJUST SERVICE        1""                            ",DSV-ADJPIPE,Repair
+2763,"ADJUST SERVICE    1 1/2""                            ",DSV-ADJPIPE,Repair
+2764,"ADJUST SERVICE        2""                            ",DSV-ADJPIPE,Repair
+2765,"ADJUST SERVICE        3""                            ",DSV-ADJPIPE,Repair
+2767,"ADJUST SERVICE        6""                            ",DSV-ADJPIPE,Repair
+2446,SERVICE ABANDONMENT                                 ,DSV-ABANSVC,Repair
+D01M,"DISCONTINUE METER 5/8""                              ",DSV-ABANSVC,Repair
+D01S,"DISCONTINUE SERVICE 5/8""                            ",DSV-ABANSVC,Repair
+D02M,"DISCONTINUE METER 3/4""                              ",DSV-ABANSVC,Repair
+D02S,"DISCONTINUE SERVICE 3/4""                            ",DSV-ABANSVC,Repair
+D03M,"DISCONTINUE METER 1""                                ",DSV-ABANSVC,Repair
+D03S,"DISCONTINUE SERVICE 1""                              ",DSV-ABANSVC,Repair
+D04M,"DISCONTINUE METER 1 1/2""                            ",DSV-ABANSVC,Repair
+D04S,"DISCONTINUE SERVICE 1 1/2""                          ",DSV-ABANSVC,Repair
+D05M,"DISCONTINUE METER 2""                                ",DSV-ABANSVC,Repair
+D05S,"DISCONTINUE SERVICE 2""                              ",DSV-ABANSVC,Repair
+D06M,"DISCONTINUE METER - 3""                              ",DSV-ABANSVC,Repair
+D06S,"DISCONTINUE SERVICE - 3""                            ",DSV-ABANSVC,Repair
+D07M,"DISCONTINUE METER - 4""                              ",DSV-ABANSVC,Repair
+D07S,"DISCONTINUE SERVICE - 4""                            ",DSV-ABANSVC,Repair
+D08M,"DISCONTINUE METER - 6""                              ",DSV-ABANSVC,Repair
+D08S,"DISCONTINUE SERVICE - 6""                            ",DSV-ABANSVC,Repair
+D09M,"DISCONTINUE METER - 8""                              ",DSV-ABANSVC,Repair
+D09S,"DISCONTINUE SERVICE - 8""                            ",DSV-ABANSVC,Repair
+D2SP,"DISCONTINUE 2"" SPRINKLER TAP                        ",DSV-ABANSVC,Repair
+D4SP,"DISCONTINUE 4"" SPRINKLER TAP                        ",DSV-ABANSVC,Repair
+D5SP,"DISCONTINUE 6"" SPRINKLER TAP                        ",DSV-ABANSVC,Repair
+D6SP,"DISCONTINUE 8"" SPRKINLER TAP                        ",DSV-ABANSVC,Repair
+DM24,"DISCONTINUE METER, 24""                              ",DSV-ABANSVC,Repair
+DO24,"DISCONTINUE SERVICE, 24""                            ",DSV-ABANSVC,Repair
+2756,ABANDON EXISTING CORPORATION STOP                   ,DSV-ABANCORP,Repair
+3180,FIVE(5) YEAR CHECK                                  ,DSV-5YCHECK,Repair
+2599,MISC - SERVICE IN DRIVE                             ,DSV,Repair
+3108,"FIRST-TIME METER, 5/8""                              ",DSV,Repair
+3109,"FIRST-TIME METER, 3/4""                              ",DSV,Repair
+ZCFY,FIVE (5) YEAR CHECK                                 ,DSV,Repair
+2902,FIELD PROJECTS - COORDINATION                       ,DPR,Repair
+2609,INSTALL POLYWRAP                                    ,DPI-POLY,Repair
+2605,INSTALL OFFSET                                      ,DPI-OFFSET,Repair
+2716,INSTALL OFFSET                                      ,DPI-OFFSET,Repair
+2601,PIPELINE INSTALLATION-DSI                           ,DPI-INSTPIPE,Repair
+2798,TEMPORARY PIPE INSTALLATION                         ,DPI-INSTPIPE,Repair
+2602,INSTALL TEE                                         ,DPI-INSTEE,Repair
+2702,REPLACE TEE                                         ,DPI-INSTEE,Repair
+2922,EXPOSED PIPE MAINTENANCE                            ,DPI-EXPIPE,Repair
+2645,TEMPORARY CUT & PLUG                                ,DPI-CUTPLUG,Repair
+2709,"LEAK REPAIR, MAIN (BBO)                             ",DPI-CLAMP,Repair
+2710,"LEAK REPAIR, PINHOLE, 01"" - 08""                     ",DPI-CLAMP,Repair
+2719,"LEAK REPAIR, CORROSIVE SOIL                         ",DPI-CLAMP,Repair
+2720,"LEAK REPAIR, BEAM  01"" - 20""                        ",DPI-CLAMP,Repair
+2721,"LEAK REPAIR, BEAM, 21"" - 30""                        ",DPI-CLAMP,Repair
+2722,"LEAK REPAIR, BEAM, 31"" - 54""                        ",DPI-CLAMP,Repair
+2726,"LEAK REPAIR, SPLIT  01"" - 20""                       ",DPI-CLAMP,Repair
+2727,"LEAK REPAIR, SPLIT, 21"" - 30""                       ",DPI-CLAMP,Repair
+2729,"LEAK REPAIR, COUPLING  01"" - 20""                    ",DPI-CLAMP,Repair
+2730,"LEAK REPAIR, COUPLING, 21"" - 30""                    ",DPI-CLAMP,Repair
+2731,"LEAK REPAIR, COUPLING, 31"" - 54""                    ",DPI-CLAMP,Repair
+2732,"LEAK REPAIR, BELL  01"" - 20""                        ",DPI-CLAMP,Repair
+2733,"LEAK REPAIR, BELL, 21"" - 30""                        ",DPI-CLAMP,Repair
+2734,"LEAK REPAIR, BELL, 31"" - 54""                        ",DPI-CLAMP,Repair
+2759,"LEAK REPAIR, RAW WATER MAIN  16"" - 54""              ",DPI-CLAMP,Repair
+2641,INSTALL CASING                                      ,DPI-CASING,Repair
+2445,MAIN ABANDONMENT                                    ,DPI-ABAN,Repair
+2634,ABANDONMENT OF MAIN - DEVELOPER                     ,DPI-ABAN,Repair
+2783,ABANDONMENT OF MAIN - EXPENSE                       ,DPI-ABAN,Repair
+2441,FIELD INSP DIST/TRANS MAINS                         ,DPI,Repair
+2604,INSTALL BEND                                        ,DPI,Repair
+2627,MAIN ADJUSTMENTS                                    ,DPI,Repair
+2748,INSTALL TRACER WIRE                                 ,DPI,Repair
+2820,TURN HYDRANT AROUND                                 ,DHY-TURN,Repair
+2827,STRAIGHTEN HYDRANT                                  ,DHY-STRGHT,Repair
+2635,TEMPORARY REMOVAL OF HYDRANT                        ,DHY-RMVTMP,Repair
+2622,REMOVE HYDRANT FOR REPLACEMENT                      ,DHY-RMV,Repair
+2631,REMOVE HYDRANT                                      ,DHY-RMV,Repair
+2797,REMOVE HYDRANT                                      ,DHY-RMV,Repair
+2813,REMOVE HYDRANT FOR REPLACEMENT                      ,DHY-RMV,Repair
+2817,REMOVE EXISTING HYDRANT                             ,DHY-RMV,Repair
+2850,REPLACE HYDRANT                                     ,DHY-REPL,Repair
+2435,RELOCATE EXISTING HYDRANT                           ,DHY-MOVE,Repair
+2623,MOVE EXISTING HYDRANT                               ,DHY-MOVE,Repair
+2812,MOVE EXISTING HYDRANT                               ,DHY-MOVE,Repair
+2608,INSTALL FIRE HYDRANT-NEW                            ,DHY-INST,Repair
+2802,HYDRANT INSTALLATION                                ,DHY-INST,Repair
+2801,HYDRANT INSPECTION                                  ,DHY-INSP,Repair
+2818,CHECK FOR HYDRANT LEAK                              ,DHY-INSP,Repair
+2819,CHECK HIT HYDRANT                                   ,DHY-INSP,Repair
+2830,HYDRANT CONTRACTOR REPORTED DEFICIENCY INSPECITON   ,DHY-INSP,Repair
+2832,HYDRANT CONTRACT INSPECTION QUALITY ASSURANCE       ,DHY-INSP,Repair
+2822,FLUSH HYDRANTS                                      ,DHY-FLUSH,Repair
+2826,FIRE FLOWS                                          ,DHY-FLOW,Repair
+2806,"HYDRANTS, MAINTENANCE                               ",DHY,Repair
+2575,RESTORATION                                         ,DGR-RSTLND,Repair
+2614,RESTORATION                                         ,DGR-RSTLND,Repair
+2747,RESTORATION                                         ,DGR-RSTLND,Repair
+7124,EROSION CONTROL                                     ,DGR-RSTLND,Repair
+7132,GRADING                                             ,DGR-RSTLND,Repair
+2807,RESTORATION                                         ,DGR-RSTCLN,Repair
+7171,STORM ASSESSMENT/CLEANUP                            ,DGR-RSTCLN,Repair
+2414,PROBLEM DETERMINATION                               ,DGR-PROBDET,Repair
+2746,PROBLEM DETERMINATION                               ,DGR-PROBDET,Repair
+2788,CUSTOMER HOUSELINE LEAK                             ,DGR-PROBDET,Repair
+2932,PROBLEM DETERMINATION                               ,DGR-PROBDET,Repair
+2934,PAVING PROGRAM ADJUSTMENTS                          ,DGR-PAVE,Repair
+3011,COLD PATCH                                          ,DGR-PAVE,Repair
+3012,PAVING RESTORATION BY WATERWORKS                    ,DGR-PAVE,Repair
+2618,EXPLORATORY EXCAVATION                              ,DGR-EXPEXC,Repair
+0141,STEERING SYSTEM                                     ,DGR,Repair
+0809,PARTS TRANSFER                                      ,DGR,Repair
+0813,MISC. EQUIPMENT                                     ,DGR,Repair
+0911,PICKING UP PARTS                                    ,DGR,Repair
+0912,PICKUP AND DELIVERY OF UNITS FOR REPA               ,DGR,Repair
+0913,MISCELLANEOUS                                       ,DGR,Repair
+0915,LITIGATION                                          ,DGR,Repair
+0916,DO NOT USE                                          ,DGR,Repair
+0917,STAND-BY WAITING FOR ASSIGNMENT                     ,DGR,Repair
+0919,REWORK                                              ,DGR,Repair
+0921,TRAVEL TIME                                         ,DGR,Repair
+0922,OPERATIONAL DELAY                                   ,DGR,Repair
+0923,EMERGENCY STATUS                                    ,DGR,Repair
+0924,HURRICANE                                           ,DGR,Repair
+2042,CREW SCHEDULED (DATE)                               ,DGR,Repair
+2400,PRE CONSTRUCTION MEETING                            ,DGR,Repair
+2411,MISCELLANEOUS EXPENSE CHARGED TO DEVELOPER          ,DGR,Repair
+2413,SPECIAL PROJECTS (WORK PERFORMED FOR OTHERS)        ,DGR,Repair
+2415,TRAINING AND TEACHING                               ,DGR,Repair
+2416,MISCELLANEOUS NOT CHARGED TO DEVELOPER              ,DGR,Repair
+2418,TOTAL NUMBER OF LOCATIONS LOGGED                    ,DGR,Repair
+2421,METERS COMPLETE                                     ,DGR,Repair
+2437,PROJECT COORDINATION                                ,DGR,Repair
+2438,OFFICE ADMINISTRATION                               ,DGR,Repair
+2440,OFFICE VERIFICATION OF AS-BUILTS                    ,DGR,Repair
+2447,WORK BY CONTRACTOR                                  ,DGR,Repair
+2450,SAFETY INSPECTIONS                                  ,DGR,Repair
+2637,MATERIAL PROVIDED TO CONTRACTOR                     ,DGR,Repair
+2642,TRANSPORT CASING                                    ,DGR,Repair
+2643,CLEAR & EXCAVATE SITE                               ,DGR,Repair
+2808,INSTALL GROUND LINE EXT.                            ,DGR,Repair
+2851,INSTALL CONDUIT                                     ,DGR,Repair
+2901,OFFICE PROJECTS                                     ,DGR,Repair
+3010,MISCELLANEOUS PURCHASES                             ,DGR,Repair
+3120,"CUT-OFF, 1""                                         ",DGR,Repair
+5402,EQUIPMENT                                           ,DGR,Repair
+7170,STORM PREPARATION                                   ,DGR,Repair
+7182,DEBRIS SHREDDING                                    ,DGR,Repair
+8604,3 REGULAR REPAIR TAGS                               ,DGR,Repair
+8704,4 REGULAR REPAIR TAGS                               ,DGR,Repair
+9018,"12"" FIELD REPAIR                                    ",DGR,Repair
+EXCH,EXCHANGE MATERIAL                                   ,DGR,Repair
+MECH,MECHANICAL                                          ,DGR,Repair
+2723,"LEAK REPAIR, MAIN-BLOWOFF  01"" - 20""                ",DBF-REPAIR,Repair
+2724,"LEAK REPAIR, MAIN-BLOWOFF, 21"" - 30""                ",DBF-REPAIR,Repair
+2725,"LEAK REPAIR, MAIN-BLOWOFF, 31"" - 54""                ",DBF-REPAIR,Repair
+2914,REPAIR BLOW OFF                                     ,DBF-REPAIR,Repair
+2915,REPAIR BLOW OFF LEAK                                ,DBF-REPAIR,Repair
+2611,INSTALL DEAD END BLOW OFF                           ,DBF-INST-DE,Repair
+2717,BLOW-OFF INSTALLATION                               ,DBF-INST-DE,Repair
+2920,ADJUST DEAD END BLOW OFF VALVE BOX                  ,DBF-ADJBOX,Repair
+2919,ADJUST DEAD END BLOW OFF STAND PIPE                 ,DBF,Repair
+2930,AIR VALVE MAINTENANCE                               ,DAR,Repair
+2410,SOIL TESTING                                        ,(NEW) PRJ-SOILTE,Repair
+2436,SHUT OFF NOTICE DISTRIBUTION                        ,(NEW) PRJ-SHTOFF,Repair
+2408,SAMPLING                                            ,(NEW) PRJ-SAMP,Repair
+0518,INSPECTION-VEHICLE REPAIRS                          ,(NEW) PRJ-INSP,Repair
+2402,INTERIM INSPECTION                                  ,(NEW) PRJ-INSP,Repair
+2422,LG METER VAULT CONSTR/INSP.                         ,(NEW) PRJ-INSP,Repair
+2423,PIPELINE REPAIR INSPECTION                          ,(NEW) PRJ-INSP,Repair
+2430,FINAL INSP PRELIMINARY                              ,(NEW) PRJ-INSP,Repair
+2431,FINAL INSP INTERIM CHECKS                           ,(NEW) PRJ-INSP,Repair
+2432,FINAL INSP CORRESPONDENCE & DOCUMENTATION           ,(NEW) PRJ-INSP,Repair
+2433,"FINAL INSP CONTRACTORS REPAIRS, CHARGES             ",(NEW) PRJ-INSP,Repair
+2434,FINAL INSP COMPLETION                               ,(NEW) PRJ-INSP,Repair
+2443,OFFSET INSTALLATION (INSPECTION)                    ,(NEW) PRJ-INSP,Repair
+2444,CASING INSTALLATION (INSPECTION)                    ,(NEW) PRJ-INSP,Repair
+2455,INSPECTION OF SERVICES INSTALLED BY CONTRACTORS     ,(NEW) PRJ-INSP,Repair
+2461,INTERIM INSP - CONTRACTOR INSTALLED SERVICES        ,(NEW) PRJ-INSP,Repair
+2905,VALVE INSPECTION                                    ,(NEW) PRJ-INSP,Repair
+2935,INSPECT CONTRACTOR ADJUSTMENTS                      ,(NEW) PRJ-INSP,Repair
+2403,PRELIMINARY FLUSH                                   ,(NEW) PRJ-FLUSH,Repair
+2407,SECOND FLUSH                                        ,(NEW) PRJ-FLUSH,Repair
+2405,MECHANICAL CHLORINATION / SWAB                      ,(NEW) PRJ-CHLOR,Repair
+2406,CHLORINATION                                        ,(NEW) PRJ-CHLOR,Repair
+2404,PRESSURE TEST                                       ,(NEW) PRJ_PRESTE,Repair
+2620,PRESSURE TEST (NON-INSPEC)                          ,(NEW) PRJ,Repair
+2412,LOCATING WATER LINES                                ,(NEW) LOCATE,Repair
+2926,SHUT OFF MAIN FOR REPAIRS                           ,(NEW) DVL-SHUTOFF,Repair
+2625,RELOCATE EXISTING VALVE                             ,(NEW) DVL-MOVE,Repair
+2705,RELOCATE EXISTING VALVE                             ,(NEW) DVL-MOVE,Repair
+2927,INSTALL VALVE STEM EXTENSION                        ,(NEW) DVL-EXTSN,Repair
+3139,FLUSH SERVICE                                       ,(NEW) DSV-FLUSH,Repair
+3135,CHECK PRESSURE                                      ,(NEW) DSV-FLOW,Repair
+2632,SOIL TESTING (NON-INSPEC)                           ,(NEW) DPR-SOILTE,Repair
+2409,"TIE IN AND HYDRANT TEST, SAMPLING                   ",(NEW) DPI-TIEIN,Repair
+2606,INSTALL TIE IN                                      ,(NEW) DPI-TIEIN,Repair
+2628,TIE IN EXISTING MAIN TO NEW MAIN                    ,(NEW) DPI-TIEIN,Repair
+2652,INSTALL CROSS                                       ,(NEW) DPI-TIEIN,Repair
+2713,TIE-IN EXISTING MAIN TO NEW MAIN                    ,(NEW) DPI-TIEIN,Repair
+2924,FLUSHING MAINS                                      ,(NEW) DPI-FLUSH,Repair
+2925,FLUSHING MAINS FOR CHLORINE RESIDUAL                ,(NEW) DPI-FLUSH,Repair
+2630,CAP TEE                                             ,(NEW) DPI-CAP,Repair
+2707,CAP TEE                                             ,(NEW) DPI-CAP,Repair
+2803,"HYDRANTS, LEAKS                                     ",(NEW) DHY-REPR,Repair
+2804,"HYDRANTS, VALVE LEAKS                               ",(NEW) DHY-REPR,Repair
+2805,"HYDRANTS, REPAIR                                    ",(NEW) DHY-REPR,Repair
+2833,HYDRANT CONTRACTOR REPORTED DEFICIENCY REPAIR       ,(NEW) DHY-REPR,Repair
+7136,HAULING/LOADING                                     ,(NEW) DGR-SPOILS,Repair
+48ST,48TH ST DIRT\GRAVEL RECYCLING & SPOIL DISPOSAL      ,(NEW) DGR-SPOILS,Repair
+48TH,48TH ST IMPROVEMENTS (COPELAND PARK)                ,(NEW) DGR-SPOILS,Repair
+0920,SALVAGE                                             ,(NEW) DGR-SALVAGE,Repair
+2420,TAPS COMPLETE                                       ,(NEW) DGR-INSP,Repair
+2439,FIELD VERIFICATION OF AS-BUILTS                     ,(NEW) DGR-INSP,Repair
+2456,"CONTRACTOR INSTALLED SERVICE, 1/2""                  ",(NEW) DGR-INSP,Repair
+2457,"CONTRACTOR INSTALLED SERVICE, 3/4""                  ",(NEW) DGR-INSP,Repair
+2458,"CONTRACTOR INSTALLED SERVICE, 1""                    ",(NEW) DGR-INSP,Repair
+2459,"CONTRACTOR INSTALLED SERVICE, 1 1/2""                ",(NEW) DGR-INSP,Repair
+2460,"CONTRACTOR INSTALLED SERVICE, 2""                    ",(NEW) DGR-INSP,Repair
+2600,PIPELINE INSTALLATION-DEVELOPER                     ,(NEW) DGR-INSP,Repair
+2831,NEW/REPLACED/RELOCATED HYDRANT INSPECTION           ,(NEW) DGR-INSP,Repair
+2651,EXTEND/RELOC BLOW-OFF                               ,(NEW) DBF-MOVE,Repair
+2796,RELOCATE EXISTING BLOW-OFF                          ,(NEW) DBF-MOVE,Repair
+2714,RELOCATE AIR RELEASE VALVE                          ,(NEW) DAR-MOVE,Repair
