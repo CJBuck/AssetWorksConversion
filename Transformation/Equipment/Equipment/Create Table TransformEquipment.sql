@@ -141,6 +141,7 @@ CREATE TABLE [dbo].[TransformEquipment](
 	[AccountIDUsageTickets] [varchar](10) NULL,
 	[EquipmentStatus] [varchar](10) NULL,		-- 2/18
 	[LifeCycleStatusCodeID] [varchar](2) NULL,
+	[UserStatus1] varchar(6) NULL,
 	[ConditionRating] [varchar](20) NULL,
 	[StatusCodes] [varchar](6) NULL,
 	[WorkOrders] [char](1) NULL,

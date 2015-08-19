@@ -68,6 +68,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
+		[UserStatus1] varchar(6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -164,7 +165,7 @@ BEGIN
 			WHEN 'Y' THEN 'JURIS YC'
 		END [StationLocation],
 		LTRIM(RTRIM(H.[JURIS])) [Jurisdiction],
-		'DAY' [PreferredPMShift],
+		p.ShiftId [PreferredPMShift],
 		'' [VehicleLocation],
 		'' [BuildingLocation],
 		'' [OtherLocation],
@@ -179,6 +180,7 @@ BEGIN
 		'' [AccountIDUsageTickets],		-- Open Issue
 		'IN SERVICE' [EquipmentStatus],
 		'A' [LifeCycleStatusCodeID],
+		h.INSP_SEQ# [UserStatus1],
 		'' [ConditionRating],
 		'' [StatusCodes],
 		'Y' [WorkOrders],
@@ -224,6 +226,8 @@ BEGIN
 		'' [DisposalAuthority],
 		'' [DisposalComments]
 	FROM SourcePups201Hydrant H
+	LEFT JOIN TransformEquipmentPreferredPmShift p
+		ON	h.[GROUP#] = p.ShiftId
 	WHERE
 		(H.[STATUS] IN ('A', 'I')) AND (H.HYD_SEQ# = '00')
 
@@ -304,6 +308,7 @@ BEGIN
 		[AccountIDUsageTickets],
 		[EquipmentStatus],
 		[LifeCycleStatusCodeID],
+		[UserStatus1],
 		[ConditionRating],
 		[StatusCodes],
 		[WorkOrders],

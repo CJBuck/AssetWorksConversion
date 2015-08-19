@@ -67,6 +67,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
+		UserStatus1 varchar(6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -167,6 +168,7 @@ BEGIN
 			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
 			ELSE 'A'
 		END [LifeCycleStatusCodeID],
+		NULL UserStatus1,
 		'' [ConditionRating],
 		'' [StatusCodes],
 		'Y' [WorkOrders],
@@ -465,6 +467,7 @@ BEGIN
 		[AccountIDUsageTickets],
 		[EquipmentStatus],
 		[LifeCycleStatusCodeID],
+		UserStatus1,
 		[ConditionRating],
 		[StatusCodes],
 		[WorkOrders],
