@@ -1,0 +1,9 @@
+--
+TRUNCATE TABLE TransformWorkOrderCenter
+TRUNCATE TABLE TransformWorkOrderCenterTasks
+TRUNCATE TABLE TransformWorkOrderCenterLabor
+
+EXEC spTransformWorkOrderCenter
+EXEC spTransformWorkOrderCenterTasks
+EXEC spTransformWorkOrderCenterLabor
+

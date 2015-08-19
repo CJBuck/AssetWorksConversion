@@ -74,7 +74,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -154,7 +154,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -238,7 +238,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -319,7 +319,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -400,7 +400,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -485,7 +485,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -567,7 +567,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -648,7 +648,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -730,7 +730,7 @@ BEGIN
 		NULL [Meter2],		-- TBD
 		'D4' [PriorityID],
 		'' [PMService],
-		'04' [RepairReasonID],
+		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -802,6 +802,7 @@ BEGIN
 			WHEN HP.SHOP_NUMBER IN ('E', 'EE', 'EL') THEN 'FACELEC'
 			WHEN HP.SHOP_NUMBER IN ('I', 'IC', 'J') THEN 'FACINST'
 			WHEN HP.SHOP_NUMBER IN ('M', 'M.') THEN 'FACMECH'
+			ELSE 'ERROR'
 		END [WorkOrderLocationID],		-- How are other values handled?
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		LEFT(LTRIM(RTRIM(HP.WO_NUMBER)), 15) [WorkOrderNumber],
@@ -840,7 +841,7 @@ BEGIN
 		CASE
 			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
 				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN ''
-			ELSE 'REPAIR'
+			ELSE 'NSR'
 		END [RepairReasonID],
 		CASE
 			WHEN ISDATE(HP.WO_INDATE) = 1
