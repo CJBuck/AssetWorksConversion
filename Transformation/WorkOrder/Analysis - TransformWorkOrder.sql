@@ -2,8 +2,18 @@
 TRUNCATE TABLE TransformWorkOrderCenter
 TRUNCATE TABLE TransformWorkOrderCenterTasks
 TRUNCATE TABLE TransformWorkOrderCenterLabor
+TRUNCATE TABLE TransformWorkOrderCenterParts
+TRUNCATE TABLE TransformWorkOrderCenterCommercial
 
 EXEC spTransformWorkOrderCenter
 EXEC spTransformWorkOrderCenterTasks
 EXEC spTransformWorkOrderCenterLabor
+EXEC spTransformWorkOrderCenterParts
+EXEC spTransformWorkOrderCenterCommercial
 
+--
+SELECT * FROM TransformWorkOrderCenter
+SELECT * FROM TransformWorkOrderCenterTasks
+SELECT * FROM TransformWorkOrderCenterLabor ORDER BY WorkOrderNumber, LaborDt DESC
+SELECT * FROM TransformWorkOrderCenterParts
+SELECT * FROM TransformWorkOrderCenterCommercial

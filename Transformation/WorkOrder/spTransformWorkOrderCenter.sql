@@ -70,8 +70,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		xwalk.EquipmentID,
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -125,7 +125,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -140,7 +140,7 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		'D-INSTALL' [WorkOrderLocationID],
+		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
 		CASE
@@ -150,8 +150,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		xwalk.EquipmentID,
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -205,7 +205,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -234,8 +234,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		xwalk.EquipmentID,
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -289,7 +289,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -299,7 +299,7 @@ BEGIN
 		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID
 			AND [Source] = 'SourceWicm210ObjectProject'
 	WHERE HV.[OBJECT_ID] NOT LIKE 'LV%'
-		AND HV.LOCATION = '04'
+		AND HV.LOCATION = '04' AND HV.OP_CODE1 <> '1000'
 
 	-- Distribution - NOT in TransformEquipmentLegacyXwalk
 	INSERT INTO [tmp].[WorkOrderCenter]
@@ -315,8 +315,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],	-- Fails validation per spec.
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -370,7 +370,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -386,7 +386,7 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HP.[OBJECT_ID] [Object_ID],
-		'D-INSTALL' [WorkOrderLocationID],
+		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
 		CASE
@@ -396,8 +396,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -451,7 +451,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -481,8 +481,8 @@ BEGIN
 		END [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -536,7 +536,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -548,6 +548,7 @@ BEGIN
 		AND HV.[OBJECT_ID] NOT LIKE 'LV%'
 		AND HV.[STATUS] = 'A'
 		AND HV.LOCATION = '04'
+		AND HV.OP_CODE1 <> '1000'
 
 	-- Distribution - Closed WOs
 	INSERT INTO [tmp].[WorkOrderCenter]
@@ -556,15 +557,11 @@ BEGIN
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HA.WO_INDATE) [WorkOrderYear],
 		HA.WO_NUMBER [WorkOrderNumber],
-		CASE
-			WHEN HA.[STATUS] = 'A' THEN 'OPEN'
-			WHEN HA.[STATUS] = 'P' THEN 'PENDING'
-			WHEN HA.[STATUS] IN ('C','D','U','I') THEN 'CLOSED'
-		END [JobStatus],
+		'CLOSED' [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],	-- Fails validation per spec.
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -618,7 +615,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -637,15 +634,11 @@ BEGIN
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
-		CASE
-			WHEN HP.[STATUS] = 'A' THEN 'OPEN'
-			WHEN HP.[STATUS] = 'P' THEN 'PENDING'
-			WHEN HP.[STATUS] IN ('C','D','U','I') THEN 'CLOSED'
-		END [JobStatus],
+		'CLOSED' [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],	-- Fails validation per spec.
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -699,7 +692,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -719,15 +712,11 @@ BEGIN
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HV.WO_INDATE) [WorkOrderYear],
 		HV.WO_NUMBER [WorkOrderNumber],
-		CASE
-			WHEN HV.[STATUS] = 'A' THEN 'OPEN'
-			WHEN HV.[STATUS] = 'P' THEN 'PENDING'
-			WHEN HV.[STATUS] IN ('C','D','U','I') THEN 'CLOSED'
-		END [JobStatus],
+		'CLOSED' [JobStatus],
 		'REPAIR' [JobType],
 		'' [EquipmentID],	-- Fails validation per spec.
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
 		'NSR' [RepairReasonID],
@@ -781,7 +770,7 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -790,6 +779,7 @@ BEGIN
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 	WHERE
 		HV.WO_NUMBER NOT IN (SELECT WorkOrderNumber FROM [tmp].[WorkOrderCenter])
+		AND HV.LOCATION = '04' AND HV.OP_CODE1 <> '1000'
 		AND HV.[OBJECT_ID] NOT LIKE 'LV%'
 		AND HV.[STATUS] IN ('C', 'D', 'U', 'I')
 		AND (HV.WO_INDATE > '7/1/2015' OR HV.WO_OUTDATE > '7/1/2015')
@@ -817,8 +807,8 @@ BEGIN
 			ELSE 'REPAIR'
 		END [JobType],
 		xwalk.EquipmentID,
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		NULL [Meter1],
+		NULL [Meter2],
 		CASE
 			WHEN ((ISNULL(HP.RA_ASSGN, '') = '') AND (ISNULL(HP.RA_REQD, '') = '')) THEN 'F5'
 			WHEN ((ISNULL(HP.RA_ASSGN, '') = '1') OR (ISNULL(HP.RA_REQD, '') = '1')) THEN 'F1'
@@ -913,7 +903,11 @@ BEGIN
 				END
 		END [InServiceDt],
 		'' [AccountID],		-- TBD
-		'1' [WorkClass],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN '1'
+			ELSE '2'
+		END [WorkClass],
 		'' [WarrantyWork],	-- TBD
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
@@ -931,6 +925,9 @@ BEGIN
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' THEN 'VEH SHOP'
 			WHEN HV.[OBJECT_ID] LIKE '91%' THEN 'SE SHOP'
+			WHEN HV.[OBJECT_ID] IN ('000736', '000900', '001279', '001909', '004001', '700029', '999999')
+				THEN 'VEH SHOP'
+			WHEN HV.[OBJECT_ID] IN ('000904', '004024') THEN 'SE SHOP'
 			ELSE ''
 		END [WorkOrderLocationID],
 		YEAR(HV.WO_INDATE) [WorkOrderYear],
@@ -942,8 +939,8 @@ BEGIN
 		END [JobStatus],
 		opc.RepairPM [JobType],
 		xwalk.EquipmentID [EquipmentID],
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		ISNULL(HV.MILES_HOURS, NULL) [Meter1],
+		NULL [Meter2],
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' AND opc.RepairPM = 'REPAIR' THEN 'V3'
 			WHEN HV.[OBJECT_ID] LIKE '006%' AND opc.RepairPM = 'PM' THEN 'V4'
@@ -1036,6 +1033,9 @@ BEGIN
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' THEN 'VEH SHOP'
 			WHEN HV.[OBJECT_ID] LIKE '91%' THEN 'SE SHOP'
+			WHEN HV.[OBJECT_ID] IN ('000736', '000900', '001279', '001909', '004001', '700029', '999999')
+				THEN 'VEH SHOP'
+			WHEN HV.[OBJECT_ID] IN ('000904', '004024') THEN 'SE SHOP'
 			ELSE ''
 		END [WorkOrderLocationID],
 		YEAR(HV.WO_INDATE) [WorkOrderYear],
@@ -1047,8 +1047,8 @@ BEGIN
 		END [JobStatus],
 		opc.RepairPM [JobType],
 		xwalk.AssetID [EquipmentID],
-		NULL [Meter1],		-- TBD
-		NULL [Meter2],		-- TBD
+		ISNULL(HV.MILES_HOURS, NULL) [Meter1],
+		NULL [Meter2],
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' AND opc.RepairPM = 'REPAIR' THEN 'V3'
 			WHEN HV.[OBJECT_ID] LIKE '006%' AND opc.RepairPM = 'PM' THEN 'V4'
@@ -1136,7 +1136,7 @@ BEGIN
 
 	-- Copy temp to TransformWorkOrderCenter
 	INSERT INTO TransformWorkOrderCenter
-	SELECT
+	SELECT DISTINCT
 		'[i]' [Control],
 		tmp.WorkOrderLocationID,
 		tmp.WorkOrderYear,
