@@ -50,6 +50,9 @@ BEGIN
 		[AccountID] [varchar](30) NULL,
 		[WorkClass] [char](1) NULL,
 		[WarrantyWork] [varchar](15) NULL,
+		[Complaint] [varchar](1000) NULL,
+		[Cause] [varchar](1000) NULL,
+		[Correction] [varchar](1000) NULL,
 		[Tasks] [varchar](30) NULL,
 		[Labor] [varchar](30) NULL,
 		[Parts] [varchar](30) NULL,
@@ -127,6 +130,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HA.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HA.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HA.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HA.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -207,6 +213,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HP.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HP.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HP.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HP.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -291,6 +300,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HV.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HV.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HV.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HV.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -372,6 +384,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HA.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HA.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HA.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HA.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -453,6 +468,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HP.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HP.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HP.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HP.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -538,6 +556,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HV.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HV.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HV.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HV.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -617,6 +638,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HA.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HA.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HA.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HA.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -694,6 +718,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HP.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HP.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HP.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HP.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -772,6 +799,9 @@ BEGIN
 		'' [AccountID],		-- TBD
 		'2' [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HV.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HV.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HV.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HV.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -785,6 +815,7 @@ BEGIN
 		AND (HV.WO_INDATE > '7/1/2015' OR HV.WO_OUTDATE > '7/1/2015')
 
 	-- Facilities
+	---- w/ no Shop exceptions
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
@@ -792,6 +823,11 @@ BEGIN
 			WHEN HP.SHOP_NUMBER IN ('E', 'EE', 'EL') THEN 'FACELEC'
 			WHEN HP.SHOP_NUMBER IN ('I', 'IC', 'J') THEN 'FACINST'
 			WHEN HP.SHOP_NUMBER IN ('M', 'M.') THEN 'FACMECH'
+			-- Exceptions 8/26
+			WHEN HP.SHOP_NUMBER = 'WS' THEN 'WATERSHED'
+			WHEN HP.SHOP_NUMBER = '5700' THEN 'FACELEC'
+			WHEN HP.SHOP_NUMBER = '5200' THEN 'FACMECH'
+			WHEN HP.SHOP_NUMBER = '7600' THEN 'FACINST'
 			ELSE 'ERROR'
 		END [WorkOrderLocationID],		-- How are other values handled?
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
@@ -909,6 +945,12 @@ BEGIN
 			ELSE '2'
 		END [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HP.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HP.PROB_DESC2))
+			+ LTRIM(RTRIM(HP.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HP.FIX_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(wocc.CLS_COMMENT_1)) + ' ' + LTRIM(RTRIM(wocc.CLS_COMMENT_2)) + ' ' + 
+			LTRIM(RTRIM(wocc.CLS_COMMENT_3)) + ' ' + LTRIM(RTRIM(wocc.CLS_COMMENT_4)) + ' ' +
+			LTRIM(RTRIM(wocc.CLS_COMMENT_5)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -916,6 +958,149 @@ BEGIN
 	FROM SourceWicm250WorkOrderHeaderPlant HP
 		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HP.[OBJECT_ID] = xwalk.LegacyID
 			AND [Source] = 'SourceWicm210ObjectEquipment'
+		LEFT JOIN [SourceWicm253WorkOrderExtensionPlantWOCloseComments1-5] wocc ON HP.WO_NUMBER = wocc.WO_NUMBER
+			AND HP.LOCATION = wocc.WO_LOCATION
+	WHERE
+		HP.[WO_NUMBER] NOT IN (SELECT WO_NUMBER FROM TransformWorkOrderShopNumberExceptions)
+	
+	-- Facilities
+	---- w/ Shop exceptions
+	INSERT INTO [tmp].[WorkOrderCenter]
+	SELECT
+		xwalk.LegacyID [Object_ID],
+		sne.WorkOrderLocationID [WorkOrderLocationID],
+		YEAR(HP.WO_INDATE) [WorkOrderYear],
+		LEFT(LTRIM(RTRIM(HP.WO_NUMBER)), 15) [WorkOrderNumber],
+		CASE
+			WHEN HP.[STATUS] = 'A' THEN 'OPEN'
+			WHEN HP.[STATUS] = 'P' THEN 'PENDING'
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN 'CLOSED'
+		END [JobStatus],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN 'PM'
+			ELSE 'REPAIR'
+		END [JobType],
+		xwalk.EquipmentID,
+		NULL [Meter1],
+		NULL [Meter2],
+		CASE
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '') AND (ISNULL(HP.RA_REQD, '') = '')) THEN 'F5'
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '1') OR (ISNULL(HP.RA_REQD, '') = '1')) THEN 'F1'
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '2') OR (ISNULL(HP.RA_REQD, '') = '2')) THEN 'F2'
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '3') OR (ISNULL(HP.RA_REQD, '') = '3')) THEN 'F5'
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '4') OR (ISNULL(HP.RA_REQD, '') = '4')) THEN 'F7'
+			WHEN ((ISNULL(HP.RA_ASSGN, '') = '5') OR (ISNULL(HP.RA_REQD, '') = '5')) THEN 'F8'
+			ELSE 'F5'
+		END [PriorityID],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN
+					CASE
+						WHEN HP.OP_CODE1 = 'ANNU' THEN 'IY01'
+						WHEN HP.OP_CODE1 = 'SEMI' THEN 'IS01'
+						ELSE HP.OP_CODE1
+					END
+			ELSE 'FGR'
+		END [PMService],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN ''
+			ELSE 'NSR'
+		END [RepairReasonID],
+		CASE
+			WHEN ISDATE(HP.WO_INDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101)
+			ELSE NULL
+		END [OutOfServiceDt],
+		CASE
+			WHEN ISDATE(HP.WO_INDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101)
+			ELSE NULL
+		END [InDt],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
+				CASE
+					WHEN ISDATE(HP.WO_OUTDATE) = 1
+						THEN CONVERT(DATETIME, (HP.WO_OUTDATE + ' ' + LEFT(HP.TIME_OUT, 2) + ':' + SUBSTRING(HP.TIME_OUT, 3, 2)), 101)
+					ELSE NULL
+				END
+		END [DueDate],
+		CASE
+			WHEN ISDATE(HP.WO_INDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101)
+			ELSE NULL
+		END [OpenedDt],
+		CASE
+			WHEN ISDATE(HP.WO_INDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101)
+			ELSE NULL
+		END [FirstLaborDt],
+		CASE
+			WHEN ISDATE(HP.WO_INDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101)
+			ELSE NULL
+		END [ShowDowntimeBeginDt],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN 'N'
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN 'Y'
+		END [FinishWorkOrder],
+		CASE
+			WHEN ISDATE(HP.WO_OUTDATE) = 1
+				THEN CONVERT(DATETIME, (HP.WO_OUTDATE + ' ' + LEFT(HP.TIME_OUT, 2) + ':' + SUBSTRING(HP.TIME_OUT, 3, 2)), 101)
+			ELSE NULL
+		END [FinishedDt],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN 'N'
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN 'Y'
+		END [CloseWorkOrder],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
+				CASE
+					WHEN ISDATE(HP.WO_OUTDATE) = 1
+						THEN CONVERT(DATETIME, (HP.WO_OUTDATE + ' ' + LEFT(HP.TIME_OUT, 2) + ':' + SUBSTRING(HP.TIME_OUT, 3, 2)), 101)
+					ELSE NULL
+				END
+		END [ClosedDt],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN 'N'
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN 'Y'
+		END [InService],
+		CASE
+			WHEN HP.[STATUS] IN ('A','P') THEN NULL
+			WHEN HP.[STATUS] IN ('C','D','U','I') THEN
+				CASE
+					WHEN ISDATE(HP.WO_OUTDATE) = 1
+						THEN CONVERT(DATETIME, (HP.WO_OUTDATE + ' ' + LEFT(HP.TIME_OUT, 2) + ':' + SUBSTRING(HP.TIME_OUT, 3, 2)), 101)
+					ELSE NULL
+				END
+		END [InServiceDt],
+		'' [AccountID],		-- TBD
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN '1'
+			ELSE '2'
+		END [WorkClass],
+		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HP.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HP.PROB_DESC2))
+			+ LTRIM(RTRIM(HP.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HP.FIX_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(wocc.CLS_COMMENT_1)) + ' ' + LTRIM(RTRIM(wocc.CLS_COMMENT_2)) + ' ' + 
+			LTRIM(RTRIM(wocc.CLS_COMMENT_3)) + ' ' + LTRIM(RTRIM(wocc.CLS_COMMENT_4)) + ' ' +
+			LTRIM(RTRIM(wocc.CLS_COMMENT_5)) [Correction],
+		'[191:1;TASKS;1-3:1-3]' [Tasks],
+		'[193:1;LABOR;1-3:1-3]' [Labor],
+		'[194:1;PARTS;1-3:1-3]' [Parts],
+		'[195:1;COMMERCIAL;1-3:1-3]' [Commercial]
+	FROM SourceWicm250WorkOrderHeaderPlant HP
+		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HP.[OBJECT_ID] = xwalk.LegacyID
+			AND [Source] = 'SourceWicm210ObjectEquipment'
+		INNER JOIN TransformWorkOrderShopNumberExceptions sne ON HP.WO_NUMBER = sne.WO_NUMBER
+			AND HP.LOCATION = sne.LOCATION
+		LEFT JOIN [SourceWicm253WorkOrderExtensionPlantWOCloseComments1-5] wocc ON HP.WO_NUMBER = wocc.WO_NUMBER
+			AND HP.LOCATION = wocc.WO_LOCATION
 	
 	-- General Services
 	---- Vehicles
@@ -1015,6 +1200,9 @@ BEGIN
 			WHEN opc.RepairPM = 'REPAIR' THEN '2'
 		END [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HV.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HV.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HV.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HV.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -1123,6 +1311,9 @@ BEGIN
 			WHEN opc.RepairPM = 'REPAIR' THEN '2'
 		END [WorkClass],
 		'' [WarrantyWork],	-- TBD
+		LTRIM(RTRIM(HV.PROB_DESC1)) + ' ' + LTRIM(RTRIM(HV.PROB_DESC2)) [Complaint],
+		'' [Cause],
+		LTRIM(RTRIM(HV.FIX_DESC1)) + ' ' + LTRIM(RTRIM(HV.FIX_DESC2)) [Correction],
 		'[191:1;TASKS;1-3:1-3]' [Tasks],
 		'[193:1;LABOR;1-3:1-3]' [Labor],
 		'[194:1;PARTS;1-3:1-3]' [Parts],
@@ -1164,6 +1355,9 @@ BEGIN
 		tmp.AccountID,
 		tmp.WorkClass,
 		tmp.WarrantyWork,
+		tmp.Complaint,
+		tmp.Cause,
+		tmp.Correction,
 		tmp.Tasks,
 		tmp.Labor,
 		tmp.Parts,
