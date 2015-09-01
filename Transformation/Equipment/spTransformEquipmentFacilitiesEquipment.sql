@@ -709,6 +709,7 @@ DECLARE
 		FRS.[OBJECT_ID]
 	FROM tmp.FinalResultSet FRS
 
+	-- Write to TransformEquipmentIndividualPM
 	INSERT INTO dbo.TransformEquipmentIndividualPM
 	(
 		PMKey,
@@ -727,12 +728,7 @@ DECLARE
 		NULL AS NumberOfTimeUnits,	--Not used per BA (used to override defaults)
 		NULL AS TimeUnit			--Not used per BA (used to override defaults)
 	FROM SourceWicm230TableLookupMaintenanceSchedules s
-	--INNER JOIN SourceWicm210ObjectEquipment e
-	--	ON s.SCH_OBJECT = e.OBJECT_ID
-	INNER JOIN TransformEquipmentLegacyXwalk x
-		ON s.SCH_OBJECT = x.LegacyID
-	--INNER JOIN TransformEquipment t
-	--	ON x.EquipmentID = t.EquipmentID
+		INNER JOIN TransformEquipmentLegacyXwalk x ON s.SCH_OBJECT = x.LegacyID
 	WHERE x.EquipmentId LIKE 'EQP%'
 	ORDER BY x.EquipmentID
 END

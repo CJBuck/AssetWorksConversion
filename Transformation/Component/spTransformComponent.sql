@@ -128,7 +128,10 @@ BEGIN
 		'N' [FuelTickets],
 		'' [FuelCardID],
 		NULL [NextPMServiceNumber],
-		NULL [NextPMDueDate],
+		CASE
+			WHEN ISDATE(OV.NEXT_PM_DUE) = 1 THEN OV.NEXT_PM_DUE
+			ELSE NULL
+		END [NextPMDueDate],
 		'V3' [DefaultWOPriorityID],
 		CASE
 			WHEN ISDATE(OV.ACQ_DATE) = 1 THEN CAST(OV.ACQ_DATE AS DATETIME)
@@ -303,4 +306,30 @@ BEGIN
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
 	FROM tmp.Components vehs
+	
+	-- Write to TransformComponentIndividualPM
+	INSERT INTO TransformComponentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT
+		tc.AssetID,
+		pm.PMService,
+		CASE
+			WHEN pm.PMService LIKE '%PM%' THEN ov.NEXT_PM_DUE
+			WHEN pm.PMService LIKE '%INSP%' THEN ov.INSPECT_DUE
+			ELSE NULL
+		END,
+		NULL,
+		NULL
+	FROM TransformComponentLegacyXwalk XWALK
+		INNER JOIN TransformComponent tc on XWALK.AssetID = tc.AssetID
+		INNER JOIN TransformComponentGSPMTasks pm ON tc.EquipmentType = pm.EquipmentType
+		INNER JOIN SourceWicm210ObjectVehicle ov on XWALK.LegacyID = ov.[OBJECT_ID]
+	WHERE XWALK.AssetID LIKE 'GS%'
+		AND XWALK.[Source] = 'SourceWicm210ObjectVehicle'
 END

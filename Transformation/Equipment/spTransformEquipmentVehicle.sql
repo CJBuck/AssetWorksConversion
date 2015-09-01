@@ -67,7 +67,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
-		UserStatus1 varchar(6) NULL,
+		[UserStatus1] [varchar](6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -168,7 +168,7 @@ BEGIN
 			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
 			ELSE 'A'
 		END [LifeCycleStatusCodeID],
-		NULL UserStatus1,
+		NULL [UserStatus1],
 		'' [ConditionRating],
 		'' [StatusCodes],
 		'Y' [WorkOrders],
@@ -208,7 +208,10 @@ BEGIN
 		'' [Latitude],
 		'' [Longitude],
 		NULL [NextPMServiceNumber],
-		NULL [NextPMDueDate],
+		CASE
+			WHEN ISDATE(OV.NEXT_PM_DUE) = 1 THEN OV.NEXT_PM_DUE
+			ELSE NULL
+		END [NextPMDueDate],
 		'' [IndividualPMService],
 		'' [IndividualPMDateNextDue],
 		NULL [IndividualPMNumberOfTimeUnits],
@@ -467,7 +470,7 @@ BEGIN
 		[AccountIDUsageTickets],
 		[EquipmentStatus],
 		[LifeCycleStatusCodeID],
-		UserStatus1,
+		[UserStatus1],
 		[ConditionRating],
 		[StatusCodes],
 		[WorkOrders],
@@ -519,4 +522,31 @@ BEGIN
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
 	FROM tmp.Vehicles vehs
+	
+	-- Write to TransformEquipmentIndividualPM
+	INSERT INTO TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT
+		XWALK.EquipmentID,
+		pm.PMService,
+		CASE
+			WHEN pm.PMService LIKE '%PM%' THEN ov.NEXT_PM_DUE
+			WHEN pm.PMService LIKE '%INSP%' THEN ov.INSPECT_DUE
+			ELSE NULL
+		END,
+		NULL,
+		NULL
+	FROM TransformEquipmentLegacyXwalk XWALK
+		INNER JOIN TransformEquipment te on XWALK.EquipmentID = te.EquipmentID
+		INNER JOIN TransformEquipmentGSPMTasks pm ON te.EquipmentType = pm.EquipmentType
+		INNER JOIN SourceWicm210ObjectVehicle ov on XWALK.LegacyID = ov.[OBJECT_ID]
+	WHERE XWALK.EquipmentID LIKE 'GS%'
+		AND XWALK.[Source] = 'SourceWicm210ObjectVehicle'
+	
 END
