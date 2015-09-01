@@ -170,7 +170,7 @@ CREATE TABLE [dbo].[TransformEquipment](
 	[Longitude] [varchar](10) NULL,				-- 2/18
 	[NextPMServiceNumber] [int] NULL,			-- 2/18
 	[NextPMDueDate] [datetime] NULL,			-- 2/18
-	[IndividualPMService] [varchar](12) NULL,	-- 2/18
+	[IndividualPMService] [varchar](30) NULL,	-- Updated per BA 09/01
 	[IndividualPMDateNextDue] [datetime] NULL,	-- 2/18
 	[IndividualPMNumberofTimeUnits] [int] NULL,	-- 2/18
 	[IndividualPMTimeUnit] [varchar](10) NULL,	-- 2/18
