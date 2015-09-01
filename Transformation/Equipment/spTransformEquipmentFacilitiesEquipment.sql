@@ -142,7 +142,7 @@ DECLARE
 		[Longitude] [varchar](10) NULL,
 		[NextPMServiceNumber] [int] NULL,
 		[NextPMDueDate] [datetime] NULL,
-		[IndividualPMService] [varchar](12) NULL,
+		[IndividualPMService] [varchar](30) NULL,
 		[IndividualPMDateNextDue] [datetime] NULL,
 		[IndividualPMNumberofTimeUnits] [int] NULL,
 		[IndividualPMTimeUnit] [varchar](10) NULL,
@@ -303,7 +303,7 @@ DECLARE
 		'' [Longitude],
 		'' [NextPMServiceNumber],
 		NULL [NextPMDueDate],
-		'' [IndividualPMService],
+		'[12359:1;IndividualPM;1:1]' [IndividualPMService], -- Update per BA 09/01
 		'' [IndividualPMDateNextDue],
 		NULL [IndividualPMNumberOfTimeUnits],
 		'' [IndividualPMTimeUnit],
