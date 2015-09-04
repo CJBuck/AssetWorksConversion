@@ -35,5 +35,24 @@ CREATE TABLE [dbo].[TransformEquipmentClassPMDetail](
 
 GO
 
-SET ANSI_PADDING OFF
+--
+INSERT INTO TransformEquipmentClassPMDetail
+SELECT
+	'[i]',
+	LEFT(LTRIM(RTRIM(PMD.EquipmentClassID)), 30),
+	LEFT(LTRIM(RTRIM(PMD.PMService)), 12),
+	LEFT(LTRIM(RTRIM(PMD.OilChange)), 1),
+	LEFT(LTRIM(RTRIM(PMD.UpdateScheduleBasedOn)), 15),
+	LEFT(LTRIM(RTRIM(PMD.PMServicePriority)), 2),
+	LEFT(LTRIM(RTRIM(PMD.[ExtendDateDue_service])), 3),
+	LEFT(LTRIM(RTRIM(PMD.[AllowUpdatePMSchedulePriorDue_Days])), 3),
+	LEFT(LTRIM(RTRIM(PMD.Meter1)), 6),
+	LEFT(LTRIM(RTRIM(PMD.Meter2)), 6),
+	LEFT(LTRIM(RTRIM(PMD.[UpdateMeterDueFromScheduledIf_late])), 1),
+	LEFT(LTRIM(RTRIM(PMD.UpdateScheduleByCalendar)), 1),
+	LEFT(LTRIM(RTRIM(PMD.UpdateToWorkingDay)), 10),
+	LEFT(LTRIM(RTRIM(PMD.CalendarID)), 10),
+	LEFT(LTRIM(RTRIM(PMD.MinimumDaysBuffer)), 4),
+	GETDATE()
+FROM Staging_TransformEquipmentClassPMDetail PMD
 GO
