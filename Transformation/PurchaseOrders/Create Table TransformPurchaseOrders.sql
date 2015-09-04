@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[TransformPurchaseOrders](
 	[PurchaseTypeID] [varchar](20) NULL,
 	[CurrencyID] [varchar](3) NULL,
 	[AccountID] [varchar](30) NULL,
+	[RequestedDt] [datetime] NULL,
 	[OrderedDt] [datetime] NULL,
 	[ExpectedDeliveryDt] [datetime] NULL,
 	[OrderedByEmployeeID] [varchar](9) NULL,

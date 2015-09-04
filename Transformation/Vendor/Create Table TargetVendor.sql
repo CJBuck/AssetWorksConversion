@@ -1,7 +1,7 @@
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetVendor]    Script Date: 01/30/2015 13:12:52 ******/
+/****** Object:  Table [dbo].[TargetVendor]    Script Date: 09/02/2015 08:17:48 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TargetVendor]') AND type in (N'U'))
 DROP TABLE [dbo].[TargetVendor]
 GO
@@ -9,7 +9,7 @@ GO
 USE [AssetWorksConversion]
 GO
 
-/****** Object:  Table [dbo].[TargetVendor]    Script Date: 01/30/2015 14:41:53 ******/
+/****** Object:  Table [dbo].[TargetVendor]    Script Date: 09/02/2015 08:17:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -20,6 +20,7 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [dbo].[TargetVendor](
+	[Control] [varchar](10) NOT NULL,
 	[VendorID] [varchar](15) NOT NULL,
 	[VendorName] [varchar](35) NOT NULL,
 	[VendorContactName] [varchar](35) NULL,
@@ -29,7 +30,7 @@ CREATE TABLE [dbo].[TargetVendor](
 	[Address4] [varchar](30) NULL,
 	[Phone] [varchar](30) NULL,
 	[Fax] [varchar](30) NULL,
-	[AccountingSysNo] [varchar](20) NULL,
+	[AccountingSysNo] [varchar](30) NULL,
 	[Active] [char](1) NOT NULL,
 	[MinorityOwned] [char](1) NULL,
 	[MinorityOwnedExp] [datetime] NULL,
@@ -52,7 +53,8 @@ CREATE TABLE [dbo].[TargetVendor](
 	[ContactName] [varchar](35) NULL,
 	[ContactPhone] [varchar](30) NULL,
 	[ContactFax] [varchar](30) NULL,
-	[ContactEmailAddr] [varchar](200) NULL
+	[ContactEmailAddr] [varchar](200) NULL,
+	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 
 GO

@@ -1,0 +1,12 @@
+--
+TRUNCATE TABLE TransformPurchaseOrders
+TRUNCATE TABLE TransformPurchaseOrdersLineItems
+TRUNCATE TABLE TransformPurchaseOrdersEnterprisePurchasingReceipts
+
+EXEC spTransformPurchaseOrders
+EXEC spTransformPurchaseOrdersLineItems
+EXEC spTransformPurchaseOrdersEnterprisePurchasingReceipts
+
+SELECT * FROM TransformPurchaseOrders
+SELECT * FROM TransformPurchaseOrdersLineItems
+SELECT * FROM TransformPurchaseOrdersEnterprisePurchasingReceipts

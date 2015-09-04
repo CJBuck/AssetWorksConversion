@@ -3,7 +3,7 @@
 --	Create Date:	08/26/2015
 --	Updates:
 --	Description:	Creates/modifies the spTransformPurchaseOrders stored procedure.  Populates
---					the TransportWorkOrderCenter table.
+--					the TransformPurchaseOrders table.
 --	=================================================================================================
 
 --	In order to persist security settings if the SP already exists, we check if
@@ -18,43 +18,100 @@ BEGIN
 --	=================================================================================================
 --	Build dbo.spTransformPurchaseOrders
 --	=================================================================================================
-	IF OBJECT_ID('tmp.WorkOrderCenter') IS NOT NULL
-		DROP TABLE tmp.WorkOrderCenter
+	IF OBJECT_ID('tmp.PurchaseOrders') IS NOT NULL
+		DROP TABLE tmp.PurchaseOrders
 
 	CREATE TABLE [tmp].[PurchaseOrders](
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
-		[Object_ID] [varchar](25) NULL,
-		[WorkOrderLocationID] [varchar](10) NOT NULL,
-		[WorkOrderYear] [int] NULL,
-		[WorkOrderNumber] [varchar](15) NULL,
-		[JobStatus] [varchar](20) NULL,
-		[JobType] [varchar](8) NULL,
-		[EquipmentID] [varchar](20) NULL,
-		[Meter1] [int] NULL,
-		[Meter2] [int] NULL,
-		[PriorityID] [varchar](2) NULL,
-		[PMService] [varchar](12) NULL,
-		[RepairReasonID] [varchar](4) NULL,
-		[OutOfServiceDt] [datetime] NULL,
-		[InDt] [datetime] NULL,
-		[DueDt] [datetime] NULL,
-		[OpenedDt] [datetime] NULL,
-		[FirstLaborDt] [datetime] NULL,
-		[ShowDowntimeBeginDt] [datetime] NULL,
-		[FinishWorkOrder] [char](1) NULL,
-		[FinishedDt] [datetime] NULL,
-		[CloseWorkOrder] [char](1) NULL,
-		[ClosedDt] [datetime] NULL,
-		[InService] [char](1) NULL,
-		[InServiceDt] [datetime] NULL,
+		[PurchaseOrderID] [varchar](30) NOT NULL,
+		[LocationID] [varchar](10) NULL,
+		[Description] [varchar](30) NULL,
+		[VendorID] [varchar](15) NULL,
+		[Status] [varchar](20) NULL,
+		[PurchaseTypeID] [varchar](20) NULL,
+		[CurrencyID] [varchar](3) NULL,
 		[AccountID] [varchar](30) NULL,
-		[WorkClass] [char](1) NULL,
-		[WarrantyWork] [varchar](15) NULL,
-		[Tasks] [varchar](30) NULL,
-		[Labor] [varchar](30) NULL,
-		[Parts] [varchar](30) NULL,
-		[Commercial] [varchar](30) NULL
+		[RequestedDt] [datetime] NULL,
+		[OrderedDt] [datetime] NULL,
+		[ExpectedDeliveryDt] [datetime] NULL,
+		[OrderedByEmployeeID] [varchar](9) NULL,
+		[LineItems] [varchar](30) NULL,
+		[RelatedWorkOrders] [varchar](30) NULL,
+		[Comments] [varchar](2000) NULL
 	)
 
-	-- Distribution - in TransformEquipmentLegacyXwalk
+	-- SourceWicm300CcpHeader
+	INSERT INTO [tmp].[PurchaseOrders]
+	SELECT DISTINCT
+		(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [PurchaseOrderID],
+		'STOREROOM' [LocationID],
+		LTRIM(RTRIM(CCPH.JTEXT15)) [Description],
+		v.VendorID [VendorID],
+		'OPEN' [Status],
+		'HISTORIC WICM CCP' [PurchaseTypeID],
+		'USD' [CurrencyID],
+		'' [AccountID],		-- TBD
+		CONVERT(DATETIME, (CCPH.[ORDER-DATE] + ' ' + LEFT(CCPH.[ORDER-TIME], 2) + ':' +
+			SUBSTRING(CCPH.[ORDER-TIME], 3, 2)), 101) [RequestedDt],
+		CONVERT(DATETIME, (CCPH.[ORDER-DATE] + ' ' + LEFT(CCPH.[ORDER-TIME], 2) + ':' +
+			SUBSTRING(CCPH.[ORDER-TIME], 3, 2)), 101) [OrderedDt],
+		CASE
+			WHEN ISDATE(CCPH.ESTDELDATE) = 1 THEN CCPH.ESTDELDATE
+			ELSE NULL
+		END [ExpectedDeliveryDt],
+		xwalk.EmployeeID [OrderedByEmployeeID],	-- TBD
+		'[8874:1;LINES;1:1]' [LineItems],
+		'[8904:1;WO;1:1]' [RelatedWorkOrders],
+		dbo.TransformPurchaseOrdesConcatComments(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [Comments]
+	FROM SourceWicm300CcpHeader CCPH
+		INNER JOIN TransformVendor v ON CCPH.VNUMBER = v.VendorID
+		LEFT JOIN TransformWicmEINXwalk xwalk ON CCPH.BUYERID = xwalk.BuyerID
+	WHERE CCPH.[STATUS] <> 'X'
+		AND (LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) IN (
+			SELECT DISTINCT CCP_NUMBER FROM SourceWicm305CcpDetail WHERE PART_NO NOT LIKE 'N%'
+			)
+		
+	-- SourceWicm330POHeader
+	INSERT INTO [tmp].[PurchaseOrders]
+	SELECT DISTINCT
+		POH.PONUMBER [PurchaseOrderID],
+		'STOREROOM' [LocationID],
+		LEFT(LTRIM(RTRIM(POH.COMMENT)), 30) [Description],
+		v.VendorID [VendorID],
+		'OPEN' [Status],
+		'BLANKET AMOUNT PO' [PurchaseTypeID],
+		'USD' [CurrencyID],
+		'' [AccountID],		-- TBD
+		NULL [RequestedDt],	-- TBD
+		NULL [OrderedDt],	-- TBD
+		NULL [ExpectedDeliveryDt],
+		'' [OrderedByEmployeeID],	-- TBD
+		'[8874:1;LINES;1:1]' [LineItems],
+		'[8904:1;WO;1:1]' [RelatedWorkOrders],
+		'' [Comments]
+	FROM SourceWicm330POHeader POH
+		INNER JOIN TransformVendor v ON POH.VENDORNUMBER = v.VendorID
+	WHERE POH.PONUMBER LIKE '2016%'
+	
+	-- Copy temp to TransformPurchaseOrders
+	INSERT INTO [dbo].[TransformPurchaseOrders]
+	SELECT DISTINCT
+		'[i]' [Control],
+		tmp.PurchaseOrderID,
+		tmp.LocationID,
+		tmp.[Description],
+		tmp.VendorID,
+		tmp.[Status],
+		tmp.PurchaseTypeID,
+		tmp.CurrencyID,
+		tmp.AccountID,
+		tmp.RequestedDt,
+		tmp.OrderedDt,
+		tmp.ExpectedDeliveryDt,
+		tmp.OrderedByEmployeeID,
+		tmp.LineItems,
+		tmp.RelatedWorkOrders,
+		tmp.Comments,
+		GETDATE()
+	FROM [tmp].[PurchaseOrders] tmp
 END
