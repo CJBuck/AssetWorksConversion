@@ -64,18 +64,60 @@ ELSE IF @Source = 'Hydrants'
 	END
 ELSE IF @Source = 'Vehicles'
 	BEGIN
-		SELECT OV.[OBJECT_ID],
-			ISNULL(LTRIM(RTRIM(OV.[VEH_MAKE])), '') [Make],
-			ISNULL(manid.SourceValue, '') [Source Value]
-		FROM SourceWicm210ObjectVehicle OV
-			LEFT JOIN TransformEquipmentManufacturer manid
-				ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue AND manid.[Source] LIKE '%Vehicles%'
-		WHERE
-			(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
-			AND (ISNULL(manid.TargetValue, '') = '')
-			AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
-				'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
-				'006673', '006674', '006675'))
+		--SELECT OV.[OBJECT_ID],
+		--	ISNULL(LTRIM(RTRIM(OV.[VEH_MAKE])), '') [Make],
+		--	ISNULL(manid.SourceValue, '') [Source Value]
+		--FROM SourceWicm210ObjectVehicle OV
+		--	LEFT JOIN TransformEquipmentManufacturer manid
+		--		ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue AND manid.[Source] LIKE '%Vehicles%'
+		--WHERE
+		--	(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
+		--	AND (ISNULL(manid.TargetValue, '') = '')
+		--	AND (OV.[OBJECT_ID] NOT IN ('006658', '006659', '006660', '006661', '006662', '006663',
+		--		'006664', '006665', '006666', '006667', '006668', '006669', '006670', '006672',
+		--		'006673', '006674', '006675'))
+	WITH Vehs AS (
+		  SELECT
+				LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID], LTRIM(RTRIM(OV.VEH_YEAR)) [ModelYear],
+				ISNULL(manid.TargetValue, '') [ManufacturerID], ISNULL(modid.CleansedModelID, '') [ModelID]
+		  FROM SourceWicm210ObjectVehicle OV
+				INNER JOIN TransformEquipmentManufacturer manid
+					  ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue
+							AND manid.[Source] LIKE '%Vehicles%'
+				INNER JOIN TransformEquipmentManufacturerModel modid
+					  ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
+							AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
+							AND modid.[Source] = 'Vehicles'
+		  WHERE
+				(OV.[OBJECT_ID] IN (SELECT EQ_Equip_No FROM AW_ProductionVehicleAssets))
+				AND (OV.[OBJECT_ID] NOT IN ('006533', '006565', '006572', '006573', '006656', '006657', '006658',
+					  '006659', '006660', '006661', '006662', '006663', '006664', '006665', '006666', '006667',
+					  '006668', '006669', '006670', '006672', '006673', '006674', '006675', '006678'))
+	)
+	SELECT
+		  LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
+		  LTRIM(RTRIM(OV.VEH_YEAR)) [VEH_YEAR],
+		  LTRIM(RTRIM(OV.VEH_MAKE)) [VEH_MAKE],
+		  LTRIM(RTRIM(OV.VEH_MODEL)) [VEH_MODEL],
+		  ISNULL(LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30), '') [EquipmentType]
+	FROM SourceWicm210ObjectVehicle OV
+		  INNER JOIN Vehs ON OV.[OBJECT_ID] = Vehs.[OBJECT_ID]
+		  INNER JOIN TransformObjectVehicleValueEquipmentClass vec
+				ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
+					  AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
+					  AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
+		  INNER JOIN TransformEquipmentClass tec ON vec.EquipmentClassID = tec.EquipmentClassID
+		  LEFT JOIN (
+				SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+				FROM TransformEquipmentVehicleValueEquipmentType
+				) vet
+				ON vehs.ManufacturerID = vet.VEH_MAKE
+					  AND vehs.ModelID = vet.VEH_MODEL
+					  AND vehs.ModelYear = vet.VEH_YEAR
+					  AND vec.EquipmentClassID = vet.EquipmentClass
+	WHERE ISNULL(LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30), '') = ''
+	ORDER BY OV.[OBJECT_ID]
+ 
 	END
 ELSE
 	-- Current Valid Values
