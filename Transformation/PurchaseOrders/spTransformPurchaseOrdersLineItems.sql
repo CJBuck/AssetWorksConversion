@@ -85,25 +85,36 @@ BEGIN
 	INSERT INTO [tmp].[PurchaseOrdersLineItems]
 	SELECT
 		po.PurchaseOrderID,
-		1 [LineNumber],
+		munis.[PO Line Number] [LineNumber],
 		'OPEN' [Status],
 		'NON-STOCK PART' [LineItemType],
 		'' [PartID],
 		NULL [PartSuffix],
 		'MUNIS PO' [OtherID],
-		'' [Description],		-- TBD
-		NULL [Quantity],		-- TBD
-		NULL [UnitPrice],		-- TBD
+		ISNULL(LEFT(LTRIM(RTRIM(munis.[PO Detail Description])), 30), '') [Description],
+		ISNULL(munis.[Quantity], NULL) [Quantity],
+		ISNULL(munis.[Unit Price], NULL) [UnitPrice],
 		'STOREROOM' [LocationID],
-		NULL [OrderedDt],		-- TBD
-		NULL [ExpectedDeliveryDt],
-		NULL [SentToVendorDt],	-- TBD
+		ISNULL(munis.[Create Date], NULL) [OrderedDt],
+		ISNULL(munis.[Create Date], NULL) [ExpectedDeliveryDt],
+		ISNULL(munis.[Create Date], NULL) [SentToVendorDt],
 		po.PurchaseOrderID [VendorContractID],
-		'' [UnitOfMeasure],
+		ISNULL(LEFT(LTRIM(RTRIM(munis.[Unit of Measure])), 4), '') [UnitOfMeasure],
 		'' [AccountID]
 	FROM SourceWicm330POHeader POH
 		INNER JOIN TransformPurchaseOrders po ON POH.PONUMBER = po.PurchaseOrderID
+		INNER JOIN TransformMUNISPurchaseOrders munis ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT))))
+			AND munis.[Record Type] = 'Detail Line'
 	WHERE POH.PONUMBER LIKE '2016%'
+	ORDER BY POH.PONUMBER
+	
+	-- Update AccountID
+	UPDATE [tmp].[PurchaseOrdersLineItems]
+	SET AccountID = SUBSTRING((ISNULL((LEFT(LTRIM(RTRIM(MUNIS.[GL Account])), 30)), 30)), 4, 30)
+	FROM TransformMUNISPurchaseOrders MUNIS
+		INNER JOIN [tmp].[PurchaseOrdersLineItems] poli ON
+			LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT)))) = poli.PurchaseOrderID
+			AND MUNIS.[Acct Line Number] = poli.LineNumber AND MUNIS.[Record Type] = 'Account'
 	
 	-- Copy temp to TransformPurchaseOrdersLineItems
 	INSERT INTO [dbo].[TransformPurchaseOrdersLineItems]

@@ -50,7 +50,7 @@ BEGIN
 		'OPEN' [Status],
 		'HISTORIC WICM CCP' [PurchaseTypeID],
 		'USD' [CurrencyID],
-		'' [AccountID],		-- TBD
+		'6000-0000-145300-000000-00000' [AccountID],
 		CONVERT(DATETIME, (CCPH.[ORDER-DATE] + ' ' + LEFT(CCPH.[ORDER-TIME], 2) + ':' +
 			SUBSTRING(CCPH.[ORDER-TIME], 3, 2)), 101) [RequestedDt],
 		CONVERT(DATETIME, (CCPH.[ORDER-DATE] + ' ' + LEFT(CCPH.[ORDER-TIME], 2) + ':' +
@@ -59,7 +59,7 @@ BEGIN
 			WHEN ISDATE(CCPH.ESTDELDATE) = 1 THEN CCPH.ESTDELDATE
 			ELSE NULL
 		END [ExpectedDeliveryDt],
-		xwalk.EmployeeID [OrderedByEmployeeID],	-- TBD
+		xwalk.EmployeeID [OrderedByEmployeeID],
 		'[8874:1;LINES;1:1]' [LineItems],
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
 		dbo.TransformPurchaseOrdesConcatComments(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [Comments]
@@ -81,16 +81,19 @@ BEGIN
 		'OPEN' [Status],
 		'BLANKET AMOUNT PO' [PurchaseTypeID],
 		'USD' [CurrencyID],
-		'' [AccountID],		-- TBD
-		NULL [RequestedDt],	-- TBD
-		NULL [OrderedDt],	-- TBD
+		'' [AccountID],
+		ISNULL(po.[Create Date], NULL) [RequestedDt],
+		ISNULL(po.[Create Date], NULL) [OrderedDt],
 		NULL [ExpectedDeliveryDt],
-		'' [OrderedByEmployeeID],	-- TBD
+		ISNULL(LEFT(LTRIM(RTRIM(m.rh_clerk_id)), 9), '') [OrderedByEmployeeID],
 		'[8874:1;LINES;1:1]' [LineItems],
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
 		'' [Comments]
 	FROM SourceWicm330POHeader POH
 		INNER JOIN TransformVendor v ON POH.VENDORNUMBER = v.VendorID
+		LEFT JOIN TransformMUNISOpenRequisitions m ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(m.a_purch_order_no AS INT))))
+		LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
+			AND po.[Record Type] = 'Header'
 	WHERE POH.PONUMBER LIKE '2016%'
 	
 	-- Copy temp to TransformPurchaseOrders
