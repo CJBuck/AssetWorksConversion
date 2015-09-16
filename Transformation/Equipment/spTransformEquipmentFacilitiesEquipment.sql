@@ -336,12 +336,12 @@ DECLARE
 	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
-			ON LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
+			ON LEFT(LTRIM(RTRIM(oe.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
 				AND midc.[Source] LIKE '%Facilities%'
 		-- ModelID Cleansing
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
-				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+				AND LTRIM(RTRIM(oe.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
 	WHERE
 		LTRIM(RTRIM(oe.FAC_MODEL)) <> 'NA'
 
@@ -361,12 +361,12 @@ DECLARE
 		INNER JOIN TransformEquipmentFacilitiesEquipmentValueEquipmentType et
 			ON LTRIM(RTRIM(FAC.[Object_ID])) = LTRIM(RTRIM(et.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
-			ON LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
+			ON LEFT(LTRIM(RTRIM(oe.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
 				AND midc.[Source] LIKE '%Facilities%'
 		-- ModelID Cleansing
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
-				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+				AND LTRIM(RTRIM(oe.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
 	WHERE
 		LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
 
