@@ -11,18 +11,22 @@ IF OBJECT_ID('spTransformEquipmentFacilitiesEquipment') IS NULL
     EXEC ('CREATE PROCEDURE dbo.spTransformEquipmentFacilitiesEquipment AS SELECT 1')
 GO
 
-ALTER PROCEDURE dbo.spTransformEquipmentFacilitiesEquipment
+ALTER PROCEDURE [dbo].[spTransformEquipmentFacilitiesEquipment]
 AS
 BEGIN
-DECLARE
-	@NewID				INT,
-	@RowNumInProgress	INT
+	DECLARE
+		@GoLiveDate Date = '09/01/2015', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
+		@NewID				INT,
+		@RowNumInProgress	INT
 	
-	CREATE TABLE #StationLocationLkUp (
+	IF OBJECT_ID('tmp.StationLocationLkUp') IS NOT NULL
+	DROP TABLE tmp.StationLocationLkUp
+
+	CREATE TABLE tmp.StationLocationLkUp (
 		[WICM_Class] [varchar] (4),
 		[AW_StationLoc] [varchar] (8)
 	)
-	INSERT INTO #StationLocationLkUp
+	INSERT INTO tmp.StationLocationLkUp
 	( [WICM_Class], [AW_StationLoc] )
 	VALUES
 	('BGWF', 'FACBGWF'),
@@ -55,7 +59,10 @@ DECLARE
 	('UYST', 'FACUYST'),
 	('YCWS', 'FACYCWS')
 
-	CREATE TABLE #StagingEquip(
+	IF OBJECT_ID('tmp.StagingEquip') IS NOT NULL
+	DROP TABLE tmp.StagingEquip
+
+	CREATE TABLE tmp.StagingEquip(
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
@@ -106,6 +113,7 @@ DECLARE
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
+		[UserStatus1] varchar(6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -134,7 +142,7 @@ DECLARE
 		[Longitude] [varchar](10) NULL,
 		[NextPMServiceNumber] [int] NULL,
 		[NextPMDueDate] [datetime] NULL,
-		[IndividualPMService] [varchar](12) NULL,
+		[IndividualPMService] [varchar](30) NULL,
 		[IndividualPMDateNextDue] [datetime] NULL,
 		[IndividualPMNumberofTimeUnits] [int] NULL,
 		[IndividualPMTimeUnit] [varchar](10) NULL,
@@ -148,7 +156,7 @@ DECLARE
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #StagingEquip
+	INSERT INTO tmp.StagingEquip
 	SELECT
 		LTRIM(RTRIM(OE.[OBJECT_ID])) [Object_ID],
 		'[i]' [Control],
@@ -158,7 +166,7 @@ DECLARE
 		ISNULL(LTRIM(RTRIM(OE.[OBJECT_ID])), '') [AssetNumber],
 		ISNULL(LTRIM(RTRIM(OE.SERIAL_NO)), '') [SerialNumber],
 		'' [EquipmentType],
-		'CLASS' [PMProgramType],
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		ISNULL(OE.VEH_YEAR, NULL) [ModelYear],
@@ -236,6 +244,7 @@ DECLARE
 		'' [AccountIDUsageTickets],		-- Open issue
 		'IN SERVICE' [EquipmentStatus],
 		'A' [LifeCycleStatusCodeID],
+		NULL UserStatus1,
 		'' [ConditionRating],
 		ISNULL(OE.NORM_UNDER_W, '') [StatusCodes],
 		'Y' [WorkOrders],
@@ -255,6 +264,8 @@ DECLARE
 			ELSE NULL
 		END [ActualDeliveryDate],
 		CASE
+			-- No or invalid Delivery date (don't populate InServiceDate) 
+			WHEN ISDATE(OE.ACQ_DATE) = 0 THEN NULL 
 			-- Install Dt before Acq Date
 			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
 				AND (OE.DATE_INSTALL < OE.ACQ_DATE) THEN NULL
@@ -262,22 +273,22 @@ DECLARE
 			WHEN ((ISDATE(OE.DATE_INSTALL) = 1) AND (ISDATE(OE.ACQ_DATE) = 1))
 				AND (OE.DATE_INSTALL > OE.ACQ_DATE) THEN CAST(OE.DATE_INSTALL AS DATETIME)
 			-- Install Dt blank, NULL, or not a date
-			WHEN (ISDATE(OE.DATE_INSTALL) = 0) 
+			WHEN (ISDATE(OE.DATE_INSTALL) = 0)
 				OR (ISNULL(OE.DATE_INSTALL, '') = '')
 				OR (ISNULL(OE.ACQ_DATE, '') = '') THEN NULL
 			ELSE NULL
 		END [ActualInServiceDate],
 		ISNULL(OE.ADDON_COST, NULL) [OriginalCost],
 		'1/2 YEAR STRAIGHT LINE' [DepreciationMethod],
-		NULL [LifeMonths],			-- Open issue
+		NULL [LifeMonths],
 		NULL [MonthsRemaining],
 		'OWNED' [Ownership],
-		'' [VendorID],				-- Open issue
+		'' [VendorID],
 		NULL [ExpirationDate],
 		NULL [Meter1Expiration],
 		NULL [Meter2Expiration],
 		NULL [Deductible],
-		'' [WarrantyType],			-- Open issue
+		'' [WarrantyType],
 		'' [Comments2],
 		CASE
 			WHEN ISDATE(OBSOL_DATE) = 1 THEN MONTH(OE.OBSOL_DATE)
@@ -292,7 +303,7 @@ DECLARE
 		'' [Longitude],
 		'' [NextPMServiceNumber],
 		NULL [NextPMDueDate],
-		'' [IndividualPMService],
+		'[12359:1;IndividualPM;1:1]' [IndividualPMService], -- Update per BA 09/01
 		'' [IndividualPMDateNextDue],
 		NULL [IndividualPMNumberOfTimeUnits],
 		'' [IndividualPMTimeUnit],
@@ -310,10 +321,10 @@ DECLARE
 	FROM SourceWicm210ObjectEquipment OE
 	WHERE
 		OE.[STATUS] = 'A' AND LTRIM(RTRIM(OE.[CLASS])) NOT IN ('JAPS', 'LHPL', 'RDGDMT')
-		
+
 	-- (FAC_MODEL <> 'NA') EquipmentType, ManufacturerID, ModelID, Maintenance,
 	-- PMProgram, Standards, Resources
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = LTRIM(RTRIM(modid.ModelName)),
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
@@ -322,21 +333,21 @@ DECLARE
 		PMProgram = LTRIM(RTRIM(modid.ModelName)),
 		Standards = LTRIM(RTRIM(modid.ModelName)),
 		Resources = LTRIM(RTRIM(modid.ModelName))
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
-			ON LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
+			ON LEFT(LTRIM(RTRIM(oe.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
 				AND midc.[Source] LIKE '%Facilities%'
 		-- ModelID Cleansing
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
-				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+				AND LTRIM(RTRIM(oe.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
 	WHERE
 		LTRIM(RTRIM(oe.FAC_MODEL)) <> 'NA'
 
 	-- (FAC_MODEL = 'NA') EquipmentType, ManufacturerID, ModelID,
 	-- Maintenance, PMProgram, Standards, Resources
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = et.[EquipType],
 		ManufacturerID = ISNULL(midc.[TargetValue], ''),
@@ -345,60 +356,63 @@ DECLARE
 		PMProgram = et.[EquipType],
 		Standards = et.[EquipType],
 		Resources = et.[EquipType]
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentFacilitiesEquipmentValueEquipmentType et
 			ON LTRIM(RTRIM(FAC.[Object_ID])) = LTRIM(RTRIM(et.[OBJECT_ID]))
 		INNER JOIN TransformEquipmentManufacturer midc
-			ON LEFT(LTRIM(RTRIM(OE.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
+			ON LEFT(LTRIM(RTRIM(oe.MFR_NAME)), 15) = LEFT(LTRIM(RTRIM(midc.[SourceValue])), 15)
 				AND midc.[Source] LIKE '%Facilities%'
 		-- ModelID Cleansing
 		INNER JOIN TransformEquipmentManufacturerModel modid
 			ON LEFT(LTRIM(RTRIM(midc.[TargetValue])), 15) = modid.CleansedManufacturerID
-				AND LTRIM(RTRIM(OE.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
+				AND LTRIM(RTRIM(oe.FAC_MODEL)) = LTRIM(RTRIM(modid.SourceModelID))
 	WHERE
 		LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
-		
+
 	-- (FAC_MODEL = 'NA') and not in TransformEquipmentFacilitiesEquipmentValueEquipmentType
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET
 		EquipmentType = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Maintenance = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		PMProgram = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Standards = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE)),
 		Resources = LTRIM(RTRIM(oe.MFR_NAME)) + LTRIM(RTRIM(oe.ASSET_TYPE))
-	FROM #StagingEquip FAC
+	FROM tmp.StagingEquip FAC
 		INNER JOIN SourceWicm210ObjectEquipment oe ON FAC.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
 	WHERE
 		FAC.[Object_ID] NOT IN (SELECT [OBJECT_ID] FROM TransformEquipmentFacilitiesEquipmentValueEquipmentType)
 		AND LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
 		AND FAC.EquipmentType = ''
 
-	-- Condition Rating				
-	UPDATE #StagingEquip
+	-- Condition Rating
+	UPDATE tmp.StagingEquip
 	SET ConditionRating = ISNULL(cr.ConditionRating, '')
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN TransformEquipmentFacilitiesValueConditionRating cr
 			ON LTRIM(RTRIM(FACS.[Object_ID])) = LTRIM(RTRIM(cr.[OBJECT_ID]))
 
 	-- StationLocation
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET StationLocation = statloc.AW_StationLoc
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm210ObjectEquipment oe
 			ON FACS.[Object_ID] = LTRIM(RTRIM(oe.[OBJECT_ID]))
-		INNER JOIN #StationLocationLkUp statloc ON LTRIM(RTRIM(oe.CLASS )) = statloc.WICM_Class
+		INNER JOIN tmp.StationLocationLkUp statloc ON LTRIM(RTRIM(oe.CLASS )) = statloc.WICM_Class
 
 	-- Comments
-	UPDATE #StagingEquip
+	UPDATE tmp.StagingEquip
 	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1] + ' ' + oee.[SPECL-INST2] + ' ' + oee.[SPECL-INST3] + ' ' + oee.[SPECL-INST4]))
-	FROM #StagingEquip FACS
+	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm212ObjectExtensionEquipment oee ON FACS.[Object_ID] = oee.[OBJECT_ID]
 
 	-- Build the auto-incrementing EquipmentID
+	IF OBJECT_ID('tmp.FinalResultSet') IS NOT NULL
+	DROP TABLE tmp.FinalResultSet
+
 	DECLARE Facilities_Cursor CURSOR
 	FOR SELECT SP.RowNum [RowNum]
-	FROM #StagingEquip SP
+	FROM tmp.StagingEquip SP
 	ORDER BY SP.RowNum
 
 	OPEN Facilities_Cursor
@@ -410,7 +424,7 @@ DECLARE
 		-- Get the next auto-number
 		INSERT INTO EquipmentIDAutoCounter DEFAULT VALUES
 		SET @NewID = @@IDENTITY
-		
+
 		IF @RowNumInProgress = 1
 			BEGIN
 				SELECT
@@ -454,7 +468,7 @@ DECLARE
 					SP.[Jurisdiction],
 					SP.[PreferredPMShift],
 					SP.[VehicleLocation],
-					'' [BuildingLocation],
+					SP.[BuildingLocation],
 					SP.[OtherLocation],
 					SP.[DepartmentID],
 					SP.[DeptToNotifyForPM],
@@ -467,6 +481,7 @@ DECLARE
 					SP.[AccountIDUsageTickets],
 					SP.[EquipmentStatus],
 					SP.[LifeCycleStatusCodeID],
+					SP.UserStatus1,
 					SP.[ConditionRating],
 					SP.[StatusCodes],
 					SP.[WorkOrders],
@@ -507,13 +522,13 @@ DECLARE
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				INTO #FinalResultSet
-				FROM #StagingEquip SP
+				INTO tmp.FinalResultSet
+				FROM tmp.StagingEquip SP
 				WHERE SP.RowNum = @RowNumInProgress
 			END
 		ELSE
 			BEGIN
-				INSERT INTO #FinalResultSet
+				INSERT INTO tmp.FinalResultSet
 				SELECT
 					SP.[Object_ID],
 					SP.[Control],
@@ -555,7 +570,7 @@ DECLARE
 					SP.[Jurisdiction],
 					SP.[PreferredPMShift],
 					SP.[VehicleLocation],
-					'' [BuildingLocation],
+					SP.[BuildingLocation],
 					SP.[OtherLocation],
 					SP.[DepartmentID],
 					SP.[DeptToNotifyForPM],
@@ -568,6 +583,7 @@ DECLARE
 					SP.[AccountIDUsageTickets],
 					SP.[EquipmentStatus],
 					SP.[LifeCycleStatusCodeID],
+					SP.UserStatus1,
 					SP.[ConditionRating],
 					SP.[StatusCodes],
 					SP.[WorkOrders],
@@ -608,10 +624,10 @@ DECLARE
 					SP.[DisposalMethod],
 					SP.[DisposalAuthority],
 					SP.[DisposalComments]
-				FROM #StagingEquip SP
+				FROM tmp.StagingEquip SP
 				WHERE SP.RowNum = @RowNumInProgress
 			END
-		
+
 		FETCH NEXT FROM Facilities_Cursor
 		INTO @RowNumInProgress
 	END
@@ -619,17 +635,20 @@ DECLARE
 	DEALLOCATE Facilities_Cursor;
 
 	-- Handling of duplicate SerialNumbers
+	IF OBJECT_ID('tmp.DuplicateSerialNos') IS NOT NULL
+	DROP TABLE tmp.DuplicateSerialNos
+
 	SELECT FRE.SerialNumber, COUNT(FRE.SerialNumber) [DupeCount]
-	INTO #DuplicateSerialNos
-	FROM #FinalResultSet FRE
+	INTO tmp.DuplicateSerialNos
+	FROM tmp.FinalResultSet FRE
 	GROUP BY FRE.SerialNumber
 	ORDER BY COUNT(FRE.SerialNumber) DESC
 
-	UPDATE #FinalResultSet
+	UPDATE tmp.FinalResultSet
 	SET SerialNumber = 'NSN: ' + FRE.EquipmentID
-	FROM #FinalResultSet FRE
+	FROM tmp.FinalResultSet FRE
 	WHERE FRE.SerialNumber IN (
-		SELECT SerialNumber FROM #DuplicateSerialNos WHERE [DupeCount] > 1
+		SELECT SerialNumber FROM tmp.DuplicateSerialNos WHERE [DupeCount] > 1
 		)
 
 	INSERT INTO TransformEquipment
@@ -658,7 +677,7 @@ DECLARE
 		AccountIDLaborPosting, AccountIDPartIssues,
 		AccountIDCommercialWork, AccountIDFuelTickets,
 		AccountIDUsageTickets, EquipmentStatus,
-		LifeCycleStatusCodeID, ConditionRating,
+		LifeCycleStatusCodeID, UserStatus1, ConditionRating,
 		StatusCodes, WorkOrders,
 		UsageTickets, FuelTickets,
 		Comments, DefaultWOPriorityID,
@@ -679,7 +698,7 @@ DECLARE
 		GrossSalePrice, DisposalReason,
 		DisposalMethod, DisposalAuthority,
 		DisposalComments
-	FROM #FinalResultSet
+	FROM tmp.FinalResultSet
 
 	-- Create the cross-walk reference for this dataset.
 	INSERT INTO TransformEquipmentLegacyXwalk
@@ -688,15 +707,29 @@ DECLARE
 		'SourceWicm210ObjectEquipment' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.[OBJECT_ID]
-	FROM #FinalResultSet FRS
+	FROM tmp.FinalResultSet FRS
+
+	-- Write to TransformEquipmentIndividualPM
+	INSERT INTO dbo.TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT 
+		x.EquipmentID AS PMKey, 
+		s.SCH_OPCODE AS PMService, 
+		CASE 
+			WHEN CAST(s.NXT_DUE_DATE AS date) < @GoLiveDate THEN @GoLiveDate --For already overdue PMs reset to go live date
+			ELSE CAST(s.NXT_DUE_DATE AS date) 
+		END AS NextDueDate,
+		NULL AS NumberOfTimeUnits,	--Not used per BA (used to override defaults)
+		NULL AS TimeUnit			--Not used per BA (used to override defaults)
+	FROM SourceWicm230TableLookupMaintenanceSchedules s
+		INNER JOIN TransformEquipmentLegacyXwalk x ON s.SCH_OBJECT = x.LegacyID
+	WHERE x.EquipmentId LIKE 'EQP%'
+	ORDER BY x.EquipmentID
 END
 
--- Clean up
-IF OBJECT_ID('tempdb..#StagingEquip') IS NOT NULL
-	DROP TABLE #StagingEquip
-IF OBJECT_ID('tempdb..#FinalResultSet') IS NOT NULL
-	DROP TABLE #FinalResultSet
-IF OBJECT_ID('tempdb..#StationLocationLkUp') IS NOT NULL
-	DROP TABLE #StationLocationLkUp
-IF OBJECT_ID('tempdb..#DuplicateSerialNos') IS NOT NULL
-	DROP TABLE #DuplicateSerialNos

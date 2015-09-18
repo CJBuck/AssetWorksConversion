@@ -14,10 +14,10 @@ GO
 ALTER PROCEDURE [dbo].[spTransformEquipmentFacilitiesEquipment]
 AS
 BEGIN
-DECLARE
-	@GoLiveDate Date = '09/01/2015', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
-	@NewID				INT,
-	@RowNumInProgress	INT
+	DECLARE
+		@GoLiveDate Date = '09/01/2015', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
+		@NewID				INT,
+		@RowNumInProgress	INT
 	
 	IF OBJECT_ID('tmp.StationLocationLkUp') IS NOT NULL
 	DROP TABLE tmp.StationLocationLkUp
@@ -634,23 +634,29 @@ DECLARE
 	CLOSE Facilities_Cursor;
 	DEALLOCATE Facilities_Cursor;
 
-	-- Handling of duplicate SerialNumbers
-	IF OBJECT_ID('tmp.DuplicateSerialNos') IS NOT NULL
-	DROP TABLE tmp.DuplicateSerialNos
-
-	SELECT FRE.SerialNumber, COUNT(FRE.SerialNumber) [DupeCount]
-	INTO tmp.DuplicateSerialNos
-	FROM tmp.FinalResultSet FRE
-	GROUP BY FRE.SerialNumber
-	ORDER BY COUNT(FRE.SerialNumber) DESC
-
+	-- CjB 9/18/15: Handling of duplicate SerialNumbers
+	-- Duplicate determined by make & model from the source.
+	WITH Staging AS (
+		SELECT SE.EquipmentID, oe.[OBJECT_ID], oe.MFR_NAME, oe.FAC_MODEL, oe.SERIAL_NO
+		FROM tmp.FinalResultSet SE
+			INNER JOIN SourceWicm210ObjectEquipment oe ON SE.[Object_ID] = LTRIM(RTRIM(OE.[OBJECT_ID]))
+	),
+	Facs AS (
+		SELECT [OBJECT_ID], MFR_NAME, FAC_MODEL, SERIAL_NO
+		FROM SourceWicm210ObjectEquipment
+		WHERE [STATUS] = 'A' AND LTRIM(RTRIM([CLASS])) NOT IN ('JAPS', 'LHPL', 'RDGDMT')
+	)
 	UPDATE tmp.FinalResultSet
-	SET SerialNumber = 'NSN: ' + FRE.EquipmentID
-	FROM tmp.FinalResultSet FRE
-	WHERE FRE.SerialNumber IN (
-		SELECT SerialNumber FROM tmp.DuplicateSerialNos WHERE [DupeCount] > 1
-		)
+	SET SerialNumber = 'NSN: ' + S.EquipmentID
+	FROM Staging S
+		INNER JOIN tmp.FinalResultSet frs ON S.EquipmentID = frs.EquipmentID
+		INNER JOIN Facs f ON S.MFR_NAME = f.MFR_NAME
+			AND S.FAC_MODEL = f.FAC_MODEL
+			AND S.SERIAL_NO = f.SERIAL_NO
+			AND S.[OBJECT_ID] <> f.[OBJECT_ID]
+	WHERE ISNULL(S.SERIAL_NO, '') NOT IN ('NA', 'N/A', '')
 
+	-- Copy temp table to TrannsformEquipment
 	INSERT INTO TransformEquipment
 	SELECT
 		[Control],
@@ -732,4 +738,3 @@ DECLARE
 	WHERE x.EquipmentId LIKE 'EQP%'
 	ORDER BY x.EquipmentID
 END
-
