@@ -6,6 +6,7 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
+		Description = Last Updated: 09/16/2015
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{99218BA2-D1A4-4908-984C-AAC9684D7A0C}.Development|Default.ActiveCfg = Development
