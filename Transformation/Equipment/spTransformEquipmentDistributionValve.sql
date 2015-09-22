@@ -73,7 +73,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
-		[UserStatus1] varchar(6) NULL,
+		[UserStatus1] [varchar](6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -344,7 +344,8 @@ BEGIN
 				AND manid.[Source] LIKE '%Valves%'
 
 	-- 6/2/2015 Temporary while logic is resolved with the business units.
-	UPDATE tmp.Valves SET ActualInServiceDate = NULL
+	--UPDATE tmp.Valves SET ActualInServiceDate = NULL
+	-- 9/22/2015 Commented out as a workaround.
 
     -- Used in Bypass valves to ensure distinct EquipmentId
 	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves)
