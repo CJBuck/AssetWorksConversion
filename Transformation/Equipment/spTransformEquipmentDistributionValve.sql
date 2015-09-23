@@ -348,16 +348,16 @@ BEGIN
 	-- 9/22/2015 Commented out as a workaround.
 
     -- Used in Bypass valves to ensure distinct EquipmentId
-	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves)
+	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves )
 
 	-- Add Bypass valves as seperate entity
 	INSERT INTO tmp.Valves
 	(
 		Valve_No
-		,Control
+		,[Control]
 		,EquipmentID
 		,AssetType
-		,Description
+		,[Description]
 		,AssetNumber
 		,SerialNumber
 		,EquipmentType
@@ -398,7 +398,7 @@ BEGIN
 		,DepreciationMethod
 		,LifeMonths
 		,MonthsRemaining
-		,Ownership
+		,[Ownership]
 		,VendorID
 		,ExpirationDate
 		,Meter1Expiration
@@ -406,12 +406,11 @@ BEGIN
 		,Deductible
 		,WarrantyType
 	)
-	SELECT 
+	SELECT
 		v.Valve_No AS Valve_No,
-		'[i]' AS Control,
+		'[i]' AS [Control],
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS EquipmentId,
 		'STATIONARY' AS AssetType,
-		--LEFT(v.Description, 36) + ') BP' AS Description, --TRUNCATED TO FIT FOR NOW.  Description is varchar(40)
 		LEFT(LTRIM(RTRIM(s.STREET_NAME)) + ' (' + 
 			LTRIM(RTRIM(s.XSTREET_NAME)) + '-' + 
 			LTRIM(RTRIM(s.TO_STREET)), 36) + + ') BP' [Description],
@@ -455,7 +454,7 @@ BEGIN
 		NULL AS DepreciationMethod, -- Open issue
 		'1200' AS LifeMonths,
 		NULL AS MonthsRemaining,
-		'OWNED' AS Ownership,
+		'OWNED' AS [Ownership],
 		NULL AS VendorID, -- Open issue
 		NULL AS ExpirationDate, -- Open issue
 		NULL AS Meter1Expiration, -- Open issue
