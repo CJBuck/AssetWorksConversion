@@ -755,6 +755,51 @@ BEGIN
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.AssetNumber [LegacyID]
 	FROM tmp.ProjectFinalResultSet FRS
+
+	-- PM Records applied against entire equipment class
+	INSERT INTO TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT 
+		p.EquipmentID AS PMKey,
+		l.PMService AS PMServiceType,
+		l.PMDateNextDue AS NextDueDate,
+		NULL AS NumberOfTimeUnits,
+		NULL AS TimeUnit
+	FROM tmp.ProjectFinalResultSet p
+	INNER JOIN SourceProjectPMDateLookup l
+		ON p.EquipmentType = l.EquipmentType
+	WHERE p.EquipmentId LIKE 'EQP%' -- limit to only records with source LOCATION = 5
+	AND l.SourceObjectID IS NULL
+
+	-- PM Records applied against specific piece of equipment
+	INSERT INTO TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT 
+		p.EquipmentID AS PMKey,
+		l.PMService AS PMServiceType,
+		l.PMDateNextDue AS NextDueDate,
+		NULL AS NumberOfTimeUnits,
+		NULL AS TimeUnit
+	FROM tmp.ProjectFinalResultSet p
+	INNER JOIN TransformEquipmentLegacyXwalk xwalk
+		ON p.EquipmentId = xwalk.EquipmentID
+	INNER JOIN SourceProjectPMDateLookup l
+		ON p.EquipmentType = l.EquipmentType
+		AND xwalk.LegacyID = l.SourceObjectID
+	WHERE p.EquipmentId LIKE 'EQP%' -- limit to only records with source LOCATION = 5
+		AND l.SourceObjectID IS NOT NULL
 END
 
 --SELECT *
