@@ -95,9 +95,9 @@ BEGIN
 		ISNULL(munis.[Quantity], NULL) [Quantity],
 		ISNULL(munis.[Unit Price], NULL) [UnitPrice],
 		'STOREROOM' [LocationID],
-		ISNULL(munis.[Create Date], NULL) [OrderedDt],
-		ISNULL(munis.[Create Date], NULL) [ExpectedDeliveryDt],
-		ISNULL(munis.[Create Date], NULL) [SentToVendorDt],
+		NULL [OrderedDt],
+		NULL [ExpectedDeliveryDt],
+		NULL [SentToVendorDt],
 		po.PurchaseOrderID [VendorContractID],
 		ISNULL(LEFT(LTRIM(RTRIM(munis.[Unit of Measure])), 4), '') [UnitOfMeasure],
 		'' [AccountID]
@@ -108,13 +108,24 @@ BEGIN
 	WHERE POH.PONUMBER LIKE '2016%'
 	ORDER BY POH.PONUMBER
 	
+	-- Update OrderedDt, ExpectedDeliveryDt, & SentToVendorDt
+	UPDATE [tmp].[PurchaseOrdersLineItems]
+	SET
+		[OrderedDt] = ISNULL(munis.[Create Date], NULL),
+		[ExpectedDeliveryDt] = ISNULL(munis.[Create Date], NULL),
+		[SentToVendorDt] = ISNULL(munis.[Create Date], NULL)
+	FROM TransformMUNISPurchaseOrders MUNIS
+		INNER JOIN [tmp].[PurchaseOrdersLineItems] poli ON
+			LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT)))) = poli.PurchaseOrderID
+				AND MUNIS.[Record Type] = 'Header'
+	
 	-- Update AccountID
 	UPDATE [tmp].[PurchaseOrdersLineItems]
 	SET AccountID = SUBSTRING((ISNULL((LEFT(LTRIM(RTRIM(MUNIS.[GL Account])), 30)), 30)), 4, 30)
 	FROM TransformMUNISPurchaseOrders MUNIS
 		INNER JOIN [tmp].[PurchaseOrdersLineItems] poli ON
 			LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT)))) = poli.PurchaseOrderID
-			AND MUNIS.[Acct Line Number] = poli.LineNumber AND MUNIS.[Record Type] = 'Account'
+				AND MUNIS.[Acct Line Number] = poli.LineNumber AND MUNIS.[Record Type] = 'Account'
 	
 	-- Copy temp to TransformPurchaseOrdersLineItems
 	INSERT INTO [dbo].[TransformPurchaseOrdersLineItems]
