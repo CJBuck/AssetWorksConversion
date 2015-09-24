@@ -1,5 +1,6 @@
 --
 TRUNCATE TABLE TransformEquipment
+TRUNCATE TABLE TransformEquipmentIndividualPM
 TRUNCATE TABLE TransformEquipmentLegacyXwalk
 TRUNCATE TABLE EquipmentIDAutoCounter
 
@@ -8,6 +9,7 @@ EXEC dbo.spTransformEquipmentFacilitiesEquipment
 EXEC dbo.spTransformEquipmentVehicle
 EXEC dbo.spTransformEquipmentProject
 EXEC dbo.spTransformEquipmentHydrant
+EXEC dbo.spTransformAssetHeirarchy
 
 SELECT * FROM TransformEquipment
 SELECT * FROM TransformEquipmentLegacyXwalk
