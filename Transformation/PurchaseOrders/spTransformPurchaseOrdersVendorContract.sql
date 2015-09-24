@@ -40,14 +40,16 @@ BEGIN
 		POH.PONUMBER [VendorContractID],
 		LEFT(LTRIM(RTRIM(POH.COMMENT)), 60) [Description],
 		v.VendorID [VendorID],
-		NULL [BeginDate],	-- TBD: MUNIS
-		NULL [EndDate],	-- TBD: MUNIS
+		ISNULL(po.[Create Date], NULL) [BeginDate],	-- TBD: MUNIS
+		'6/30/2016' [EndDate],	-- TBD: MUNIS
 		(CONVERT(DECIMAL(12,2), TOTALAMOUNT) - CONVERT(DECIMAL(12,2), TOTALRELEASEDAMT)) [PurchasingLimit],
 		NULL [NotificationPct],
 		'' [Comment],
 		'[12548:1;ContractLines;1:1]' [ContractLines]
 	FROM SourceWicm330POHeader POH
 		LEFT JOIN TransformVendor v ON POH.VENDORNUMBER = v.VendorID
+		LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
+			AND po.[Record Type] = 'Header'
 	WHERE POH.PONUMBER LIKE '2016%'
 		and POH.PONUMBER IN (SELECT PurchaseOrderID FROM TransformPurchaseOrders)
 
