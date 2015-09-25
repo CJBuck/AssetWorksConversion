@@ -20,8 +20,8 @@ CREATE TABLE [dbo].[TargetPurchaseOrdersEnterprisePurchasingReceipts](
 	[PurchaseOrderID] [varchar](30) NOT NULL,
 	[LineNumber] [int] NOT NULL,
 	[FullyReceiveAllLineItems] [char](1) NOT NULL,
-	[ReceivedDt] [datetime] NULL,
-	[QuantityReceived] [decimal](22,2) NULL,
+	[ReceivedDt] [datetime] NOT NULL,
+	[QuantityReceived] [decimal](22,2) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO

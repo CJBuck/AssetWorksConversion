@@ -19,12 +19,12 @@ CREATE TABLE [dbo].[TargetPurchaseOrdersVendorContract](
 	[Control] [varchar](10) NOT NULL,
 	[VendorContractID] [varchar](30) NOT NULL,
 	[Description] [varchar](60) NULL,
-	[VendorID] [varchar](15) NULL,
-	[BeginDate] [datetime] NULL,
-	[EndDate] [datetime] NULL,
-	[PurchasingLimit] [decimal](12,2) NULL,
-	[NotificationPct] [decimal](5,2) NULL,
-	[Comment] [varchar](1000) NULL,
+	[VendorID] [varchar](15) NOT NULL,
+	[BeginDate] [datetime] NOT NULL,
+	[EndDate] [datetime] NOT NULL,
+	[PurchasingLimit] [decimal](12,2) NOT NULL,
+	[NotificationPct] [decimal](5,2) NOT NULL,
+	[Comment] [varchar](1000) NOT NULL,
 	[ContractLines] [varchar](50) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
