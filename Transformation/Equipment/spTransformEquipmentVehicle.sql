@@ -1,6 +1,8 @@
 -- =============================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
+-- Update Date:
+--			CJB 09/29/2015 - Added support for 'Surplus Vehicles'
 -- Description: Creates/modifies the TransformEquipmentVehicle stored procedure.
 -- =============================================================================
 
@@ -123,14 +125,20 @@ BEGIN
 			WHEN LTRIM(RTRIM(OV.SERIAL_NO)) = 'N/A' THEN 'GS' + LTRIM(RTRIM(OV.[OBJECT_ID]))
 			ELSE LTRIM(RTRIM(OV.SERIAL_NO))
 		END [SerialNumber],
-		'' [EquipmentType],
+		CASE
+			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
+			ELSE ''
+		END AS [EquipmentType],
 		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		NULL [ModelYear],
 		'' [ManufacturerID],
 		'' [ModelID],
-		'' [MeterTypesClass],
+		CASE
+			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
+			ELSE ''
+		END AS [MeterTypesClass],
 		'' [Meter1Type],
 		'' [Meter2Type],
 		NULL [Meter1AtDelivery],
@@ -139,10 +147,19 @@ BEGIN
 		NULL [LatestMeter2Reading],
 		NULL [MaxMeter1Value],
 		NULL [MaxMeter2Value],
-		'' [Maintenance],
+		CASE
+			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
+			ELSE ''
+		END AS [Maintenance],
 		'' [PMProgram],
-		'' [Standards],
-		'' [RentalRates],
+		CASE
+			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
+			ELSE ''
+		END AS [Standards],
+		CASE
+			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
+			ELSE ''
+		END AS [RentalRates],
 		'' [Resources],
 		'' AssetCategoryID,
 		'' AssignedPM,
@@ -165,7 +182,7 @@ BEGIN
 		'' [AccountIDUsageTickets],
 		'' [EquipmentStatus],
 		CASE
-			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
+			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'SP'
 			ELSE 'A'
 		END [LifeCycleStatusCodeID],
 		NULL [UserStatus1],
@@ -289,6 +306,7 @@ BEGIN
 				AND modid.[Source] = 'Vehicles'
 
 	-- EquipmentClass & EquimentType Cleansing
+	---- Non-Surplus
 	UPDATE tmp.Vehicles
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
@@ -326,6 +344,43 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
+	WHERE vehs.EquipmentType <> 'SURPLUS VEHICLE'
+				
+	---- Surplus
+	UPDATE tmp.Vehicles
+	SET
+		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
+		MaxMeter1Value =
+			CASE
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Miles' THEN '999999'
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Hours' THEN '99999'
+				ELSE NULL
+			END,
+		Meter2Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10),
+		MaxMeter2Value =
+			CASE
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Miles' THEN '999999'
+				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Hours' THEN '99999'
+				ELSE NULL
+			END,
+		PMProgram = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
+		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
+			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
+				AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
+				AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
+		INNER JOIN TransformEquipmentClass tec ON vec.EquipmentClassID = tec.EquipmentClassID
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vec.EquipmentClassID = vet.EquipmentClass
+	WHERE vehs.EquipmentType = 'SURPLUS VEHICLE'
 				
 	-- Special EquipmentType exceptions.
 	UPDATE tmp.Vehicles
@@ -397,6 +452,7 @@ BEGIN
 		END
 	FROM tmp.Vehicles V
 		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON V.Maintenance = mtc.EquipmentClassID
+	WHERE V.MeterTypesClass <> 'SURPLUS VEHICLE'
 
 	-- EquipmentClass specific updates
 	UPDATE tmp.Vehicles

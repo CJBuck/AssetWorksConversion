@@ -13,7 +13,11 @@ GO
 ALTER PROCEDURE dbo.spTransformEquipmentVehicle
 AS
 BEGIN
-	CREATE TABLE #Vehicles(
+
+	IF OBJECT_ID('tmp.Vehicles') IS NOT NULL
+		DROP TABLE tmp.Vehicles
+
+	CREATE TABLE tmp.Vehicles(
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Control] [varchar] (10) NOT NULL,
 		[EquipmentID] [varchar](20) NOT NULL,
@@ -63,6 +67,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
+		[UserStatus1] [varchar](6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -105,7 +110,7 @@ BEGIN
 		[DisposalComments] [varchar](60) NULL
 	)
 
-	INSERT INTO #Vehicles
+	INSERT INTO tmp.Vehicles
 	SELECT
 		LTRIM(RTRIM(OV.[OBJECT_ID])) [OBJECT_ID],
 		'[u:1]' [Control],
@@ -119,7 +124,7 @@ BEGIN
 			ELSE LTRIM(RTRIM(OV.SERIAL_NO))
 		END [SerialNumber],
 		'' [EquipmentType],
-		'INDIVIDUAL' [PMProgramType],		-- Open issue
+		'BOTH' [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
 		NULL [ModelYear],
@@ -145,7 +150,7 @@ BEGIN
 		'' [StoredLocation],
 		'' [StationLocation],
 		'' [Jurisdiction],
-		'DAY' [PreferredPMShift],		-- Open issue
+		'DAY' [PreferredPMShift],
 		'' [VehicleLocation],
 		'' [BuildingLocation],
 		'' [OtherLocation],
@@ -163,6 +168,7 @@ BEGIN
 			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
 			ELSE 'A'
 		END [LifeCycleStatusCodeID],
+		NULL [UserStatus1],
 		'' [ConditionRating],
 		'' [StatusCodes],
 		'Y' [WorkOrders],
@@ -202,7 +208,10 @@ BEGIN
 		'' [Latitude],
 		'' [Longitude],
 		NULL [NextPMServiceNumber],
-		NULL [NextPMDueDate],
+		CASE
+			WHEN ISDATE(OV.NEXT_PM_DUE) = 1 THEN OV.NEXT_PM_DUE
+			ELSE NULL
+		END [NextPMDueDate],
 		'' [IndividualPMService],
 		'' [IndividualPMDateNextDue],
 		NULL [IndividualPMNumberOfTimeUnits],
@@ -232,7 +241,7 @@ BEGIN
 			'006673', '006674', '006675'))
 
 	-- Vehicle specific updates
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ModelYear = LTRIM(RTRIM(vehdet.AW_YEAR)),
 		AssetCategoryID =
@@ -246,35 +255,30 @@ BEGIN
 		StationLocation = vehdet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10),
 		DeptToNotifyForPM = LEFT(ISNULL(vehdet.[AW_PROGRAM], ''), 10)
-	FROM #Vehicles OV
+	FROM tmp.Vehicles OV
 		INNER JOIN TransformEquipmentVehicleValueVehicleDetails vehdet
 			ON OV.[Object_ID] = vehdet.[WICM_OBJID]
 
 	-- Updates from the Special Equipment spreadsheet
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ModelYear = LTRIM(RTRIM(sedet.AW_YEAR)),
-		AssetCategoryID =
-			CASE
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'CONSTRUCTION EQUIPMENT' THEN 'EQUIPMENT'
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'TRAILERS' THEN 'TRAILER'
-				WHEN LTRIM(RTRIM(sedet.AW_CATID)) = 'VEHICLES' THEN 'VEHICLE'
-			END,
+		AssetCategoryID = 'SPECIALTY',
 		AssignedPM = 'VEH SHOP',
 		AssignedRepair = 'VEH SHOP',
 		StationLocation = sedet.AW_LOCATION,
 		DepartmentID = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10),
 		DeptToNotifyForPM = LEFT(ISNULL(sedet.[AW_PROGRAM], ''), 10)
-	FROM #Vehicles OV
+	FROM tmp.Vehicles OV
 		INNER JOIN TransformEquipmentVehicleValueSpecialEquipmentDetails sedet
 			ON OV.[Object_ID] = sedet.[WICM_OBJID]
 
 	-- ManufacturerID & ModelID Cleansing
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		ManufacturerID = ISNULL(manid.TargetValue, ''),
 		ModelID = ISNULL(modid.CleansedModelID, '')
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LTRIM(RTRIM(OV.VEH_MAKE)) = manid.SourceValue
@@ -283,9 +287,9 @@ BEGIN
 			ON LTRIM(RTRIM(manid.[TargetValue])) = LTRIM(RTRIM(modid.CleansedManufacturerID))
 				AND LTRIM(RTRIM(OV.[VEH_MODEL])) = LTRIM(RTRIM(modid.SourceModelID))
 				AND modid.[Source] = 'Vehicles'
-					
+
 	-- EquipmentClass & EquimentType Cleansing
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
 		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
@@ -307,7 +311,7 @@ BEGIN
 		Standards = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		RentalRates = LEFT(LTRIM(RTRIM(vec.EquipmentClassID)), 30),
 		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
 		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
 			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
@@ -323,32 +327,93 @@ BEGIN
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
 				
+	-- Special EquipmentType exceptions.
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP COMPACT 4X4'
+	WHERE vehs.[Object_ID] = '006533'
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP COMPACT EXT CAB 4X4'
+	WHERE vehs.[Object_ID] IN ('006565', '006572', '006573', '006678')
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP 1/2 TON 4X4'
+	WHERE vehs.[Object_ID] = '006656'
+
+	UPDATE tmp.Vehicles
+	SET
+		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
+	FROM tmp.Vehicles vehs
+		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
+		INNER JOIN (
+			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
+			FROM TransformEquipmentVehicleValueEquipmentType
+			) vet
+			ON vehs.ManufacturerID = vet.VEH_MAKE
+				AND vehs.ModelID = vet.VEH_MODEL
+				AND vehs.ModelYear = vet.VEH_YEAR
+				AND vet.EquipmentClass = 'PICKUP 1/2 TON EXT CAB 4X4'
+	WHERE vehs.[Object_ID] = '006657'
+
 	-- Meter Types Class
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET MeterTypesClass = 
 		CASE
 			WHEN ISNULL(mtc.MeterTypesClass, '') <> '' THEN mtc.MeterTypesClass
 			ELSE 'NO METER'
 		END
-	FROM #Vehicles V
+	FROM tmp.Vehicles V
 		LEFT JOIN TransformObjectVehicleValueMeterTypesClass mtc ON V.Maintenance = mtc.EquipmentClassID
-				
+
 	-- EquipmentClass specific updates
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP 1/2 TON 4X4',
 		Standards = 'PICKUP 1/2 TON 4X4',
 		RentalRates = 'PICKUP 1/2 TON 4X4'
 	WHERE [Object_ID] = '006656'
 
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP COMPACT 4X4',
 		Standards = 'PICKUP COMPACT 4X4',
 		RentalRates = 'PICKUP COMPACT 4X4'
 	WHERE [Object_ID] = '006533'
 
-	UPDATE #Vehicles
+	UPDATE tmp.Vehicles
 	SET
 		Maintenance = 'PICKUP 1/2 TON EXT CAB 4X4',
 		Standards = 'PICKUP 1/2 TON EXT CAB 4X4',
@@ -405,6 +470,7 @@ BEGIN
 		[AccountIDUsageTickets],
 		[EquipmentStatus],
 		[LifeCycleStatusCodeID],
+		[UserStatus1],
 		[ConditionRating],
 		[StatusCodes],
 		[WorkOrders],
@@ -445,7 +511,7 @@ BEGIN
 		[DisposalMethod],
 		[DisposalAuthority],
 		[DisposalComments]
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
 	ORDER BY vehs.EquipmentID
 
 	-- Vehicles to the crosswalk table.
@@ -455,9 +521,32 @@ BEGIN
 		'SourceWicm210ObjectVehicle' [Source],
 		'OBJECT_ID' [LegacyIDSource],
 		vehs.[Object_ID] [LegacyID]
-	FROM #Vehicles vehs
+	FROM tmp.Vehicles vehs
+	
+	-- Write to TransformEquipmentIndividualPM
+	INSERT INTO TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT
+		XWALK.EquipmentID,
+		pm.PMService,
+		CASE
+			WHEN pm.PMService LIKE '%PM%' THEN ov.NEXT_PM_DUE
+			WHEN pm.PMService LIKE '%INSP%' THEN ov.INSPECT_DUE
+			ELSE NULL
+		END,
+		NULL,
+		NULL
+	FROM TransformEquipmentLegacyXwalk XWALK
+		INNER JOIN TransformEquipment te on XWALK.EquipmentID = te.EquipmentID
+		INNER JOIN TransformEquipmentGSPMTasks pm ON te.EquipmentType = pm.EquipmentType
+		INNER JOIN SourceWicm210ObjectVehicle ov on XWALK.LegacyID = ov.[OBJECT_ID]
+	WHERE XWALK.EquipmentID LIKE 'GS%'
+		AND XWALK.[Source] = 'SourceWicm210ObjectVehicle'
+	
 END
-
--- Clean up
-IF OBJECT_ID('tempdb..#Vehicles') IS NOT NULL
-	DROP TABLE #Vehicles

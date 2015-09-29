@@ -1,8 +1,6 @@
 -- =============================================================================
 -- Created By:	Chris Buck
 -- Create Date:	04/30/2015
--- Update Date:
---			CJB 09/29/2015 - Added support for 'Surplus Vehicles'
 -- Description: Creates/modifies the spTransformComponent stored procedure.
 -- =============================================================================
 
@@ -83,10 +81,7 @@ BEGIN
 		NULL [ModelYear],
 		'' [ManufacturerID],
 		'' [ModelID],
-		CASE
-			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
-			ELSE ''
-		END AS [EquipmentType],
+		'' [EquipmentType],
 		CASE
 			WHEN ISNULL(LTRIM(RTRIM(OV.SERIAL_NO)), '') = ''
 				THEN 'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR)
@@ -96,10 +91,7 @@ BEGIN
 		END [SerialNumber],
 		'BOTH' [PMProgramType],
 		'GS' + CAST((CAST(OV.[OBJECT_ID] AS INT)) AS VARCHAR) [AssetNumber],
-		CASE
-			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
-			ELSE ''
-		END AS [MeterTypesClass],
+		'' [MeterTypesClass],
 		'' [Meter1Type],
 		NULL [Meter1AtDelivery],
 		ISNULL(OV.MILES_CURR, NULL) [LatestMeter1Reading],
@@ -107,19 +99,10 @@ BEGIN
 		'' [Meter2Type],
 		NULL [Meter2AtDelivery],
 		NULL [MaxMeter2Value],
-		CASE
-			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
-			ELSE ''
-		END AS [Maintenance],
+		'' [Maintenance],
 		'' [PMClass],
-		CASE
-			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
-			ELSE ''
-		END AS [Standards],
-		CASE
-			WHEN OV.[DRIVER] LIKE '%SURPLUS%' THEN 'SURPLUS VEHICLE'
-			ELSE ''
-		END AS [RentalRates],
+		'' [Standards],
+		'' [RentalRates],
 		'' [Resources],
 		'SPECIALTY' AssetCategoryID,
 		'SE SHOP' AssignedPM,
@@ -136,7 +119,7 @@ BEGIN
 		'' [AccountIDFuel],
 		'' [AccountIDUsage],
 		CASE
-			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'SP'
+			WHEN (OV.[DRIVER] LIKE '%SURPLUS%') THEN 'R'
 			ELSE 'A'
 		END [LifeCycleStatusCodeID],
 		'' [ConditionRating],
@@ -205,7 +188,6 @@ BEGIN
 				AND modid.[Source] = 'Vehicles'
 					
 	-- EquipmentClass & EquimentType Cleansing
-	---- Non-Surplus
 	UPDATE tmp.Components
 	SET
 		EquipmentType = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
@@ -248,43 +230,6 @@ BEGIN
 				AND vehs.ModelID = vet.VEH_MODEL
 				AND vehs.ModelYear = vet.VEH_YEAR
 				AND vec.EquipmentClassID = vet.EquipmentClass
-	WHERE vehs.EquipmentType <> 'SURPLUS VEHICLE'
-				
-	---- Surplus
-	UPDATE tmp.Components
-	SET
-		Meter1Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10),
-		MaxMeter1Value =
-			CASE
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Miles' THEN '999999'
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter1Type, ''))), 10) = 'Hours' THEN '99999'
-				ELSE NULL
-			END,
-		Meter2Type = LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10),
-		MaxMeter2Value =
-			CASE
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Miles' THEN '999999'
-				WHEN LEFT(LTRIM(RTRIM(ISNULL(tec.Meter2Type, ''))), 10) = 'Hours' THEN '99999'
-				ELSE NULL
-			END,
-		PMClass = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30),
-		Resources = LEFT(LTRIM(RTRIM(vet.EquipmentType)), 30)
-	FROM tmp.Components vehs
-		INNER JOIN SourceWicm210ObjectVehicle OV ON vehs.[Object_ID] = OV.[OBJECT_ID]
-		INNER JOIN TransformObjectVehicleValueEquipmentClass vec
-			ON LTRIM(RTRIM(OV.CLASS)) = vec.WICM_CLASS
-				AND LTRIM(RTRIM(OV.VEH_MAKE)) = vec.WICM_VEH_MAKE
-				AND LTRIM(RTRIM(OV.VEH_MODEL)) = vec.WICM_VEH_MODEL
-		INNER JOIN TransformEquipmentClass tec ON vec.EquipmentClassID = tec.EquipmentClassID
-		INNER JOIN (
-			SELECT DISTINCT VEH_YEAR, VEH_MAKE, VEH_MODEL, EquipmentClass, EquipmentType
-			FROM TransformEquipmentVehicleValueEquipmentType
-			) vet
-			ON vehs.ManufacturerID = vet.VEH_MAKE
-				AND vehs.ModelID = vet.VEH_MODEL
-				AND vehs.ModelYear = vet.VEH_YEAR
-				AND vec.EquipmentClassID = vet.EquipmentClass
-	WHERE vehs.EquipmentType = 'SURPLUS VEHICLE'
 				
 	-- Meter Types Class
 	UPDATE tmp.Components
