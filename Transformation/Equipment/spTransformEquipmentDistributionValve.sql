@@ -195,6 +195,7 @@ BEGIN
 		CASE
 			WHEN SPV.[STATUS] = 'A' THEN 'A'
 			WHEN SPV.[STATUS] = 'I' THEN 'PI'
+			WHEN SPV.[STATUS] IN ('H', 'D') THEN 'D'
 			ELSE ''
 		END [LifeCycleStatusCodeID],
 		NULL [UserStatus1],
@@ -243,16 +244,14 @@ BEGIN
 		'' [DisposalComments]
 	FROM SourcePups201Valve SPV
 	WHERE
+		-- Active Valves
 		(SPV.[STATUS] = 'A')
+		-- Proposed Valves
 		OR ((SPV.[STATUS] = 'I') AND
 			(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
+		-- Abandoned/Disposed Valves
 		OR (
-			(SPV.BYPASS_CD = 'Y')
-			AND (
-				(SPV.[STATUS] = 'A')
-				OR ((SPV.[STATUS] = 'I') AND 
-					(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
-				)
+			SPV.[STATUS] IN ('H', 'D') AND SPV.[REPLACE_DATE] > '07/01/2015'
 			)
 
 	-- EquipmentType
@@ -362,10 +361,20 @@ BEGIN
 		,SerialNumber
 		,EquipmentType
 		,PMProgramType
+		,AssetPhotoFilePath
+		,AssetPhotoFileDescription
 		,ModelYear
 		,ManufacturerID
 		,ModelID
 		,MeterTypesClass
+		,Meter1Type
+		,Meter2Type
+		,Meter1AtDelivery
+		,Meter2AtDelivery
+		,LatestMeter1Reading
+		,LatestMeter2Reading
+		,MaxMeter1Value
+		,MaxMeter2Value
 		,Maintenance
 		,PMProgram
 		,Standards
@@ -374,10 +383,16 @@ BEGIN
 		,AssetCategoryID
 		,AssignedPM
 		,AssignedRepair
+		,StoredLocation
 		,StationLocation
+		,Jurisdiction
 		,PreferredPMShift
+		,VehicleLocation
+		,BuildingLocation
+		,OtherLocation
 		,DepartmentID
 		,DeptToNotifyForPM
+		,CompanyID
 		,AccountIDAssignmentWO
 		,AccountIDLaborPosting
 		,AccountIDPartIssues
@@ -386,7 +401,9 @@ BEGIN
 		,AccountIDUsageTickets
 		,EquipmentStatus
 		,LifeCycleStatusCodeID
+		,UserStatus1
 		,ConditionRating
+		,StatusCodes
 		,WorkOrders
 		,UsageTickets
 		,FuelTickets
@@ -405,6 +422,26 @@ BEGIN
 		,Meter2Expiration
 		,Deductible
 		,WarrantyType
+		,Comments2
+		,EstimatedReplacementMonth
+		,EstimatedReplacementYear
+		,EstimatedReplacementCost
+		,Latitude
+		,Longitude
+		,NextPMServiceNumber
+		,NextPMDueDate
+		,IndividualPMService
+		,IndividualPMDateNextDue
+		,IndividualPMNumberofTimeUnits
+		,IndividualPMTimeUnit
+		,PlannedRetirementDate
+		,RetirementDate
+		,DispositionDate
+		,GrossSalePrice
+		,DisposalReason
+		,DisposalMethod
+		,DisposalAuthority
+		,DisposalComments
 	)
 	SELECT
 		v.Valve_No AS Valve_No,
@@ -418,10 +455,20 @@ BEGIN
 		'VLV' + RIGHT('0000000' + LTRIM(RTRIM(@MaxValve + ROW_NUMBER() OVER(ORDER BY v.Valve_No))), 7) AS SerialNumber,
 		'DVL ISO GATE SMALL DIA' AS EquipmentType,
 		'BOTH' AS PMProgramType,
+		'' AS AssetPhotoFilePath,
+		'' AS AssetPhotoFileDescription,
 		v.ModelYear AS ModelYear,
 		'UNKNOWN' AS ManufacturerID,
 		'GENERIC VALVE' AS ModelID,
 		'NO METER' AS MeterTypesClass,
+		'' [Meter1Type],
+		'' [Meter2Type],
+		NULL Meter1AtDelivery,
+		NULL Meter2AtDelivery,
+		NULL LatestMeter1Reading,
+		NULL LatestMeter2Reading,
+		NULL MaxMeter1Value,
+		NULL MaxMeter2Value,
 		v.Maintenance AS Maintenance,
 		v.PMProgram AS PMProgram,
 		v.Standards AS Standards,
@@ -430,10 +477,16 @@ BEGIN
 		'VALVE' AS AssetCategoryId,
 		'D-HYD VAL' AS AssignedPM,
 		'D-REPAIR' AS AssignedRepair,
+		'' StoredLocation,
 		v.StationLocation AS StationLocation,
+		'' Jurisdiction,
 		'DAY' AS PreferredPMShift,
+		'' VehicleLocation,
+		'' BuildingLocation,
+		'' OtherLocation,
 		'413505' AS DepartmentID,
 		'413505' AS DeptToNotifyForPM,
+		'' AS CompanyID,
 		NULL AS AccountIDAssignmentWO, -- Open issue
 		NULL AS AccountIDLaborPosting, -- Open issue
 		NULL AS AccountIDPartIssues, -- Open issue
@@ -442,7 +495,9 @@ BEGIN
 		NULL AS AccountIDUsageTickets, -- Open issue
 		'IN SERVICE' AS EquipmentStatus,
 		'A' AS LifeCycleStatusCodeID,
+		'' [UserStatus1],
 		NULL AS ConditionRating, -- Open issue
+		'' [StatusCodes],
 		'Y' AS WorkOrders,
 		'N' AS UsageTickets,
 		'N' AS FuelTickets,
@@ -460,11 +515,37 @@ BEGIN
 		NULL AS Meter1Expiration, -- Open issue
 		NULL AS Meter2Expiration, -- Open issue
 		NULL AS Deductible, -- Open issue
-		NULL AS WarrantyType -- Open issue
+		NULL AS WarrantyType, -- Open issue
+		'' Comments2,
+		NULL EstimatedReplacementMonth,
+		NULL EstimatedReplacementYear,
+		NULL EstimatedReplacementCost,
+		'' Latitude,
+		'' Longitude,
+		NULL NextPMServiceNumber,
+		NULL NextPMDueDate,
+		'' IndividualPMService,
+		NULL IndividualPMDateNextDue,
+		NULL IndividualPMNumberofTimeUnits,
+		'' IndividualPMTimeUnit,
+		NULL PlannedRetirementDate,
+		NULL RetirementDate,
+		NULL DispositionDate,
+		NULL GrossSalePrice,
+		'' DisposalReason,
+		'' DisposalMethod,
+		'' DisposalAuthority,
+		'' DisposalComments
 	FROM dbo.SourcePups201Valve	s
 	INNER JOIN tmp.Valves v
 		ON s.VALVE_NO = v.Valve_No
-	WHERE s.BYPASS_CD = 'Y'
+	WHERE
+		(s.BYPASS_CD = 'Y')
+			AND (
+				(s.[STATUS] = 'A')
+				OR ((s.[STATUS] = 'I') AND
+					(s.[REMARK2] LIKE '%proposed%') OR (s.[REMARK2] LIKE '%not yet installed%'))
+		)
 	ORDER BY v.Valve_No --Required to ensure proper row_number for sequential EquipmentId
 
 	-- Move data from the temp table to TransformEquipment.
