@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[TransformWorkOrderCenterLabor](
 	[Control] [varchar](10) NOT NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NULL,
-	[WorkOrderNumber] [int] NULL,
+	[WorkOrderNumber] [varchar](15) NULL,
 	[TaskID] [varchar](12) NULL,
 	[WorkAccomplishedCode] [varchar](4) NULL,
 	[LaborDt] [datetime] NULL,
