@@ -47,5 +47,10 @@
       <FullPath>EquipmentClass.dtsx</FullPath>
       <References />
     </DtsPackage>
+    <DtsPackage FormatVersion="3">
+      <Name>EquipmentSubsystem.dtsx</Name>
+      <FullPath>EquipmentSubsystem.dtsx</FullPath>
+      <References />
+    </DtsPackage>
   </DTSPackages>
 </Project>
