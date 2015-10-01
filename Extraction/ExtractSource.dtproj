@@ -28,8 +28,18 @@
   </Configurations>
   <DTSPackages>
     <DtsPackage FormatVersion="3">
-      <Name>ExtractGis.dtsx</Name>
-      <FullPath>ExtractGis.dtsx</FullPath>
+      <Name>Gis.dtsx</Name>
+      <FullPath>Gis.dtsx</FullPath>
+      <References />
+    </DtsPackage>
+    <DtsPackage FormatVersion="0">
+      <Name>SubsystemProperty.dtsx</Name>
+      <FullPath>SubsystemProperty.dtsx</FullPath>
+      <References />
+    </DtsPackage>
+    <DtsPackage FormatVersion="0">
+      <Name>SubsystemList.dtsx</Name>
+      <FullPath>SubsystemList.dtsx</FullPath>
       <References />
     </DtsPackage>
   </DTSPackages>
