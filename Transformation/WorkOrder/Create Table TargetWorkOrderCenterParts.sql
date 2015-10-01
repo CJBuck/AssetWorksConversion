@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[TargetWorkOrderCenterParts](
 	[Control] [varchar](10) NOT NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NOT NULL,
-	[WorkOrderNumber] [int] NOT NULL,
+	[WorkOrderNumber] [varchar](15) NULL,
 	[TaskID] [varchar](12) NOT NULL,
 	[Dt] [datetime] NOT NULL,
 	[NotFromInventory] [char](1) NOT NULL,
