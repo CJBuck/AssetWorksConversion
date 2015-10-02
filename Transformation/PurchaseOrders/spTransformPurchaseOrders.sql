@@ -84,7 +84,7 @@ BEGIN
 		'' [AccountID],
 		ISNULL(po.[Create Date], NULL) [RequestedDt],
 		ISNULL(po.[Create Date], NULL) [OrderedDt],
-		NULL [ExpectedDeliveryDt],
+		ISNULL(po.[Create Date], NULL) [ExpectedDeliveryDt],
 		ISNULL(LEFT(LTRIM(RTRIM(m.rh_clerk_id)), 9), '') [OrderedByEmployeeID],
 		'[8874:1;LINES;1:1]' [LineItems],
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
