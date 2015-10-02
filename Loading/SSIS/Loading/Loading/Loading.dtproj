@@ -48,8 +48,13 @@
       <References />
     </DtsPackage>
     <DtsPackage FormatVersion="3">
+<<<<<<< HEAD
       <Name>PurchaseOrders.dtsx</Name>
       <FullPath>PurchaseOrders.dtsx</FullPath>
+=======
+      <Name>EquipmentSubsystem.dtsx</Name>
+      <FullPath>EquipmentSubsystem.dtsx</FullPath>
+>>>>>>> origin/master
       <References />
     </DtsPackage>
   </DTSPackages>
