@@ -51,10 +51,8 @@ BEGIN
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
 		'' [TimeCode]			-- TBD
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
-		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha
-			ON DLP.WO_NUMBER = ha.WO_NUMBER AND DLP.LOCATION = ha.LOCATION
+		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha ON DLP.WO_NUMBER = ha.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND ha.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
@@ -75,10 +73,8 @@ BEGIN
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
 		'' [TimeCode]			-- TBD
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
-		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp
-			ON DLP.WO_NUMBER = hp.WO_NUMBER AND DLP.LOCATION = hp.LOCATION
+		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp ON DLP.WO_NUMBER = hp.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hp.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
@@ -99,10 +95,8 @@ BEGIN
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
 		'' [TimeCode]			-- TBD
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
-		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv
-			ON DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
+		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DLP.WO_NUMBER = hv.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
@@ -131,10 +125,8 @@ BEGIN
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
 		'' [TimeCode]			-- TBD
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
-		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp
-			ON DLP.WO_NUMBER = hp.WO_NUMBER AND DLP.LOCATION = hp.LOCATION
+		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp ON DLP.WO_NUMBER = hp.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hp.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
@@ -155,10 +147,8 @@ BEGIN
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
 		'' [TimeCode]			-- TBD
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
-		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv
-			ON DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
+		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DLP.WO_NUMBER = hv.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DLP.OPER_CODE = gsoc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'

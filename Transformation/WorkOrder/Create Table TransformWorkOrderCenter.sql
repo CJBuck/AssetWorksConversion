@@ -17,6 +17,8 @@ GO
 
 CREATE TABLE [dbo].[TransformWorkOrderCenter](
 	[Control] [varchar](10) NOT NULL,
+	[Object_ID] [varchar](25) NULL,
+	[Location] [varchar](2) NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NULL,
 	[WorkOrderNumber] [varchar](15) NULL,

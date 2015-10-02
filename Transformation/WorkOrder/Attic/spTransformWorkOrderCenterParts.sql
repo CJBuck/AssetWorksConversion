@@ -48,7 +48,6 @@ BEGIN
 		WODP.PART_COST [UnitPrice]
 	FROM SourceWicm251WorkOrderDetailParts WODP
 		INNER JOIN TransformWorkOrderCenter woc ON WODP.WO_NUMBER = woc.WorkOrderNumber
-			AND WODP.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON WODP.OPER_CODE = lkup.OpCode
 	WHERE ISNULL(WODP.OPER_CODE, '') <> ''
 		AND ISDATE(WODP.ACTION_DATE) = 1		-- TBD

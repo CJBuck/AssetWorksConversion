@@ -8,6 +8,7 @@ TRUNCATE TABLE TransformWorkOrderCenterCommercial
 EXEC spTransformWorkOrderCenter
 EXEC spTransformWorkOrderCenterTasks
 EXEC spTransformWorkOrderCenterLabor
+EXEC spTransformWorkOrderCenterParts
 EXEC spTransformWorkOrderCenterCommercial
 
 --

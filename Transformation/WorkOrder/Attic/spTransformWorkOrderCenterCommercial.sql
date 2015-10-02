@@ -50,9 +50,7 @@ BEGIN
 		NULL [MiscCost]					-- TBD
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha ON DS.WO_NUMBER = ha.WO_NUMBER
-			AND DS.LOCATION = ha.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
-			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
@@ -71,9 +69,7 @@ BEGIN
 		NULL [MiscCost]					-- TBD
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp ON DS.WO_NUMBER = hp.WO_NUMBER
-			AND DS.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
-			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
@@ -92,9 +88,7 @@ BEGIN
 		NULL [MiscCost]					-- TBD
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DS.WO_NUMBER = hv.WO_NUMBER
-			AND DS.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
-			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
@@ -112,9 +106,7 @@ BEGIN
 		NULL [MiscCost]					-- TBD
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp ON DS.WO_NUMBER = hp.WO_NUMBER
-			AND DS.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
-			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
@@ -133,9 +125,7 @@ BEGIN
 		NULL [MiscCost]					-- TBD
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DS.WO_NUMBER = hv.WO_NUMBER
-			AND DS.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
-			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'

@@ -46,7 +46,6 @@ BEGIN
 		'WICM OP_CODE: ' + HA.OP_CODE1 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderAdmin HA
 		INNER JOIN TransformWorkOrderCenter woc ON HA.WO_NUMBER = woc.WorkOrderNumber
-			AND HA.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HA.OP_CODE1 = lkup.OpCode
 	WHERE ISNULL(HA.OP_CODE1, '') <> ''
 
@@ -64,7 +63,6 @@ BEGIN
 		'WICM OP_CODE: ' + HA.OP_CODE2 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderAdmin HA
 		INNER JOIN TransformWorkOrderCenter woc ON HA.WO_NUMBER = woc.WorkOrderNumber
-			AND HA.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HA.OP_CODE2 = lkup.OpCode
 	WHERE ISNULL(HA.OP_CODE2, '') <> ''
 
@@ -82,7 +80,6 @@ BEGIN
 		'WICM OP_CODE: ' + HA.OP_CODE3 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderAdmin HA
 		INNER JOIN TransformWorkOrderCenter woc ON HA.WO_NUMBER = woc.WorkOrderNumber
-			AND HA.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HA.OP_CODE3 = lkup.OpCode
 	WHERE ISNULL(HA.OP_CODE3, '') <> ''
 
@@ -98,7 +95,6 @@ BEGIN
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha ON DLP.WO_NUMBER = ha.WO_NUMBER AND DLP.LOCATION = ha.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND ha.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
@@ -117,7 +113,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE1 + ' - ' + lkup.[Description] [Comments]
 	FROM SourceWicm250WorkOrderHeaderProjects HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HP.OP_CODE1 = lkup.OpCode
 	WHERE ISNULL(HP.OP_CODE1, '') <> ''
 
@@ -135,7 +130,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE2 + ' - ' + lkup.[DESCRIPTION] [Description]
 	FROM SourceWicm250WorkOrderHeaderProjects HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HP.OP_CODE2 = lkup.OpCode
 	WHERE ISNULL(HP.OP_CODE2, '') <> ''
 
@@ -153,7 +147,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE3 + ' - ' + lkup.[DESCRIPTION] [Description]
 	FROM SourceWicm250WorkOrderHeaderProjects HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON HP.OP_CODE3 = lkup.OpCode
 	WHERE ISNULL(HP.OP_CODE3, '') <> ''
 
@@ -169,7 +162,6 @@ BEGIN
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp ON DLP.WO_NUMBER = hp.WO_NUMBER AND DLP.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hp.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
@@ -188,7 +180,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE1 + ' - ' + doc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON HV.OP_CODE1 = doc.OpCode
 	WHERE ISNULL(HV.OP_CODE1, '') <> ''
 		AND hv.LOCATION = '04'
@@ -208,7 +199,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE2 + ' - ' + doc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON HV.OP_CODE2 = doc.OpCode
 	WHERE ISNULL(HV.OP_CODE2, '') <> ''
 		AND hv.LOCATION = '04'
@@ -228,7 +218,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE3 + ' - ' + doc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON HV.OP_CODE3 = doc.OpCode
 	WHERE ISNULL(HV.OP_CODE3, '') <> ''
 		AND hv.LOCATION = '04'
@@ -246,7 +235,6 @@ BEGIN
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
@@ -273,7 +261,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE1 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderPlant HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN SourceWicm230TableLookupOperationCodes lkup ON HP.OP_CODE1 = lkup.OP_CODE
 	WHERE ISNULL(HP.OP_CODE1, '') <> ''
 
@@ -297,7 +284,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE2 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderPlant HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN SourceWicm230TableLookupOperationCodes lkup ON HP.OP_CODE2 = lkup.OP_CODE
 	WHERE ISNULL(HP.OP_CODE2, '') <> ''
 
@@ -321,7 +307,6 @@ BEGIN
 		'WICM OP_CODE: ' + HP.OP_CODE3 + ' - ' + lkup.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderPlant HP
 		INNER JOIN TransformWorkOrderCenter woc ON HP.WO_NUMBER = woc.WorkOrderNumber
-			AND HP.LOCATION = woc.Location
 		INNER JOIN SourceWicm230TableLookupOperationCodes lkup ON HP.OP_CODE3 = lkup.OP_CODE
 	WHERE ISNULL(HP.OP_CODE3, '') <> ''
 	
@@ -343,7 +328,6 @@ BEGIN
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp ON DLP.WO_NUMBER = hp.WO_NUMBER
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hp.LOCATION = woc.Location
 		INNER JOIN SourceWicm230TableLookupOperationCodes lkup ON DLP.OPER_CODE = lkup.OP_CODE
 	ORDER BY woc.WorkOrderNumber
 	
@@ -362,7 +346,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE1 + ' - ' + gsoc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON HV.OP_CODE1 = gsoc.OpCode
 	WHERE ISNULL(HV.OP_CODE1, '') <> ''
 		AND hv.LOCATION = '01'
@@ -381,7 +364,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE1 + ' - ' + gsoc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON HV.OP_CODE2 = gsoc.OpCode
 	WHERE ISNULL(HV.OP_CODE2, '') <> ''
 		AND hv.LOCATION = '01'
@@ -400,7 +382,6 @@ BEGIN
 		'WICM OP_CODE: ' + HV.OP_CODE1 + ' - ' + gsoc.[DESCRIPTION] [Comments]
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 		INNER JOIN TransformWorkOrderCenter woc ON HV.WO_NUMBER = woc.WorkOrderNumber
-			AND HV.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON HV.OP_CODE3 = gsoc.OpCode
 	WHERE ISNULL(HV.OP_CODE3, '') <> ''
 		AND hv.LOCATION = '01'
@@ -417,7 +398,6 @@ BEGIN
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON
 			DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
-			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DLP.OPER_CODE = gsoc.OpCode
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'

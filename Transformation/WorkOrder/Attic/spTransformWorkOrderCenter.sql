@@ -24,7 +24,6 @@ BEGIN
 	CREATE TABLE [tmp].[WorkOrderCenter](
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar](25) NULL,
-		[Location] [varchar](2) NULL,
 		[WorkOrderLocationID] [varchar](10) NOT NULL,
 		[WorkOrderYear] [int] NULL,
 		[WorkOrderNumber] [varchar](15) NULL,
@@ -64,7 +63,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		HA.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HA.WO_INDATE) [WorkOrderYear],
 		HA.WO_NUMBER [WorkOrderNumber],
@@ -148,7 +146,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		HP.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
@@ -232,7 +229,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		HV.LOCATION,
 		CASE
 			WHEN HV.[LOCATION] = '04' AND HV.WO_TYPE = 'X2' THEN 'D-INSTALL'
 			WHEN HV.[LOCATION] = '04' AND HV.WO_TYPE = 'X6' THEN 'D-REPAIR'
@@ -321,7 +317,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HA.[OBJECT_ID] [Object_ID],
-		HA.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HA.WO_INDATE) [WorkOrderYear],
 		HA.WO_NUMBER [WorkOrderNumber],
@@ -406,7 +401,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HP.[OBJECT_ID] [Object_ID],
-		HP.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
@@ -491,7 +485,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HV.[OBJECT_ID] [Object_ID],
-		HV.LOCATION,
 		CASE
 			WHEN HV.[LOCATION] = '04' AND HV.WO_TYPE = 'X2' THEN 'D-INSTALL'
 			WHEN HV.[LOCATION] = '04' AND HV.WO_TYPE = 'X6' THEN 'D-REPAIR'
@@ -582,7 +575,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HA.[OBJECT_ID] [Object_ID],
-		HA.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HA.WO_INDATE) [WorkOrderYear],
 		HA.WO_NUMBER [WorkOrderNumber],
@@ -663,7 +655,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HP.[OBJECT_ID] [Object_ID],
-		HP.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		HP.WO_NUMBER [WorkOrderNumber],
@@ -745,7 +736,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HV.[OBJECT_ID] [Object_ID],
-		HV.LOCATION,
 		'D-ADMIN' [WorkOrderLocationID],
 		YEAR(HV.WO_INDATE) [WorkOrderYear],
 		HV.WO_NUMBER [WorkOrderNumber],
@@ -829,7 +819,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		HP.LOCATION,
 		CASE
 			WHEN HP.SHOP_NUMBER IN ('E', 'EE', 'EL') THEN 'FACELEC'
 			WHEN HP.SHOP_NUMBER IN ('I', 'IC', 'J') THEN 'FACINST'
@@ -979,7 +968,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		xwalk.LegacyID [Object_ID],
-		HP.LOCATION,
 		sne.WorkOrderLocationID [WorkOrderLocationID],
 		YEAR(HP.WO_INDATE) [WorkOrderYear],
 		LEFT(LTRIM(RTRIM(HP.WO_NUMBER)), 15) [WorkOrderNumber],
@@ -1119,7 +1107,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HV.[OBJECT_ID] [Object_ID],
-		HV.LOCATION,
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' THEN 'VEH SHOP'
 			WHEN HV.[OBJECT_ID] LIKE '91%' THEN 'SE SHOP'
@@ -1231,7 +1218,6 @@ BEGIN
 	INSERT INTO [tmp].[WorkOrderCenter]
 	SELECT
 		HV.[OBJECT_ID] [Object_ID],
-		HV.LOCATION,
 		CASE
 			WHEN HV.[OBJECT_ID] LIKE '006%' THEN 'VEH SHOP'
 			WHEN HV.[OBJECT_ID] LIKE '91%' THEN 'SE SHOP'
@@ -1343,8 +1329,6 @@ BEGIN
 	INSERT INTO TransformWorkOrderCenter
 	SELECT DISTINCT
 		'[i]' [Control],
-		tmp.[Object_ID],
-		tmp.[Location],
 		tmp.WorkOrderLocationID,
 		tmp.WorkOrderYear,
 		tmp.WorkOrderNumber,
