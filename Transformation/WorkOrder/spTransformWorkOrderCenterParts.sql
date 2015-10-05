@@ -35,6 +35,7 @@ BEGIN
 	)
 
 	-- WorkOrderAdmin - Parts
+	---- Distribution
 	INSERT INTO [tmp].[WorkOrderCenterParts]
 	SELECT
 		woc.WorkOrderLocationID,
@@ -50,9 +51,30 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON WODP.WO_NUMBER = woc.WorkOrderNumber
 			AND WODP.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode lkup ON WODP.OPER_CODE = lkup.OpCode
-	WHERE ISNULL(WODP.OPER_CODE, '') <> ''
+	WHERE woc.EquipmentID NOT LIKE 'GS%'
+		AND ISNULL(WODP.OPER_CODE, '') <> ''
 		AND ISDATE(WODP.ACTION_DATE) = 1		-- TBD
-
+		
+	---- General Services
+	INSERT INTO [tmp].[WorkOrderCenterParts]
+	SELECT
+		woc.WorkOrderLocationID,
+		woc.WorkOrderYear,
+		woc.WorkOrderNumber,
+		lkup.TaskIDAlignment [TaskID],
+		WODP.ACTION_DATE [Dt],
+		'Y' [NotFromInventory],
+		WODP.PART_NUMBER [PartID],
+		WODP.PART_QTY [Quantity],
+		WODP.PART_COST [UnitPrice]
+	FROM SourceWicm251WorkOrderDetailParts WODP
+		INNER JOIN TransformWorkOrderCenter woc ON WODP.WO_NUMBER = woc.WorkOrderNumber
+			AND WODP.LOCATION = woc.Location
+		INNER JOIN TransformWorkOrderGSOpCode lkup ON WODP.OPER_CODE = lkup.OpCode
+	WHERE woc.EquipmentID LIKE 'GS%'
+		AND ISNULL(WODP.OPER_CODE, '') <> ''
+		AND ISDATE(WODP.ACTION_DATE) = 1		-- TBD
+		
 	-- Copy temp to TransformWorkOrderCenterParts
 	INSERT INTO TransformWorkOrderCenterParts
 	SELECT DISTINCT

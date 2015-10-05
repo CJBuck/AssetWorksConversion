@@ -121,7 +121,7 @@ BEGIN
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '01'
 	INSERT INTO [tmp].[WorkOrderCenterCommercial]
 	SELECT DISTINCT woc.WorkOrderLocationID, woc.WorkOrderYear, woc.WorkOrderNumber,
-		doc.TaskIDAlignment,
+		gsoc.TaskIDAlignment,
 		CASE
 			WHEN hv.[STATUS] IN ('C','D','U','I') THEN 'WICM'
 			ELSE ''
@@ -136,7 +136,7 @@ BEGIN
 			AND DS.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
-		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
+		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DS.OPER_CODE = gsoc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'
 	

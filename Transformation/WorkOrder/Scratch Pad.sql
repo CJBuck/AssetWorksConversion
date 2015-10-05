@@ -11,7 +11,7 @@ SELECT A.WorkOrderNumber, A.TaskID
 FROM TransformWorkOrderCenterParts A
 	INNER JOIN TransformWorkOrderCenter B on a.WorkOrderNumber = b.WorkOrderNumber
 where b.EquipmentID like 'GS%'
-	AND TaskID = 'DSV'
+	AND TaskID = 'DGR'
 
 SELECT A.WorkOrderNumber,B.EquipmentID, A.TaskID
 FROM TransformWorkOrderCenterTasks A
