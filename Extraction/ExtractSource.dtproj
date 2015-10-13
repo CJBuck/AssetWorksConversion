@@ -32,12 +32,12 @@
       <FullPath>Gis.dtsx</FullPath>
       <References />
     </DtsPackage>
-    <DtsPackage FormatVersion="0">
+    <DtsPackage FormatVersion="3">
       <Name>SubsystemProperty.dtsx</Name>
       <FullPath>SubsystemProperty.dtsx</FullPath>
       <References />
     </DtsPackage>
-    <DtsPackage FormatVersion="0">
+    <DtsPackage FormatVersion="3">
       <Name>SubsystemList.dtsx</Name>
       <FullPath>SubsystemList.dtsx</FullPath>
       <References />

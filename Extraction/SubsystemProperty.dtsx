@@ -10,8 +10,8 @@
 <DTS:Property DTS:Name="PackagePriorityClass">0</DTS:Property>
 <DTS:Property DTS:Name="VersionMajor">1</DTS:Property>
 <DTS:Property DTS:Name="VersionMinor">0</DTS:Property>
-<DTS:Property DTS:Name="VersionBuild">2</DTS:Property>
-<DTS:Property DTS:Name="VersionGUID">{55DF5184-848E-4E7F-9A40-6E195512BCF2}</DTS:Property>
+<DTS:Property DTS:Name="VersionBuild">10</DTS:Property>
+<DTS:Property DTS:Name="VersionGUID">{ED135F6C-DBEA-48B9-AE9B-2669C09BF90E}</DTS:Property>
 <DTS:Property DTS:Name="EnableConfig">0</DTS:Property>
 <DTS:Property DTS:Name="CheckpointFileName"></DTS:Property>
 <DTS:Property DTS:Name="SaveCheckpoints">0</DTS:Property>
@@ -72,7 +72,7 @@
 <DTS:Property DTS:Name="DTSID">{17885FE0-1895-4029-A599-6EBFF8521DBB}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">Microsoft.SqlServer.Dts.Tasks.ExecuteSQLTask.ExecuteSQLTask, Microsoft.SqlServer.SQLTask, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91</DTS:Property>
-<DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property><DTS:ObjectData><SQLTask:SqlTaskData SQLTask:Connection="{A643923C-8FC0-4295-82E9-96C7118D3CC2}" SQLTask:TimeOut="0" SQLTask:IsStoredProc="False" SQLTask:BypassPrepare="True" SQLTask:SqlStmtSourceType="DirectInput" SQLTask:SqlStatementSource="CREATE TABLE [dbo].[Staging_SubsystemProperty] (&#xA;[Division] nvarchar(255) NOT NULL,&#xA;[AssetCatagory] nvarchar(255) NOT NULL,&#xA;[KEY] nvarchar(20) NOT NULL,&#xA;[Property ] nvarchar(50) NOT NULL,&#xA;[InputType] nvarchar(20),&#xA;[ListTypeID] nvarchar(20),&#xA;[Source] nvarchar(255)&#xA;)&#xA;GO&#xA;" SQLTask:CodePage="1252" SQLTask:ResultType="ResultSetType_None" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask"/></DTS:ObjectData></DTS:Executable>
+<DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property><DTS:ObjectData><SQLTask:SqlTaskData SQLTask:Connection="{A643923C-8FC0-4295-82E9-96C7118D3CC2}" SQLTask:TimeOut="0" SQLTask:IsStoredProc="False" SQLTask:BypassPrepare="False" SQLTask:SqlStmtSourceType="DirectInput" SQLTask:SqlStatementSource="IF OBJECT_ID('Staging_SubsystemProperty') IS NOT NULL&#xA;	DROP TABLE dbo.Staging_SubsystemProperty&#xA;&#xA;CREATE TABLE [dbo].[Staging_SubsystemProperty]&#xA;(&#xA;	[Division] nvarchar(255) NOT NULL,&#xA;                [Control] nvarchar(10) NOT NULL,&#xA;	[AssetCategory] nvarchar(255) NOT NULL,&#xA;	[SubsystemID] nvarchar(20) NOT NULL,&#xA;	[Property] nvarchar(50) NOT NULL,&#xA;	[InputType] nvarchar(20),&#xA;	[ListTypeID] nvarchar(20),&#xA;                [Exclude] nchar(1),&#xA;	[Populate] nchar(1),&#xA;	[SourceTable] nvarchar(255),&#xA;	[SourceColumn] nvarchar(255)&#xA;)&#xA;GO&#xA;" SQLTask:CodePage="1252" SQLTask:ResultType="ResultSetType_None" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask"/></DTS:ObjectData></DTS:Executable>
 <DTS:Executable DTS:ExecutableType="SSIS.Pipeline.2">
 <DTS:Property DTS:Name="ExecutionLocation">0</DTS:Property>
 <DTS:Property DTS:Name="ExecutionAddress"></DTS:Property>
@@ -111,28 +111,43 @@
 <connection id="8" name="OleDbConnection" description="The OLE DB runtime connection used to access the database." connectionManagerID="{E03BF448-7DCD-4AFE-B8FE-96B639C12E82}"/></connections>
 <outputs>
 <output id="9" name="Excel Source Output" description="" exclusionGroup="0" synchronousInputId="0" deleteOutputOnPathDetached="false" hasSideEffects="false" dangling="false" isErrorOut="false" isSorted="false" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed"><outputColumns>
-<outputColumn id="15" name="Division" description="" lineageId="15" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="14" mappedColumnId="0"/>
-<outputColumn id="18" name="AssetCatagory" description="" lineageId="18" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="17" mappedColumnId="0"/>
-<outputColumn id="21" name="KEY" description="" lineageId="21" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="20" mappedColumnId="0"/>
-<outputColumn id="24" name="Property " description="" lineageId="24" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="23" mappedColumnId="0"/>
-<outputColumn id="27" name="Input Type" description="" lineageId="27" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="26" mappedColumnId="0"/>
 <outputColumn id="30" name="ListTypeID" description="" lineageId="30" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="29" mappedColumnId="0"/>
-<outputColumn id="33" name="Source" description="" lineageId="33" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="32" mappedColumnId="0"/></outputColumns><externalMetadataColumns isUsed="True">
-<externalMetadataColumn id="14" name="Division" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="17" name="AssetCatagory" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="20" name="KEY" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="23" name="Property " description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="26" name="Input Type" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<outputColumn id="71" name="Populate" description="" lineageId="71" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="70" mappedColumnId="0"/>
+<outputColumn id="74" name="SourceTable" description="" lineageId="74" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="73" mappedColumnId="0"/>
+<outputColumn id="77" name="SourceColumn" description="" lineageId="77" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="76" mappedColumnId="0"/>
+<outputColumn id="80" name="InputType" description="" lineageId="80" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="79" mappedColumnId="0"/>
+<outputColumn id="92" name="Property" description="" lineageId="92" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="91" mappedColumnId="0"/>
+<outputColumn id="99" name="AssetCategory" description="" lineageId="99" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="98" mappedColumnId="0"/>
+<outputColumn id="119" name="Control" description="" lineageId="119" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="118" mappedColumnId="0"/>
+<outputColumn id="125" name="Exclude" description="" lineageId="125" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="124" mappedColumnId="0"/>
+<outputColumn id="128" name="Notes" description="" lineageId="128" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="127" mappedColumnId="0"/>
+<outputColumn id="135" name="Division" description="" lineageId="135" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="134" mappedColumnId="0"/>
+<outputColumn id="138" name="SubsystemID" description="" lineageId="138" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="Conversion" errorRowDisposition="FailComponent" truncationRowDisposition="FailComponent" externalMetadataColumnId="137" mappedColumnId="0"/></outputColumns><externalMetadataColumns isUsed="True">
 <externalMetadataColumn id="29" name="ListTypeID" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="32" name="Source" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/></externalMetadataColumns></output>
+<externalMetadataColumn id="70" name="Populate" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="73" name="SourceTable" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="76" name="SourceColumn" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="79" name="InputType" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="91" name="Property" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="98" name="AssetCategory" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="118" name="Control" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="124" name="Exclude" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="127" name="Notes" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="134" name="Division" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="137" name="SubsystemID" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/></externalMetadataColumns></output>
 <output id="10" name="Excel Source Error Output" description="" exclusionGroup="0" synchronousInputId="0" deleteOutputOnPathDetached="false" hasSideEffects="false" dangling="false" isErrorOut="true" isSorted="false" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed"><outputColumns>
-<outputColumn id="16" name="Division" description="" lineageId="16" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
-<outputColumn id="19" name="AssetCatagory" description="" lineageId="19" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
-<outputColumn id="22" name="KEY" description="" lineageId="22" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
-<outputColumn id="25" name="Property " description="" lineageId="25" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
-<outputColumn id="28" name="Input Type" description="" lineageId="28" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="136" name="Division" description="" lineageId="136" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="120" name="Control" description="" lineageId="120" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="100" name="AssetCategory" description="" lineageId="100" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="139" name="SubsystemID" description="" lineageId="139" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="93" name="Property" description="" lineageId="93" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="81" name="InputType" description="" lineageId="81" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
 <outputColumn id="31" name="ListTypeID" description="" lineageId="31" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
-<outputColumn id="34" name="Source" description="" lineageId="34" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="126" name="Exclude" description="" lineageId="126" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="72" name="Populate" description="" lineageId="72" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="75" name="SourceTable" description="" lineageId="75" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="78" name="SourceColumn" description="" lineageId="78" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
+<outputColumn id="129" name="Notes" description="" lineageId="129" precision="0" scale="0" length="255" dataType="wstr" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="0" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
 <outputColumn id="11" name="ErrorCode" description="" lineageId="11" precision="0" scale="0" length="0" dataType="i4" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="1" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/>
 <outputColumn id="12" name="ErrorColumn" description="" lineageId="12" precision="0" scale="0" length="0" dataType="i4" codePage="0" sortKeyPosition="0" comparisonFlags="0" specialFlags="2" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="0" mappedColumnId="0"/></outputColumns><externalMetadataColumns isUsed="False"/></output>
 </outputs>
@@ -154,21 +169,29 @@
 <connection id="43" name="OleDbConnection" description="The OLE DB runtime connection used to access the database." connectionManagerID="{A643923C-8FC0-4295-82E9-96C7118D3CC2}"/></connections>
 <inputs>
 <input id="48" name="Destination Input" description="" hasSideEffects="true" dangling="false" errorOrTruncationOperation="Insert" errorRowDisposition="FailComponent" truncationRowDisposition="NotUsed"><inputColumns>
-<inputColumn id="60" name="" description="" lineageId="15" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="52" mappedColumnId="0"/>
-<inputColumn id="61" name="" description="" lineageId="18" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="53" mappedColumnId="0"/>
-<inputColumn id="62" name="" description="" lineageId="21" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="54" mappedColumnId="0"/>
-<inputColumn id="63" name="" description="" lineageId="24" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="55" mappedColumnId="0"/>
-<inputColumn id="64" name="" description="" lineageId="27" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="56" mappedColumnId="0"/>
 <inputColumn id="65" name="" description="" lineageId="30" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="57" mappedColumnId="0"/>
-<inputColumn id="66" name="" description="" lineageId="33" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="58" mappedColumnId="0"/>
+<inputColumn id="86" name="" description="" lineageId="80" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="56" mappedColumnId="0"/>
+<inputColumn id="89" name="" description="" lineageId="74" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="84" mappedColumnId="0"/>
+<inputColumn id="90" name="" description="" lineageId="77" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="85" mappedColumnId="0"/>
+<inputColumn id="95" name="" description="" lineageId="92" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="83" mappedColumnId="0"/>
+<inputColumn id="97" name="" description="" lineageId="71" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="96" mappedColumnId="0"/>
+<inputColumn id="114" name="" description="" lineageId="99" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="113" mappedColumnId="0"/>
+<inputColumn id="143" name="" description="" lineageId="135" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="52" mappedColumnId="0"/>
+<inputColumn id="144" name="" description="" lineageId="119" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="140" mappedColumnId="0"/>
+<inputColumn id="145" name="" description="" lineageId="138" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="141" mappedColumnId="0"/>
+<inputColumn id="146" name="" description="" lineageId="125" usageType="readOnly" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed" externalMetadataColumnId="142" mappedColumnId="0"/>
 </inputColumns><externalMetadataColumns isUsed="True">
 <externalMetadataColumn id="52" name="Division" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="53" name="AssetCatagory" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="54" name="KEY" description="" precision="0" scale="0" length="20" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="55" name="Property " description="" precision="0" scale="0" length="50" dataType="wstr" codePage="0" mappedColumnId="0"/>
 <externalMetadataColumn id="56" name="InputType" description="" precision="0" scale="0" length="20" dataType="wstr" codePage="0" mappedColumnId="0"/>
 <externalMetadataColumn id="57" name="ListTypeID" description="" precision="0" scale="0" length="20" dataType="wstr" codePage="0" mappedColumnId="0"/>
-<externalMetadataColumn id="58" name="Source" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/></externalMetadataColumns></input>
+<externalMetadataColumn id="83" name="Property" description="" precision="0" scale="0" length="50" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="84" name="SourceTable" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="85" name="SourceColumn" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="96" name="Populate" description="" precision="0" scale="0" length="1" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="113" name="AssetCategory" description="" precision="0" scale="0" length="255" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="140" name="Control" description="" precision="0" scale="0" length="10" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="141" name="SubsystemID" description="" precision="0" scale="0" length="20" dataType="wstr" codePage="0" mappedColumnId="0"/>
+<externalMetadataColumn id="142" name="Exclude" description="" precision="0" scale="0" length="1" dataType="wstr" codePage="0" mappedColumnId="0"/></externalMetadataColumns></input>
 </inputs>
 <outputs>
 <output id="49" name="OLE DB Destination Error Output" description="" exclusionGroup="1" synchronousInputId="48" deleteOutputOnPathDetached="false" hasSideEffects="false" dangling="false" isErrorOut="true" isSorted="false" errorOrTruncationOperation="" errorRowDisposition="NotUsed" truncationRowDisposition="NotUsed"><outputColumns>
@@ -196,7 +219,7 @@
 <DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property>
 <DTS:PackageVariable>
 <DTS:Property DTS:Name="PackageVariableValue" DTS:DataType="8">&lt;Package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0"&gt;&lt;dwd:DtsControlFlowDiagram&gt;&lt;dwd:BoundingLeft&gt;-5019&lt;/dwd:BoundingLeft&gt;&lt;dwd:BoundingTop&gt;-3064&lt;/dwd:BoundingTop&gt;&lt;dwd:Layout&gt;&lt;dds&gt;
-  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="6" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-6019" scrolltop="-1943" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="32359" y="11800" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
+  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="10" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-6019" scrolltop="-4064" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="21008" y="11800" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
     &lt;font&gt;
       &lt;ddsxmlobjectstreamwrapper binary="01010000900180380100065461686f6d61" /&gt;
     &lt;/font&gt;
@@ -207,7 +230,7 @@
   &lt;layoutmanager&gt;
     &lt;ddsxmlobj /&gt;
   &lt;/layoutmanager&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="0" top="2164" logicalid="1" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="Truncation may occur due to inserting data from data flow column &amp;quot;Exclude&amp;quot; with a length of 255 to d..." left="-5019" top="-900" logicalid="4" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -219,7 +242,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="0" top="0" logicalid="2" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="-5019" top="-3064" logicalid="5" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -231,7 +254,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="1400" top="765" logicalid="3" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="-3619" top="-2299" logicalid="6" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobj&gt;
         &lt;polyline endtypedst="3" endtypesrc="1" usercolor="32768" linestyle="0" linerender="2" customendtypedstid="0" customendtypesrcid="0" adornsvisible="1" /&gt;
@@ -245,26 +268,26 @@
       &lt;/ddsxmlobj&gt;
     &lt;/layoutobject&gt;
     &lt;connector sourceid="2" destid="1" sourceattachpoint="7" destattachpoint="6" segmenteditmode="0" bendpointeditmode="0" bendpointvisibility="2" relatedid="0" virtual="0"&gt;
-      &lt;point x="1799" y="1164" /&gt;
-      &lt;point x="1799" y="2164" /&gt;
+      &lt;point x="-3220" y="-1900" /&gt;
+      &lt;point x="-3220" y="-900" /&gt;
     &lt;/connector&gt;
   &lt;/ddscontrol&gt;
-&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-6019&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-1943&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsControlFlowDiagram&gt;&lt;/Package&gt;</DTS:Property>
+&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-6019&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-4064&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsControlFlowDiagram&gt;&lt;/Package&gt;</DTS:Property>
 <DTS:Property DTS:Name="Namespace">dts-designer-1.0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">{4A4467BD-E0BC-484C-8573-783EF1C501F6}</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{07BF37E7-55AD-4CE7-BE40-8FB36EB92051}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{F0952D09-D873-4241-B1A5-7C66934E24E2}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PackageVariable>
 <DTS:PackageVariable>
 <DTS:Property DTS:Name="PackageVariableValue" DTS:DataType="8">&lt;PrecedenceConstraint xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0"&gt;&lt;dwd:EvalOp&gt;Constraint&lt;/dwd:EvalOp&gt;&lt;/PrecedenceConstraint&gt;</DTS:Property>
 <DTS:Property DTS:Name="Namespace">dts-designer-1.0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">{9A4C8554-6AFB-4D48-8989-2C50645F6F53}</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{CB3CAEA1-1E4B-4D0C-A4ED-FC8697C1B14C}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{3ABAC544-7128-42F2-A8C5-877F360D5FFD}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PackageVariable>
 <DTS:PackageVariable>
 <DTS:Property DTS:Name="PackageVariableValue" DTS:DataType="8">&lt;TaskHost xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0"&gt;&lt;dwd:DtsDataFlowDiagram&gt;&lt;dwd:BoundingLeft&gt;-1209&lt;/dwd:BoundingLeft&gt;&lt;dwd:BoundingTop&gt;-921&lt;/dwd:BoundingTop&gt;&lt;dwd:Layout&gt;&lt;dds&gt;
-  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="7" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-2209" scrolltop="-1921" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="28152" y="5345" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="0" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
+  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="11" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-2209" scrolltop="-1921" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="21008" y="10874" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="0" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
     &lt;font&gt;
       &lt;ddsxmlobjectstreamwrapper binary="01010000900180380100065461686f6d61" /&gt;
     &lt;/font&gt;
@@ -275,7 +298,7 @@
   &lt;layoutmanager&gt;
     &lt;ddsxmlobj /&gt;
   &lt;/layoutmanager&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="OLE DB Destination" left="0" top="2164" logicalid="1" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="Truncation may occur due to inserting data from data flow column &amp;quot;ListTypeID&amp;quot; with a length of 255 t..." left="-1209" top="1243" logicalid="4" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -287,7 +310,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="Excel Source" left="0" top="0" logicalid="2" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="Excel Source" left="-1209" top="-921" logicalid="5" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -299,7 +322,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="1400" top="765" logicalid="3" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="191" top="-156" logicalid="6" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobj&gt;
         &lt;polyline endtypedst="3" endtypesrc="1" usercolor="32768" linestyle="0" linerender="1" customendtypedstid="0" customendtypesrcid="0" adornsvisible="1" /&gt;
@@ -313,26 +336,26 @@
       &lt;/ddsxmlobj&gt;
     &lt;/layoutobject&gt;
     &lt;connector sourceid="2" destid="1" sourceattachpoint="7" destattachpoint="6" segmenteditmode="0" bendpointeditmode="0" bendpointvisibility="2" relatedid="0" virtual="0"&gt;
-      &lt;point x="1799" y="1164" /&gt;
-      &lt;point x="1799" y="2164" /&gt;
+      &lt;point x="590" y="243" /&gt;
+      &lt;point x="590" y="1243" /&gt;
     &lt;/connector&gt;
   &lt;/ddscontrol&gt;
-&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-2209&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-1921&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsDataFlowDiagram&gt;&lt;/TaskHost&gt;</DTS:Property>
+&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-2209&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-1921&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsDataFlowDiagram&gt;&lt;dwd:DtsComponentDesignerPropertiesList&gt;&lt;dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:key xsi:type="xsd:string"&gt;35	TableInfoObjectType&lt;/dwd:key&gt;&lt;dwd:value xsi:type="xsd:string"&gt;Table&lt;/dwd:value&gt;&lt;/dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:key xsi:type="xsd:string"&gt;35	DataSourceViewID&lt;/dwd:key&gt;&lt;/dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:key xsi:type="xsd:string"&gt;1	DataSourceViewID&lt;/dwd:key&gt;&lt;/dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:DtsComponentDesignTimeProperty&gt;&lt;dwd:key xsi:type="xsd:string"&gt;1	TableInfoObjectType&lt;/dwd:key&gt;&lt;dwd:value xsi:type="xsd:string"&gt;Table&lt;/dwd:value&gt;&lt;/dwd:DtsComponentDesignTimeProperty&gt;&lt;/dwd:DtsComponentDesignerPropertiesList&gt;&lt;/TaskHost&gt;</DTS:Property>
 <DTS:Property DTS:Name="Namespace">dts-designer-1.0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">{BC5F0AF3-85B8-47A3-9035-9AA04B881A28}</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{26DF1E09-4578-45F6-BA8F-3AA1C6948F64}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{B912ACB9-C972-497B-B4E0-1D9B4F638E32}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PackageVariable>
 <DTS:PackageVariable>
 <DTS:Property DTS:Name="PackageVariableValue" DTS:DataType="8">&lt;PipelinePath xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0"&gt;&lt;dwd:SourceName&gt;Excel Source Output&lt;/dwd:SourceName&gt;&lt;dwd:DestinationName&gt;Destination Input&lt;/dwd:DestinationName&gt;&lt;/PipelinePath&gt;</DTS:Property>
 <DTS:Property DTS:Name="Namespace">dts-designer-1.0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">{BC5F0AF3-85B8-47A3-9035-9AA04B881A28}-59</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{E75AFDEA-7AF7-43EF-B194-F8FC200835DE}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{4A7E3759-F7E1-4D54-B063-57CA0D2D9DBA}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PackageVariable>
 <DTS:PackageVariable>
 <DTS:Property DTS:Name="PackageVariableValue" DTS:DataType="8">&lt;Package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ddl2="http://schemas.microsoft.com/analysisservices/2003/engine/2" xmlns:ddl2_2="http://schemas.microsoft.com/analysisservices/2003/engine/2/2" xmlns:ddl100_100="http://schemas.microsoft.com/analysisservices/2008/engine/100/100" xmlns:dwd="http://schemas.microsoft.com/DataWarehouse/Designer/1.0"&gt;&lt;dwd:DtsControlFlowDiagram&gt;&lt;dwd:BoundingLeft&gt;-5019&lt;/dwd:BoundingLeft&gt;&lt;dwd:BoundingTop&gt;-3064&lt;/dwd:BoundingTop&gt;&lt;dwd:Layout&gt;&lt;dds&gt;
-  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="6" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-6019" scrolltop="-1943" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="32359" y="11800" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
+  &lt;diagram fontclsid="{0BE35203-8F91-11CE-9DE3-00AA004BB851}" mouseiconclsid="{0BE35204-8F91-11CE-9DE3-00AA004BB851}" defaultlayout="Microsoft.DataWarehouse.Layout.GraphLayout100" defaultlineroute="Microsoft.DataWarehouse.Layout.GraphLayout100" version="7" nextobject="10" scale="100" pagebreakanchorx="0" pagebreakanchory="0" pagebreaksizex="0" pagebreaksizey="0" scrollleft="-6019" scrolltop="-4064" gridx="150" gridy="150" marginx="1000" marginy="1000" zoom="100" x="21008" y="11800" backcolor="15334399" defaultpersistence="2" PrintPageNumbersMode="3" PrintMarginTop="0" PrintMarginBottom="635" PrintMarginLeft="0" PrintMarginRight="0" marqueeselectionmode="1" mousepointer="0" snaptogrid="0" autotypeannotation="1" showscrollbars="0" viewpagebreaks="0" donotforceconnectorsbehindshapes="1" backpictureclsid="{00000000-0000-0000-0000-000000000000}"&gt;
     &lt;font&gt;
       &lt;ddsxmlobjectstreamwrapper binary="01010000900180380100065461686f6d61" /&gt;
     &lt;/font&gt;
@@ -343,7 +366,7 @@
   &lt;layoutmanager&gt;
     &lt;ddsxmlobj /&gt;
   &lt;/layoutmanager&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="0" top="2164" logicalid="1" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" tooltip="Truncation may occur due to inserting data from data flow column &amp;quot;Exclude&amp;quot; with a length of 255 to d..." left="-5019" top="-900" logicalid="4" controlid="1" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -355,7 +378,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="0" top="0" logicalid="2" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="DdsShapes.DdsObjectManagedBridge.2" left="-5019" top="-3064" logicalid="5" controlid="2" masterid="0" hint1="0" hint2="0" width="3598" height="1164" noresize="0" nomove="0" nodefaultattachpoints="0" autodrag="1" usedefaultiddshape="1" selectable="1" showselectionhandles="1" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobjectstreaminitwrapper binary="000800000e0e00008c040000" /&gt;
     &lt;/control&gt;
@@ -367,7 +390,7 @@
     &lt;/layoutobject&gt;
     &lt;shape groupshapeid="0" groupnode="0" /&gt;
   &lt;/ddscontrol&gt;
-  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="1400" top="765" logicalid="3" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
+  &lt;ddscontrol controlprogid="MSDDS.Polyline" left="-3619" top="-2299" logicalid="6" controlid="3" masterid="0" hint1="0" hint2="0" width="799" height="1899" noresize="0" nomove="0" nodefaultattachpoints="1" autodrag="0" usedefaultiddshape="0" selectable="1" showselectionhandles="0" allownudging="1" isannotation="0" dontautolayout="0" groupcollapsed="0" tabstop="1" visible="1" snaptogrid="0"&gt;
     &lt;control&gt;
       &lt;ddsxmlobj&gt;
         &lt;polyline endtypedst="3" endtypesrc="1" usercolor="32768" linestyle="0" linerender="2" customendtypedstid="0" customendtypesrcid="0" adornsvisible="1" /&gt;
@@ -381,13 +404,13 @@
       &lt;/ddsxmlobj&gt;
     &lt;/layoutobject&gt;
     &lt;connector sourceid="2" destid="1" sourceattachpoint="7" destattachpoint="6" segmenteditmode="0" bendpointeditmode="0" bendpointvisibility="2" relatedid="0" virtual="0"&gt;
-      &lt;point x="1799" y="1164" /&gt;
-      &lt;point x="1799" y="2164" /&gt;
+      &lt;point x="-3220" y="-1900" /&gt;
+      &lt;point x="-3220" y="-900" /&gt;
     &lt;/connector&gt;
   &lt;/ddscontrol&gt;
-&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-6019&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-1943&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsControlFlowDiagram&gt;&lt;/Package&gt;</DTS:Property>
+&lt;/dds&gt;&lt;/dwd:Layout&gt;&lt;dwd:PersistedViewPortLeft&gt;-6019&lt;/dwd:PersistedViewPortLeft&gt;&lt;dwd:PersistedViewPortTop&gt;-4064&lt;/dwd:PersistedViewPortTop&gt;&lt;/dwd:DtsControlFlowDiagram&gt;&lt;/Package&gt;</DTS:Property>
 <DTS:Property DTS:Name="Namespace">dts-designer-1.0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">package-diagram</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{DA22759F-B8ED-4E16-9C62-E6E8EED95141}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{55F357F3-F5FE-4B8D-B20C-CAC3CA0471F9}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PackageVariable></DTS:Executable>
