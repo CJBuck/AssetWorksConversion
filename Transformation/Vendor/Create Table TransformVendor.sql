@@ -22,38 +22,10 @@ GO
 CREATE TABLE [dbo].[TransformVendor](
 	[Control] [varchar](10) NOT NULL,
 	[VendorID] [varchar](15) NOT NULL,
-	[VendorName] [varchar](35) NULL,
-	[VendorContactName] [varchar](35) NULL,
-	[Address1] [varchar](30) NULL,
-	[Address2] [varchar](30) NULL,
-	[Address3] [varchar](30) NULL,
-	[Address4] [varchar](30) NULL,
-	[Phone] [varchar](30) NULL,
-	[Fax] [varchar](30) NULL,
-	[AccountingSysNo] [varchar](30) NULL,
-	[Active] [char](1) NULL,
-	[MinorityOwned] [char](1) NULL,
-	[MinorityOwnedExp] [datetime] NULL,
-	[EmailAddress] [varchar](200) NULL,
-	[VendorTypeID] [varchar](20) NOT NULL,
-	[IsEquipVendor] [char](1) NULL,
-	[IsEquipWarrantyVendor] [char](1) NULL,
-	[IsCommercialVendor] [char](1) NULL,
-	[IsPartsVendor] [char](1) NULL,
-	[IsPartsWarrantyVendor] [char](1) NULL,
-	[IsPartsReprVendor] [char](1) NULL,
-	[IsFuelVendor] [char](1) NULL,
-	[IsTestVendor] [char](1) NULL,
-	[CurrencyCode] [varchar](3) NULL,
-	[MinOrderValue] [decimal](22, 2) NULL,
-	[SettlementTerms] [varchar](60) NULL,
-	[SystemWideVendor] [char](1) NULL,
-	[ContactTypeID] [varchar](20) NULL,
-	[LocationCode] [varchar](10) NULL,
-	[ContactName] [varchar](35) NULL,
-	[ContactPhone] [varchar](30) NULL,
-	[ContactFax] [varchar](30) NULL,
-	[ContactEmailAddr] [varchar](200) NULL,
+	[WICMVendorName] [varchar](100) NULL,
+	[MUNISVendorName] [varchar](100) NULL,
+	[MUNISVendorID] [varchar](25) NULL,
+	[VendorStatusID] [varchar](10) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 
@@ -64,11 +36,13 @@ GO
 
 -- Copy data from staging to TransformVendor
 INSERT INTO TransformVendor
-(	[Control], VendorID, VendorName, Active, VendorTypeID, CurrencyCode, SystemWideVendor, CreateDt	)
+(	[Control], VendorID, WICMVendorName, MUNISVendorName, MUNISVendorID, VendorStatusID, CreateDt	)
 SELECT 
 	'[i]',
-	stv.VendorID,
-	stv.VendorName,
-	'Y', '', '', '',	-- NULL handling
+	LTRIM(RTRIM(stv.VendorID)),
+	LTRIM(RTRIM(stv.WICMVendorName)),
+	LTRIM(RTRIM(stv.MunisVendorName)),
+	LTRIM(RTRIM(stv.MunisVendorID)),
+	LTRIM(RTRIM(stv.[Vendor Status ID])),
 	GETDATE()
 FROM Staging_TransformVendor stv
