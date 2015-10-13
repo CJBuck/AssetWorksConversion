@@ -2,7 +2,7 @@ USE [AssetWorksConversion]
 GO
 
 /****** Object:  Table [dbo].[TransformEquipmentSubsystemProperty]    Script Date: 07/22/2015 14:12:52 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TransformEquipmentSubsystemProperty]') AND type in (N'U'))
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TransformEquipmentSubsystemProperty]') AND type in (N'U'))
 DROP TABLE [dbo].[TransformEquipmentSubsystemProperty]
 GO
 
@@ -20,12 +20,11 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [dbo].[TransformEquipmentSubsystemProperty](
-	[Control] [varchar] (10) NOT NULL,
-	[SubsystemID] [varchar](20) NOT NULL,
-	[PropertyID] [varchar](50) NOT NULL,
-	[InputType] [varchar](20) NULL,
-	[ListTypeID] [varchar](20) NULL,
-	[CreateDt] [datetime] NOT NULL
+	[Control] [nvarchar] (10) NOT NULL,
+	[SubsystemID] [nvarchar](20) NOT NULL,
+	[PropertyID] [nvarchar](50) NOT NULL,
+	[InputType] [nvarchar](20) NULL,
+	[ListTypeID] [nvarchar](20) NULL,
 ) ON [PRIMARY]
 
 GO

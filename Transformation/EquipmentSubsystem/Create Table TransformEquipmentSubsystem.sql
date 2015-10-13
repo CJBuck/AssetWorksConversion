@@ -30,9 +30,9 @@ SET ANSI_PADDING ON
 GO
 
 CREATE TABLE [dbo].[TransformEquipmentSubsystem](
-	[Control] [varchar] (10) NOT NULL,
-	[SubsystemID] [varchar](20) NOT NULL,
-	[SubsystemProperty] [varchar](20) NOT NULL,
+	[Control] [nvarchar] (10) NOT NULL,
+	[SubsystemID] [nvarchar](20) NOT NULL,
+	[SubsystemProperty] [nvarchar](20) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 
