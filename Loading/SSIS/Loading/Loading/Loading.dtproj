@@ -33,6 +33,16 @@
       <References />
     </DtsPackage>
     <DtsPackage FormatVersion="3">
+      <Name>EquipmentClass.dtsx</Name>
+      <FullPath>EquipmentClass.dtsx</FullPath>
+      <References />
+    </DtsPackage>
+    <DtsPackage FormatVersion="3">
+      <Name>EquipmentSubsystem.dtsx</Name>
+      <FullPath>EquipmentSubsystem.dtsx</FullPath>
+      <References />
+    </DtsPackage>
+    <DtsPackage FormatVersion="3">
       <Name>EquipmentType.dtsx</Name>
       <FullPath>EquipmentType.dtsx</FullPath>
       <References />
@@ -43,18 +53,8 @@
       <References />
     </DtsPackage>
     <DtsPackage FormatVersion="3">
-      <Name>EquipmentClass.dtsx</Name>
-      <FullPath>EquipmentClass.dtsx</FullPath>
-      <References />
-    </DtsPackage>
-    <DtsPackage FormatVersion="3">
-<<<<<<< HEAD
       <Name>PurchaseOrders.dtsx</Name>
       <FullPath>PurchaseOrders.dtsx</FullPath>
-=======
-      <Name>EquipmentSubsystem.dtsx</Name>
-      <FullPath>EquipmentSubsystem.dtsx</FullPath>
->>>>>>> origin/master
       <References />
     </DtsPackage>
   </DTSPackages>

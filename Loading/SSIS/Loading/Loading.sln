@@ -1,16 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{D183A3D8-5FD8-494B-B014-37F57B35E655}") = "Loading", "Loading\Loading.dtproj", "{1E314945-39F3-4155-A7CE-084948296C45}"
+Project("{D183A3D8-5FD8-494B-B014-37F57B35E655}") = "Loading", "Loading\Loading.dtproj", "{FEF4D71C-1593-4839-812C-C15EE75A1A10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Development|Default = Development|Default
-		Description = Last Updated: 10/02/2015
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E314945-39F3-4155-A7CE-084948296C45}.Development|Default.ActiveCfg = Development
-		{1E314945-39F3-4155-A7CE-084948296C45}.Development|Default.Build.0 = Development
+		{FEF4D71C-1593-4839-812C-C15EE75A1A10}.Development|Default.ActiveCfg = Development
+		{FEF4D71C-1593-4839-812C-C15EE75A1A10}.Development|Default.Build.0 = Development
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,7 +11,7 @@
 <DTS:Property DTS:Name="VersionMajor">1</DTS:Property>
 <DTS:Property DTS:Name="VersionMinor">0</DTS:Property>
 <DTS:Property DTS:Name="VersionBuild">83</DTS:Property>
-<DTS:Property DTS:Name="VersionGUID">{569D0C96-B3BE-42C9-94E9-BE8632FCBD84}</DTS:Property>
+<DTS:Property DTS:Name="VersionGUID">{4CF0066D-D379-4F51-B32B-72DA2E2D6C78}</DTS:Property>
 <DTS:Property DTS:Name="EnableConfig">-1</DTS:Property>
 <DTS:Property DTS:Name="CheckpointFileName"></DTS:Property>
 <DTS:Property DTS:Name="SaveCheckpoints">0</DTS:Property>
@@ -32,7 +32,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">EXCEL</DTS:Property><DTS:PropertyExpression DTS:Name="ExcelFilePath">@[User::ComponentFileName]</DTS:PropertyExpression><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="Retain">0</DTS:Property>
-<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\Component\CurrentCycle\Data\Component - 20151002.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
+<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\Component\CurrentCycle\Data\Component - 20151014.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
 <DTS:ConnectionManager>
 <DTS:Property DTS:Name="DelayValidation">0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">ComponentRelationship - Template.xlsx</DTS:Property>
@@ -64,7 +64,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">EXCEL</DTS:Property><DTS:PropertyExpression DTS:Name="ExcelFilePath">@[User::EquipFileName]</DTS:PropertyExpression><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="Retain">0</DTS:Property>
-<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\Equipment\CurrentCycle\Data\Equipment - 20151002.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
+<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\Equipment\CurrentCycle\Data\Equipment - 20151014.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
 <DTS:ConnectionManager>
 <DTS:Property DTS:Name="DelayValidation">0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">EquipmentManufacturer - Template.xlsx</DTS:Property>
@@ -80,7 +80,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">EXCEL</DTS:Property><DTS:PropertyExpression DTS:Name="ExcelFilePath">@[User::MfrFileName]</DTS:PropertyExpression><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="Retain">0</DTS:Property>
-<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\EquipmentManufacturer\CurrentCycle\Data\EquipmentManufacturer - 20151002.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
+<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Z:\REPOS\AssetWorksConversion\Loading\EquipmentManufacturer\CurrentCycle\Data\EquipmentManufacturer - 20151014.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
 <DTS:Configuration>
 <DTS:Property DTS:Name="ConfigurationType">2</DTS:Property>
 <DTS:Property DTS:Name="ConfigurationString">AWROOT</DTS:Property>
@@ -111,7 +111,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\Component\CurrentCycle\Data\Component - 20151002.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\Component\CurrentCycle\Data\Component - 20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">ComponentFileName</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{AEBB7D12-B4BB-4CC2-8C33-31F62855D90B}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -126,7 +126,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\ComponentRelationship\CurrentCycle\Data\ComponentRelationship - 20151002.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\ComponentRelationship\CurrentCycle\Data\ComponentRelationship - 20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">ComponentRelationship</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{73BDAF3E-8313-4527-9010-D12809C3D7BD}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -137,7 +137,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151002</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151014</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">DateStamp</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{53D33371-51F5-4D47-BF97-31491259E36C}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -152,7 +152,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\Equipment\CurrentCycle\Data\Equipment - 20151002.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\Equipment\CurrentCycle\Data\Equipment - 20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">EquipFileName</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{D5A8FD14-CE98-48CD-B44A-0458C556E4FE}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -167,7 +167,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\EquipmentManufacturer\CurrentCycle\Data\EquipmentManufacturer - 20151002.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">Z:\REPOS\AssetWorksConversion\Loading\EquipmentManufacturer\CurrentCycle\Data\EquipmentManufacturer - 20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">MfrFileName</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{1305C444-B659-4E38-9F5B-588E7A02AECC}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -2344,7 +2344,7 @@ FROM TargetEquipment</property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PrecedenceConstraint>
 <DTS:Property DTS:Name="ObjectName">Equipment</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{1ADADD7C-1801-4196-B10F-4D96CCBB149E}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{D955094E-50C5-4B01-82AC-3CEE34A3F631}</DTS:Property>
 <DTS:Property DTS:Name="Description">Last Updated: 06/11/2015</DTS:Property>
 <DTS:Property DTS:Name="CreationName">SSIS.Package.2</DTS:Property>
 <DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property>

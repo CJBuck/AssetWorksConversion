@@ -11,7 +11,7 @@
 <DTS:Property DTS:Name="VersionMajor">1</DTS:Property>
 <DTS:Property DTS:Name="VersionMinor">0</DTS:Property>
 <DTS:Property DTS:Name="VersionBuild">34</DTS:Property>
-<DTS:Property DTS:Name="VersionGUID">{06E885ED-6C8E-45FD-8F5F-E310C92DCD49}</DTS:Property>
+<DTS:Property DTS:Name="VersionGUID">{473A81F7-5B7C-4BD8-B1A9-8448DB1BF002}</DTS:Property>
 <DTS:Property DTS:Name="EnableConfig">0</DTS:Property>
 <DTS:Property DTS:Name="CheckpointFileName"></DTS:Property>
 <DTS:Property DTS:Name="SaveCheckpoints">0</DTS:Property>
@@ -32,7 +32,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">EXCEL</DTS:Property><DTS:PropertyExpression DTS:Name="ExcelFilePath">@[User::POFileName]</DTS:PropertyExpression><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="Retain">0</DTS:Property>
-<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\CBuck\Documents\GitHub\AssetWorksConversion\Loading\PurchaseOrders\CurrentCycle\Data\Purchase Orders - 20151002.xlsx;Extended Properties="EXCEL 12.0;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
+<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\CBuck\Documents\GitHub\AssetWorksConversion\Loading\PurchaseOrders\CurrentCycle\Data\Purchase Orders - 20151014.xlsx;Extended Properties="EXCEL 12.0;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
 <DTS:ConnectionManager>
 <DTS:Property DTS:Name="DelayValidation">0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">Purchase Orders - Template.xlsx</DTS:Property>
@@ -59,7 +59,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151002</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151014</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">DateStamp</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{E4594D62-2689-42CF-AB0E-14A8B06B97DF}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -74,7 +74,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">C:\Users\CBuck\Documents\GitHub\AssetWorksConversion\Loading\PurchaseOrders\CurrentCycle\Data\Purchase Orders - 20151002.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">C:\Users\CBuck\Documents\GitHub\AssetWorksConversion\Loading\PurchaseOrders\CurrentCycle\Data\Purchase Orders - 20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">POFileName</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{9E46E518-FA43-4842-961D-12204CFE20BB}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -780,7 +780,7 @@ FROM TargetPurchaseOrdersLineItems</property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PrecedenceConstraint>
 <DTS:Property DTS:Name="ObjectName">PurchaseOrders</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{FB5A1284-F95A-454D-86B7-B18171395CF0}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{2FA2A379-BB23-4E99-A5FE-7FD4EB6DF989}</DTS:Property>
 <DTS:Property DTS:Name="Description">Last Updated: 10/02/2015</DTS:Property>
 <DTS:Property DTS:Name="CreationName">SSIS.Package.2</DTS:Property>
 <DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property>

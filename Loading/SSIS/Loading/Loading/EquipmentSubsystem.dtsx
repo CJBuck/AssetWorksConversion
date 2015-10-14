@@ -11,7 +11,7 @@
 <DTS:Property DTS:Name="VersionMajor">1</DTS:Property>
 <DTS:Property DTS:Name="VersionMinor">0</DTS:Property>
 <DTS:Property DTS:Name="VersionBuild">16</DTS:Property>
-<DTS:Property DTS:Name="VersionGUID">{0BC01A9E-7EB0-444F-A1D5-1C99B3BBBFA6}</DTS:Property>
+<DTS:Property DTS:Name="VersionGUID">{C3EB4165-9D03-400E-80C5-750C7C84C926}</DTS:Property>
 <DTS:Property DTS:Name="EnableConfig">0</DTS:Property>
 <DTS:Property DTS:Name="CheckpointFileName"></DTS:Property>
 <DTS:Property DTS:Name="SaveCheckpoints">0</DTS:Property>
@@ -32,7 +32,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">EXCEL</DTS:Property><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="Retain">0</DTS:Property>
-<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\amazon\waterworks\Projects\RENEWS\AMP\AssetWorks\A.9 Data Conversion\06 Loading\EquipmentSubsystems\CurrentCycle\Data\EquipmentSubsystem.Working.xlsx;Extended Properties="Excel 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
+<DTS:Property DTS:Name="ConnectionString">Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\\amazon\waterworks\Projects\RENEWS\AMP\AssetWorks\A.9 Data Conversion\06 Loading\EquipmentSubsystems\CurrentCycle\Data\EquipmentSubsystem.Working.xlsx;Extended Properties="EXCEL 12.0 XML;HDR=YES";</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
 <DTS:ConnectionManager>
 <DTS:Property DTS:Name="DelayValidation">0</DTS:Property>
 <DTS:Property DTS:Name="ObjectName">EquipmentSubsystem.Template.xlsx</DTS:Property>
@@ -49,7 +49,7 @@
 <DTS:Property DTS:Name="CreationName">FILE</DTS:Property><DTS:ObjectData><DTS:ConnectionManager>
 <DTS:Property DTS:Name="FileUsageType">1</DTS:Property>
 <DTS:Property DTS:Name="ConnectionString">\\amazon\waterworks\Projects\RENEWS\AMP\AssetWorks\A.9 Data Conversion\06 Loading\EquipmentSubsystems\CurrentCycle\Data\EquipmentSubsystem.Working.xlsx</DTS:Property></DTS:ConnectionManager></DTS:ObjectData></DTS:ConnectionManager>
-<DTS:Property DTS:Name="LastModifiedProductVersion">10.0.6000.29</DTS:Property>
+<DTS:Property DTS:Name="LastModifiedProductVersion">10.50.1600.1</DTS:Property>
 <DTS:Property DTS:Name="ForceExecValue">0</DTS:Property>
 <DTS:Property DTS:Name="ExecValue" DTS:DataType="3">0</DTS:Property>
 <DTS:Property DTS:Name="ForceExecutionResult">-1</DTS:Property>
@@ -67,7 +67,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151001</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">20151014</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">DateStamp</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{39EB0324-9FB5-4BD6-A382-8B88F328CA6A}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -78,7 +78,7 @@
 <DTS:Property DTS:Name="Namespace">User</DTS:Property>
 <DTS:Property DTS:Name="ReadOnly">0</DTS:Property>
 <DTS:Property DTS:Name="RaiseChangedEvent">0</DTS:Property>
-<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">R:\Projects\RENEWS\AMP\AssetWorks\A.9 Data Conversion\06 Loading\EquipmentSubsystems\CurrentCycle\Data\EquipmentSubsystem.20151001.xlsx</DTS:VariableValue>
+<DTS:Property DTS:Name="IncludeInDebugDump">2345</DTS:Property><DTS:VariableValue DTS:DataType="8">R:\Projects\RENEWS\AMP\AssetWorks\A.9 Data Conversion\06 Loading\EquipmentSubsystems\CurrentCycle\Data\EquipmentSubsystem.20151014.xlsx</DTS:VariableValue>
 <DTS:Property DTS:Name="ObjectName">EquipmentSubsystemFile</DTS:Property>
 <DTS:Property DTS:Name="DTSID">{5E7AD105-93EA-480C-9460-2172EA06F772}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
@@ -374,7 +374,7 @@
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName"></DTS:Property></DTS:PrecedenceConstraint>
 <DTS:Property DTS:Name="ObjectName">EquipmentSubsystem</DTS:Property>
-<DTS:Property DTS:Name="DTSID">{C320B3B8-8A14-45C9-AA19-BF5594EA281E}</DTS:Property>
+<DTS:Property DTS:Name="DTSID">{9F697A69-4E23-4E95-9AD3-97B16DDEAAA4}</DTS:Property>
 <DTS:Property DTS:Name="Description"></DTS:Property>
 <DTS:Property DTS:Name="CreationName">SSIS.Package.2</DTS:Property>
 <DTS:Property DTS:Name="DisableEventHandlers">0</DTS:Property>
