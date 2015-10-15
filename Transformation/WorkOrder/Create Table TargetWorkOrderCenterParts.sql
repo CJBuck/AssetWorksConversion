@@ -24,8 +24,10 @@ CREATE TABLE [dbo].[TargetWorkOrderCenterParts](
 	[Dt] [datetime] NOT NULL,
 	[NotFromInventory] [char](1) NOT NULL,
 	[PartID] [varchar](22) NOT NULL,
+	[PartSuffix] [varchar](2) NOT NULL,
 	[Quantity] [decimal](10,2) NOT NULL,
 	[UnitPrice] [decimal](10,4) NOT NULL,
+	[PartKeywordAndShortDescription] [varchar](140) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO

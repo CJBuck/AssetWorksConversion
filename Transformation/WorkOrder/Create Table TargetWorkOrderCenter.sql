@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[TargetWorkOrderCenter](
 	[Meter2] [int] NULL,
 	[PriorityID] [varchar](2) NOT NULL,
 	[PMService] [varchar](12) NULL,
+	[PMScheduled] [datetime] NULL,
 	[RepairReasonID] [varchar](4) NOT NULL,
 	[OutOfServiceDt] [datetime] NOT NULL,
 	[InDt] [datetime] NOT NULL,

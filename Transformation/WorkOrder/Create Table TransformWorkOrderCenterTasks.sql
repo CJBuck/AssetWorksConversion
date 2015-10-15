@@ -22,6 +22,7 @@ CREATE TABLE [dbo].[TransformWorkOrderCenterTasks](
 	[WorkOrderNumber] [varchar](15) NULL,
 	[TaskID] [varchar](12) NULL,
 	[WorkAccomplishedCode] [varchar](4) NULL,
+	[UpdatePMSchedule] [varchar](4) NULL,
 	[Comments] [varchar](100) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]

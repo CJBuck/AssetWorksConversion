@@ -1,32 +1,11 @@
 --
-SELECT distinct A.TaskID
-FROM TransformWorkOrderCenterParts A
-INNER JOIN TransformWorkOrderCenter B on a.WorkOrderNumber = b.WorkOrderNumber
-where b.EquipmentID like 'GS%'
-AND TaskID like 'D%'
-
-select * from TransformWorkOrderCenter WHERE EquipmentID = 'GS910428' and WorkOrderNumber = '027329'
-
-SELECT A.WorkOrderNumber, A.TaskID
-FROM TransformWorkOrderCenterParts A
-	INNER JOIN TransformWorkOrderCenter B on a.WorkOrderNumber = b.WorkOrderNumber
-where b.EquipmentID like 'GS%'
-	AND TaskID = 'DGR'
-
-SELECT A.WorkOrderNumber,B.EquipmentID, A.TaskID
-FROM TransformWorkOrderCenterTasks A
-	INNER JOIN TransformWorkOrderCenter B on a.WorkOrderNumber = b.WorkOrderNumber
-where b.EquipmentID like 'GS%'
-	AND A.TaskID = 'DSV'
-	
-select * from TransformWorkOrderCenterTasks where WorkOrderNumber = '027329'
+select *
+from TransformWorkOrderCenterTasks where WorkOrderNumber = '120071'
 
 select *
-from TransformWorkOrderGSOpCode
-where TaskIDAlignment = 'DSV'
+from SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair
+where WO_NUMBER = '120000'
 
-select * from TransformComponentLegacyXwalk
-where AssetID = 'GS910428'
-
-select * from SourceWicm250WorkOrderHeaderProjects
-where WO_NUMBER = '027329'
+select *
+from TransformWorkOrderCenter
+where WorkOrderNumber = '120071'

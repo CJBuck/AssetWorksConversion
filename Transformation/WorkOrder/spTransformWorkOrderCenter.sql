@@ -1,7 +1,8 @@
 --	=================================================================================================
 --	Created By:		Chris Buck
 --	Create Date:	07/29/2015
---	Updates:
+--	Update Date:
+--			CJB 10/15/2015 - Added new column and logic for 'PMScheduled'.
 --	Description:	Creates/modifies the spTransformWorkOrderCenter stored procedure.  Populates
 --					the TransportWorkOrderCenter table.
 --	=================================================================================================
@@ -35,6 +36,7 @@ BEGIN
 		[Meter2] [int] NULL,
 		[PriorityID] [varchar](2) NULL,
 		[PMService] [varchar](12) NULL,
+		[PMScheduled] [datetime] NULL,
 		[RepairReasonID] [varchar](4) NULL,
 		[OutOfServiceDt] [datetime] NULL,
 		[InDt] [datetime] NULL,
@@ -79,6 +81,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
@@ -163,6 +166,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
@@ -251,6 +255,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
@@ -336,6 +341,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
@@ -421,6 +427,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
@@ -510,6 +517,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
@@ -593,6 +601,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
@@ -674,6 +683,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
@@ -756,6 +766,7 @@ BEGIN
 		NULL [Meter2],
 		'D4' [PriorityID],
 		'' [PMService],
+		NULL [PMScheduled],
 		'NSR' [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
@@ -875,6 +886,11 @@ BEGIN
 					END
 			ELSE 'FGR'
 		END [PMService],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN '2016-02-08'
+			ELSE NULL
+		END [PMScheduled],
 		CASE
 			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
 				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN ''
@@ -1017,6 +1033,11 @@ BEGIN
 		END [PMService],
 		CASE
 			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN '2016-02-08'
+			ELSE NULL
+		END [PMScheduled],
+		CASE
+			WHEN HP.OP_CODE1 IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
 				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN ''
 			ELSE 'NSR'
 		END [RepairReasonID],
@@ -1151,6 +1172,10 @@ BEGIN
 			ELSE ''
 		END [PMService],
 		CASE
+			WHEN opc.RepairPM = 'PM' THEN '2016-02-08'
+			ELSE NULL
+		END [PMScheduled],
+		CASE
 			WHEN opc.RepairPM = 'REPAIR' THEN 'NSR'
 			ELSE ''
 		END [RepairReasonID],
@@ -1263,6 +1288,10 @@ BEGIN
 			ELSE ''
 		END [PMService],
 		CASE
+			WHEN opc.RepairPM = 'PM' THEN '2016-02-08'
+			ELSE NULL
+		END [PMScheduled],
+		CASE
 			WHEN opc.RepairPM = 'REPAIR' THEN 'NSR'
 			ELSE ''
 		END [RepairReasonID],
@@ -1355,6 +1384,7 @@ BEGIN
 		tmp.Meter2,
 		tmp.PriorityID,
 		tmp.PMService,
+		tmp.PMScheduled,
 		tmp.RepairReasonID,
 		tmp.OutOfServiceDt,
 		tmp.InDt,

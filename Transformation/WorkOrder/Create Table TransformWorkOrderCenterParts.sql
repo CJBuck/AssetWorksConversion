@@ -24,8 +24,10 @@ CREATE TABLE [dbo].[TransformWorkOrderCenterParts](
 	[Dt] [datetime] NULL,
 	[NotFromInventory] [char](1) NULL,
 	[PartID] [varchar](22) NULL,
+	[PartSuffix] [varchar](2) NULL,
 	[Quantity] [decimal](10,2) NULL,
 	[UnitPrice] [decimal](10,4) NULL,
+	[PartKeywordAndShortDescription] [varchar](140) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO
