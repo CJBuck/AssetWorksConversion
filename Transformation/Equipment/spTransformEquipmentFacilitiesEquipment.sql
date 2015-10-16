@@ -253,7 +253,7 @@ BEGIN
 		'Y' [WorkOrders],
 		'N' [UsageTickets],
 		'N' [FuelTickets],
-		'' [Comments],
+		'WICM VENDOR ID: ' + LTRIM(RTRIM(OE.VENDOR)) [Comments],
 		CASE OE.CRITICALITY
 			WHEN '1' THEN 'F1'
 			WHEN '2' THEN 'F2'
@@ -398,7 +398,9 @@ BEGIN
 
 	-- Comments
 	UPDATE tmp.StagingEquip
-	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1] + ' ' + oee.[SPECL-INST2] + ' ' + oee.[SPECL-INST3] + ' ' + oee.[SPECL-INST4]))
+	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1])) + ' ' + LTRIM(RTRIM(oee.[SPECL-INST2])) + ' ' + 
+		LTRIM(RTRIM(oee.[SPECL-INST3])) + ' ' + LTRIM(RTRIM(oee.[SPECL-INST4]))
+		 + CHAR(13) + CHAR(10) + FACS.Comments
 	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm212ObjectExtensionEquipment oee ON FACS.[Object_ID] = oee.[OBJECT_ID]
 
