@@ -51,7 +51,7 @@ BEGIN
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
-		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + 'WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
+		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + ', WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha ON DS.WO_NUMBER = ha.WO_NUMBER
 			AND DS.LOCATION = ha.LOCATION
@@ -73,7 +73,7 @@ BEGIN
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
-		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + 'WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
+		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + ', WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp ON DS.WO_NUMBER = hp.WO_NUMBER
 			AND DS.LOCATION = hp.LOCATION
@@ -95,7 +95,7 @@ BEGIN
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
-		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + 'WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
+		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + ', WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DS.WO_NUMBER = hv.WO_NUMBER
 			AND DS.LOCATION = hv.LOCATION
@@ -109,20 +109,28 @@ BEGIN
 	-- WORKORDERPLANT
 	INSERT INTO [tmp].[WorkOrderCenterCommercial]
 	SELECT DISTINCT woc.WorkOrderLocationID, woc.WorkOrderYear, woc.WorkOrderNumber,
-		doc.TaskIDAlignment,
+		CASE
+			WHEN DS.OPER_CODE IN ('ANNU', 'EM01', 'EQ01', 'ES01', 'EY01', 'EY02', 'IM01', 'IM02', 'IQ01',
+				'IS01', 'IY01', 'MM01', 'MM02', 'MQ01', 'MS01', 'MY01', 'MY02', 'MY03', 'MY05', 'SEMI') THEN
+					CASE
+						WHEN DS.OPER_CODE = 'ANNU' THEN 'IY01'
+						WHEN DS.OPER_CODE = 'SEMI' THEN 'IS01'
+						ELSE DS.OPER_CODE
+					END
+			ELSE 'FGR'
+		END [TaskID],
 		hp.WO_STAGE [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		'HISTORIC VENDOR' [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
-		NULL [PartsCost],				-- TBD
-		NULL [MiscCost],					-- TBD
-		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + 'WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
+		NULL [PartsCost],		-- TBD
+		NULL [MiscCost],		-- TBD
+		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + ', WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp ON DS.WO_NUMBER = hp.WO_NUMBER
 			AND DS.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
-		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '01'
@@ -138,7 +146,7 @@ BEGIN
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
-		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + 'WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
+		'WICM VENDOR: ' + LTRIM(RTRIM(DS.VENDOR_ID)) + ', WICM REF DOC: ' + LTRIM(RTRIM(DS.REF_DOC)) [Comments]
 	FROM SourceWicm251WorkOrderDetailSublets DS
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv ON DS.WO_NUMBER = hv.WO_NUMBER
 			AND DS.LOCATION = hv.LOCATION
