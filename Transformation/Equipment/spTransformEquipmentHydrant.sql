@@ -179,7 +179,7 @@ BEGIN
 		'' [AccountIDFuelTickets],		-- Open Issue
 		'' [AccountIDUsageTickets],		-- Open Issue
 		'IN SERVICE' [EquipmentStatus],
-		'A' [LifeCycleStatusCodeID],
+		CASE H.[STATUS] WHEN 'A' THEN 'A' WHEN 'I' THEN 'PI' END AS [LifeCycleStatusCodeID],
 		h.INSP_SEQ# [UserStatus1],
 		'' [ConditionRating],
 		'' [StatusCodes],
@@ -233,7 +233,8 @@ BEGIN
 	LEFT JOIN TransformEquipmentPreferredPmShift p
 		ON	h.[GROUP#] = p.ShiftId
 	WHERE
-		(H.[STATUS] IN ('A', 'I')) AND (H.HYD_SEQ# = '00')
+		H.[STATUS] = 'A'
+		OR (H.[STATUS] = 'I' AND H.HYD_SEQ# = '00') -- fixed 10/19 per spec
 
 	UPDATE tmp.Hydrants
 	SET
