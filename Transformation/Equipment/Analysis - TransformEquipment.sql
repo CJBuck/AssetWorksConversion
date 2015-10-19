@@ -10,6 +10,8 @@ EXEC dbo.spTransformEquipmentVehicle
 EXEC dbo.spTransformEquipmentProject
 EXEC dbo.spTransformEquipmentHydrant
 EXEC dbo.spTransformAssetHeirarchy
+EXEC dbo.spTransformEquipmentSubsystem
+EXEC dbo.spTransformEquipmentSubsystemParts
 
 SELECT * FROM TransformEquipment
 SELECT * FROM TransformEquipmentLegacyXwalk
