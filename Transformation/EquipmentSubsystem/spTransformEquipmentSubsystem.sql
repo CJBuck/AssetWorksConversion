@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[spTransformEquipmentSubsystem]
+ALTER PROCEDURE [dbo].[spTransformEquipmentSubsystem]
 -- =================================================================================================
 -- Created By:	Gerald Davis (Marathon Consulting)
 -- Create Date:	09/21/2015
@@ -38,12 +38,12 @@ AS BEGIN
 	)
 	SELECT
 		  '[i]' AS [Control], 
-		  [KEY] AS SubsystemID,
+		  SubsystemID,
 		  Property AS PropertyID, 
 		  InputType,
 		  ListTypeID
 	FROM Staging_SubsystemProperty
-	ORDER BY [KEY], Property
+	ORDER BY SubsystemID, Property
 
 	INSERT INTO TransformEquipmentSubsystem
 	(
