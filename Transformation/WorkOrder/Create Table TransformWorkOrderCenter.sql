@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[TransformWorkOrderCenter](
 	[Meter2] [int] NULL,
 	[PriorityID] [varchar](2) NULL,
 	[PMService] [varchar](12) NULL,
+	[PMScheduled] [datetime] NULL,
 	[RepairReasonID] [varchar](4) NULL,
 	[OutOfServiceDt] [datetime] NULL,
 	[InDt] [datetime] NULL,

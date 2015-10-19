@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[TargetWorkOrderCenterCommercial](
 	[LaborCost] [decimal](12,2) NOT NULL,
 	[PartsCost] [decimal](12,2) NOT NULL,
 	[MiscCost] [decimal](12,2) NOT NULL,
+	[Comments] [varchar](60) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO

@@ -1,7 +1,8 @@
 --	=================================================================================================
 --	Created By:		Chris Buck
 --	Create Date:	08/14/2015
---	Updates:
+--	Update Date:
+--			CJB 10/15/2015 - Updated the population logic for 'LaborDt', 'EmployeeID', & 'TimeCode'.
 --	Description:	Creates/modifies the spTransformWorkOrderCenterLabor stored procedure.
 --					Populates the TransformWorkOrderCenterLabor table.
 --	=================================================================================================
@@ -43,19 +44,23 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		CASE
-			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN
-				CAST(woc.WorkOrderYear AS VARCHAR(4)) + RIGHT(DLP.LABOR_DATE, 4)
-			ELSE DLP.LABOR_DATE
+			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN woc.InDt
+			ELSE 
+				CASE 
+					WHEN DLP.LABOR_DATE < woc.InDt THEN woc.InDt
+					ELSE DLP.LABOR_DATE
+				END
 		END [LaborDt],
-		'' [EmployeeID],		-- TBD
+		LEFT(LTRIM(RTRIM(emp.EmployeeID)), 9) [EmployeeID],
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
-		'' [TimeCode]			-- TBD
+		'DI' [TimeCode]
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderAdmin ha
 			ON DLP.WO_NUMBER = ha.WO_NUMBER AND DLP.LOCATION = ha.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
 			AND ha.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
+		INNER JOIN TransformWicmEINXwalk emp ON DLP.EMPLOYEE_ID = emp.BuyerID
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
 	-- WORKORDERPROJECTS
@@ -67,19 +72,23 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		CASE
-			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN
-				CAST(woc.WorkOrderYear AS VARCHAR(4)) + RIGHT(DLP.LABOR_DATE, 4)
-			ELSE DLP.LABOR_DATE
+			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN woc.InDt
+			ELSE 
+				CASE 
+					WHEN DLP.LABOR_DATE < woc.InDt THEN woc.InDt
+					ELSE DLP.LABOR_DATE
+				END
 		END [LaborDt],
-		'' [EmployeeID],		-- TBD
+		LEFT(LTRIM(RTRIM(emp.EmployeeID)), 9) [EmployeeID],
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
-		'' [TimeCode]			-- TBD
+		'DI' [TimeCode]
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderProjects hp
 			ON DLP.WO_NUMBER = hp.WO_NUMBER AND DLP.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
 			AND hp.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
+		INNER JOIN TransformWicmEINXwalk emp ON DLP.EMPLOYEE_ID = emp.BuyerID
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '04'
@@ -91,19 +100,23 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		CASE
-			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN
-				CAST(woc.WorkOrderYear AS VARCHAR(4)) + RIGHT(DLP.LABOR_DATE, 4)
-			ELSE DLP.LABOR_DATE
+			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN woc.InDt
+			ELSE 
+				CASE 
+					WHEN DLP.LABOR_DATE < woc.InDt THEN woc.InDt
+					ELSE DLP.LABOR_DATE
+				END
 		END [LaborDt],
-		'' [EmployeeID],		-- TBD
+		LEFT(LTRIM(RTRIM(emp.EmployeeID)), 9) [EmployeeID],
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
-		'' [TimeCode]			-- TBD
+		'DI' [TimeCode]
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv
 			ON DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
 			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
+		INNER JOIN TransformWicmEINXwalk emp ON DLP.EMPLOYEE_ID = emp.BuyerID
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
 		AND hv.OP_CODE1 <> '1000'
@@ -123,19 +136,23 @@ BEGIN
 		END [TaskID],
 		hp.WO_STAGE [WorkAccomplishedCode],
 		CASE
-			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN
-				CAST(woc.WorkOrderYear AS VARCHAR(4)) + RIGHT(DLP.LABOR_DATE, 4)
-			ELSE DLP.LABOR_DATE
+			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN woc.InDt
+			ELSE 
+				CASE 
+					WHEN DLP.LABOR_DATE < woc.InDt THEN woc.InDt
+					ELSE DLP.LABOR_DATE
+				END
 		END [LaborDt],
-		'' [EmployeeID],		-- TBD
+		LEFT(LTRIM(RTRIM(emp.EmployeeID)), 9) [EmployeeID],
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
-		'' [TimeCode]			-- TBD
+		'DI' [TimeCode]
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderPlant hp
 			ON DLP.WO_NUMBER = hp.WO_NUMBER AND DLP.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
 			AND hp.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DLP.OPER_CODE = doc.OpCode
+		INNER JOIN TransformWicmEINXwalk emp ON DLP.EMPLOYEE_ID = emp.BuyerID
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '01'
@@ -147,19 +164,23 @@ BEGIN
 			WHEN gsoc.RepairPM = 'REPAIR' THEN 'REPR'
 		END [WorkAccomplishedCode],
 		CASE
-			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN
-				CAST(woc.WorkOrderYear AS VARCHAR(4)) + RIGHT(DLP.LABOR_DATE, 4)
-			ELSE DLP.LABOR_DATE
+			WHEN ISDATE(DLP.LABOR_DATE) = 0 THEN woc.InDt
+			ELSE 
+				CASE 
+					WHEN DLP.LABOR_DATE < woc.InDt THEN woc.InDt
+					ELSE DLP.LABOR_DATE
+				END
 		END [LaborDt],
-		'' [EmployeeID],		-- TBD
+		LEFT(LTRIM(RTRIM(emp.EmployeeID)), 9) [EmployeeID],
 		CONVERT(DECIMAL(5,2), DLP.REG_HOURS) [LaborHours],
-		'' [TimeCode]			-- TBD
+		'DI' [TimeCode]
 	FROM SourceWicm251WorkOrderDetailLaborCharges DLP
 		INNER JOIN SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair hv
 			ON DLP.WO_NUMBER = hv.WO_NUMBER AND DLP.LOCATION = hv.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DLP.WO_NUMBER = woc.WorkOrderNumber
 			AND hv.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DLP.OPER_CODE = gsoc.OpCode
+		INNER JOIN TransformWicmEINXwalk emp ON DLP.EMPLOYEE_ID = emp.BuyerID
 	WHERE ISNULL(DLP.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'
 	

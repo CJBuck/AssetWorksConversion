@@ -57,5 +57,10 @@
       <FullPath>PurchaseOrders.dtsx</FullPath>
       <References />
     </DtsPackage>
+    <DtsPackage FormatVersion="3">
+      <Name>WorkOrders.dtsx</Name>
+      <FullPath>WorkOrders.dtsx</FullPath>
+      <References />
+    </DtsPackage>
   </DTSPackages>
 </Project>

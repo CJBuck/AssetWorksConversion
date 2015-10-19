@@ -27,6 +27,7 @@ CREATE TABLE [dbo].[TransformWorkOrderCenterCommercial](
 	[LaborCost] [decimal](12,2) NULL,
 	[PartsCost] [decimal](12,2) NULL,
 	[MiscCost] [decimal](12,2) NULL,
+	[Comments] [varchar](60) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO

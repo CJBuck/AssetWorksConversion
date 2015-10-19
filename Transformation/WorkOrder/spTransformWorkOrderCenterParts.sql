@@ -30,8 +30,10 @@ BEGIN
 		[Dt] [datetime] NULL,
 		[NotFromInventory] [char](1) NULL,
 		[PartID] [varchar](22) NULL,
+		[PartSuffix] [varchar](2) NULL,
 		[Quantity] [decimal](10,2) NULL,
-		[UnitPrice] [decimal](10,4) NULL
+		[UnitPrice] [decimal](10,4) NULL,
+		[PartKeywordAndShortDescription] [varchar](140) NULL
 	)
 
 	-- WorkOrderAdmin - Parts
@@ -42,11 +44,19 @@ BEGIN
 		woc.WorkOrderYear,
 		woc.WorkOrderNumber,
 		lkup.TaskIDAlignment [TaskID],
-		WODP.ACTION_DATE [Dt],
+		CASE
+			WHEN WODP.ACTION_DATE < woc.InDt THEN woc.InDt
+			ELSE WODP.ACTION_DATE
+		END [Dt],
 		'Y' [NotFromInventory],
 		WODP.PART_NUMBER [PartID],
+		'0' [PartSuffix],
 		WODP.PART_QTY [Quantity],
-		WODP.PART_COST [UnitPrice]
+		WODP.PART_COST [UnitPrice],
+		CASE
+			WHEN WODP.PART_NUMBER LIKE 'N%' THEN LTRIM(RTRIM(WODP.PART_DESC))
+			ELSE ''
+		END [PartKeywordAndShortDescription]
 	FROM SourceWicm251WorkOrderDetailParts WODP
 		INNER JOIN TransformWorkOrderCenter woc ON WODP.WO_NUMBER = woc.WorkOrderNumber
 			AND WODP.LOCATION = woc.Location
@@ -62,11 +72,19 @@ BEGIN
 		woc.WorkOrderYear,
 		woc.WorkOrderNumber,
 		lkup.TaskIDAlignment [TaskID],
-		WODP.ACTION_DATE [Dt],
+		CASE
+			WHEN WODP.ACTION_DATE < woc.InDt THEN woc.InDt
+			ELSE WODP.ACTION_DATE
+		END [Dt],
 		'Y' [NotFromInventory],
 		WODP.PART_NUMBER [PartID],
+		'0' [PartSuffix],
 		WODP.PART_QTY [Quantity],
-		WODP.PART_COST [UnitPrice]
+		WODP.PART_COST [UnitPrice],
+		CASE
+			WHEN WODP.PART_NUMBER LIKE 'N%' THEN LTRIM(RTRIM(WODP.PART_DESC))
+			ELSE ''
+		END [PartKeywordAndShortDescription]
 	FROM SourceWicm251WorkOrderDetailParts WODP
 		INNER JOIN TransformWorkOrderCenter woc ON WODP.WO_NUMBER = woc.WorkOrderNumber
 			AND WODP.LOCATION = woc.Location
@@ -86,8 +104,10 @@ BEGIN
 		tmp.Dt,
 		tmp.NotFromInventory,
 		tmp.PartID,
+		tmp.PartSuffix,
 		tmp.Quantity,
 		tmp.UnitPrice,
+		tmp.PartKeywordAndShortDescription,
 		GETDATE()
 	FROM tmp.WorkOrderCenterParts tmp
 END

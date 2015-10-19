@@ -1,9 +1,12 @@
--- =============================================================================
+-- =====================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
+-- Update Date:
+--		CJB 10/15/2016 Added new logic for writing to the TransformEquipmentIndividualPM
+--		table for Condition Assessments (spec 6.2.1).
 -- Description: Creates/modifies the spTransformEquipmentFacilitiesEquipment
 --              stored procedure.
--- =============================================================================
+-- =====================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.
@@ -15,7 +18,7 @@ ALTER PROCEDURE [dbo].[spTransformEquipmentFacilitiesEquipment]
 AS
 BEGIN
 	DECLARE
-		@GoLiveDate Date = '09/01/2015', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
+		@GoLiveDate Date = '02/08/2016', --USED FOR RESETTING PM THAT ARE ALREADY OVERDUE
 		@NewID				INT,
 		@RowNumInProgress	INT
 	
@@ -245,12 +248,12 @@ BEGIN
 		'IN SERVICE' [EquipmentStatus],
 		'A' [LifeCycleStatusCodeID],
 		NULL UserStatus1,
-		'' [ConditionRating],
+		OE.COND_CODE [ConditionRating],
 		ISNULL(OE.NORM_UNDER_W, '') [StatusCodes],
 		'Y' [WorkOrders],
 		'N' [UsageTickets],
 		'N' [FuelTickets],
-		'' [Comments],
+		'WICM VENDOR ID: ' + LTRIM(RTRIM(OE.VENDOR)) [Comments],
 		CASE OE.CRITICALITY
 			WHEN '1' THEN 'F1'
 			WHEN '2' THEN 'F2'
@@ -385,13 +388,6 @@ BEGIN
 		AND LTRIM(RTRIM(oe.FAC_MODEL)) = 'NA'
 		AND FAC.EquipmentType = ''
 
-	-- Condition Rating
-	UPDATE tmp.StagingEquip
-	SET ConditionRating = ISNULL(cr.ConditionRating, '')
-	FROM tmp.StagingEquip FACS
-		INNER JOIN TransformEquipmentFacilitiesValueConditionRating cr
-			ON LTRIM(RTRIM(FACS.[Object_ID])) = LTRIM(RTRIM(cr.[OBJECT_ID]))
-
 	-- StationLocation
 	UPDATE tmp.StagingEquip
 	SET StationLocation = statloc.AW_StationLoc
@@ -402,7 +398,9 @@ BEGIN
 
 	-- Comments
 	UPDATE tmp.StagingEquip
-	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1] + ' ' + oee.[SPECL-INST2] + ' ' + oee.[SPECL-INST3] + ' ' + oee.[SPECL-INST4]))
+	SET Comments = LTRIM(RTRIM(oee.[SPECL-INST1])) + ' ' + LTRIM(RTRIM(oee.[SPECL-INST2])) + ' ' + 
+		LTRIM(RTRIM(oee.[SPECL-INST3])) + ' ' + LTRIM(RTRIM(oee.[SPECL-INST4]))
+		 + CHAR(13) + CHAR(10) + FACS.Comments
 	FROM tmp.StagingEquip FACS
 		INNER JOIN SourceWicm212ObjectExtensionEquipment oee ON FACS.[Object_ID] = oee.[OBJECT_ID]
 
@@ -716,6 +714,7 @@ BEGIN
 	FROM tmp.FinalResultSet FRS
 
 	-- Write to TransformEquipmentIndividualPM
+	---- Original run through.
 	INSERT INTO dbo.TransformEquipmentIndividualPM
 	(
 		PMKey,
@@ -724,17 +723,78 @@ BEGIN
 		NumberOfTimeUnits,
 		TimeUnit
 	)
-	SELECT 
-		x.EquipmentID AS PMKey, 
-		s.SCH_OPCODE AS PMService, 
-		CASE 
-			WHEN CAST(s.NXT_DUE_DATE AS date) < @GoLiveDate THEN @GoLiveDate --For already overdue PMs reset to go live date
-			ELSE CAST(s.NXT_DUE_DATE AS date) 
+	SELECT
+		x.EquipmentID AS PMKey,
+		CASE
+			WHEN MS.SCH_OPCODE = 'ANNU' THEN 'IY01'
+			WHEN MS.SCH_OPCODE = 'SEMI' THEN 'IS01'
+			ELSE MS.SCH_OPCODE
+		END [PMService],
+		CASE
+			WHEN CAST(MS.NXT_DUE_DATE AS DATE) < @GoLiveDate THEN @GoLiveDate --For already overdue PMs reset to go live date
+			ELSE CAST(MS.NXT_DUE_DATE AS DATE)
 		END AS NextDueDate,
-		NULL AS NumberOfTimeUnits,	--Not used per BA (used to override defaults)
-		NULL AS TimeUnit			--Not used per BA (used to override defaults)
-	FROM SourceWicm230TableLookupMaintenanceSchedules s
-		INNER JOIN TransformEquipmentLegacyXwalk x ON s.SCH_OBJECT = x.LegacyID
-	WHERE x.EquipmentId LIKE 'EQP%'
+		CASE
+			WHEN MS.SCH_OPCODE LIKE '%M01' THEN '1'
+			WHEN MS.SCH_OPCODE LIKE '%M02' THEN '2'
+			WHEN MS.SCH_OPCODE LIKE '%Q01' THEN '3'
+			WHEN MS.SCH_OPCODE LIKE '%S01' THEN '6'
+			WHEN MS.SCH_OPCODE = 'SEMI' THEN '6'
+			WHEN MS.SCH_OPCODE LIKE '%Y01' THEN '12'
+			WHEN MS.SCH_OPCODE = 'ANNU' THEN '12'
+			WHEN MS.SCH_OPCODE LIKE '%Y02' THEN '24'
+			WHEN MS.SCH_OPCODE LIKE '%Y03' THEN '36'
+			WHEN MS.SCH_OPCODE LIKE '%Y05' THEN '60'
+			WHEN MS.SCH_OPCODE LIKE '%Y10' THEN '120'
+			ELSE NULL
+		END [NumberOfTimeUnits],
+		'MONTHS' AS TimeUnit
+	FROM SourceWicm230TableLookupMaintenanceSchedules MS
+		INNER JOIN TransformEquipmentLegacyXwalk x ON MS.SCH_OBJECT = x.LegacyID
+	WHERE
+		x.EquipmentId LIKE 'EQP%'
+		AND MS.[STATUS] = 'A'
 	ORDER BY x.EquipmentID
+
+	---- Criticality/Condition run through.	CjB 10/15/2016
+	INSERT INTO dbo.TransformEquipmentIndividualPM
+	(
+		PMKey,
+		PMServiceType,
+		NextDueDate,
+		NumberOfTimeUnits,
+		TimeUnit
+	)
+	SELECT
+		X.EquipmentID AS PMKey,
+		'FACASSESSMT' AS PMService,
+		CASE
+			WHEN ISDATE(oe.NXT_ASSMT_DT) = 1 THEN oe.NXT_ASSMT_DT
+			ELSE NULL
+		END [NextDueDate],
+		CASE
+			WHEN oe.CRITICALITY = '5' AND oe.COND_CODE IN ('1','2')  THEN '60'
+			WHEN oe.CRITICALITY = '5' AND oe.COND_CODE IN ('3','4')  THEN '24'
+			WHEN oe.CRITICALITY = '5' AND oe.COND_CODE = '5'  THEN '12'
+			WHEN oe.CRITICALITY = '4' AND oe.COND_CODE = '1'  THEN '60'
+			WHEN oe.CRITICALITY = '4' AND oe.COND_CODE IN ('2','3')  THEN '24'
+			WHEN oe.CRITICALITY = '4' AND oe.COND_CODE IN ('4','5')  THEN '12'
+			WHEN oe.CRITICALITY = '3' AND oe.COND_CODE IN ('1','2')  THEN '24'
+			WHEN oe.CRITICALITY = '3' AND oe.COND_CODE IN ('3','4')  THEN '12'
+			WHEN oe.CRITICALITY = '3' AND oe.COND_CODE = '5'  THEN '6'
+			WHEN oe.CRITICALITY = '2' AND oe.COND_CODE = '1'  THEN '24'
+			WHEN oe.CRITICALITY = '2' AND oe.COND_CODE IN ('2','3')  THEN '12'
+			WHEN oe.CRITICALITY = '2' AND oe.COND_CODE = '4'  THEN '6'
+			WHEN oe.CRITICALITY = '2' AND oe.COND_CODE = '5'  THEN '3'
+			WHEN oe.CRITICALITY = '1' AND oe.COND_CODE IN ('1','2')  THEN '12'
+			WHEN oe.CRITICALITY = '1' AND oe.COND_CODE = '3'  THEN '6'
+			WHEN oe.CRITICALITY = '1' AND oe.COND_CODE IN ('4','5')  THEN '3'
+			ELSE NULL
+		END [NumberOfTimeUnits],
+		'MONTHS' AS TimeUnit
+	FROM TransformEquipmentLegacyXwalk X
+		INNER JOIN SourceWicm210ObjectEquipment oe ON X.LegacyID = oe.[OBJECT_ID]
+	WHERE
+		X.EquipmentID LIKE 'EQP%'
+	ORDER BY X.EquipmentID
 END
