@@ -47,7 +47,10 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
-		'HISTORIC VENDOR' [VendorID],
+		CASE
+			WHEN ISNULL(tv.VendorID, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VendorID
+		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
@@ -58,6 +61,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
+		LEFT JOIN TransformVendor tv ON DS.VENDOR_ID = tv.VendorID
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERPROJECTS
@@ -69,7 +73,10 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
-		'HISTORIC VENDOR' [VendorID],
+		CASE
+			WHEN ISNULL(tv.VendorID, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VendorID
+		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
@@ -80,6 +87,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
+		LEFT JOIN TransformVendor tv ON DS.VENDOR_ID = tv.VendorID
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '04'
@@ -91,7 +99,10 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
-		'HISTORIC VENDOR' [VendorID],
+		CASE
+			WHEN ISNULL(tv.VendorID, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VendorID
+		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
@@ -102,6 +113,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
+		LEFT JOIN TransformVendor tv ON DS.VENDOR_ID = tv.VendorID
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
 		AND hv.OP_CODE1 <> '1000'
@@ -121,7 +133,10 @@ BEGIN
 		END [TaskID],
 		hp.WO_STAGE [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
-		'HISTORIC VENDOR' [VendorID],
+		CASE
+			WHEN ISNULL(tv.VendorID, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VendorID
+		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],		-- TBD
 		NULL [MiscCost],		-- TBD
@@ -131,6 +146,7 @@ BEGIN
 			AND DS.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
+		LEFT JOIN TransformVendor tv ON DS.VENDOR_ID = tv.VendorID
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '01'
@@ -142,7 +158,10 @@ BEGIN
 			ELSE ''
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
-		'HISTORIC VENDOR' [VendorID],
+		CASE
+			WHEN ISNULL(tv.VendorID, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VendorID
+		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
 		NULL [MiscCost],					-- TBD
@@ -153,6 +172,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DS.OPER_CODE = gsoc.OpCode
+		LEFT JOIN TransformVendor tv ON DS.VENDOR_ID = tv.VendorID
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'
 	
