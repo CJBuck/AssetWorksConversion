@@ -27,7 +27,7 @@ CREATE TABLE [dbo].[TransformRequisitionsLineItems](
 	[LineItemType] [varchar](20) NULL,
 	[PartID] [varchar](22) NULL,
 	[PartSuffix] [int] NULL,
-	[PartDecsription] [varchar](40) NULL,
+	[PartDescription] [varchar](40) NULL,
 	[OtherID] [varchar](30) NULL,
 	[Description] [varchar](30) NULL,
 	[Quantity] [decimal](10,2) NULL,
