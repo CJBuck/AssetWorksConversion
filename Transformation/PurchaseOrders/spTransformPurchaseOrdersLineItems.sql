@@ -2,6 +2,7 @@
 --	Created By:		Chris Buck
 --	Create Date:	09/02/2015
 --	Updates:
+--		CJB 11/03/2015 Modified the population logic for several fields.
 --	Description:	Creates/modifies the spTransformPurchaseOrdersLineItems stored procedure.
 --					Populates the TransformPurchaseOrdersLineItems table.
 --	=================================================================================================
@@ -51,23 +52,27 @@ BEGIN
 		CASE
 			WHEN EXISTS (SELECT * FROM TransformPart WHERE PartID = CCPD.PART_NO) THEN 'STOCK PART'
 			WHEN CCPD.PART_NO LIKE 'FRT%' THEN 'SHIPPING'
+			WHEN (CCPD.PART_NO LIKE 'CRED%') OR (CCPD.PART_NO LIKE 'XCORE%') THEN '???'
 			ELSE 'NON-STOCK PART'
 		END [LineItemType],
 		CASE
-			WHEN CCPD.PART_NO LIKE 'FRT%' THEN ''
+			WHEN (CCPD.PART_NO LIKE 'FRT%') OR (CCPD.PART_NO LIKE 'CRED%') OR (CCPD.PART_NO LIKE 'XCORE%') THEN ''
 			ELSE CCPD.PART_NO
 		END [PartID],
 		CASE
-			WHEN CCPD.PART_NO NOT LIKE 'FRT%' THEN '0'
+			WHEN (CCPD.PART_NO NOT LIKE 'FRT%') OR (CCPD.PART_NO NOT LIKE 'CRED%') OR (CCPD.PART_NO NOT LIKE 'XCORE%') THEN '0'
 			ELSE NULL
 		END [PartSuffix],
 		CASE
 			WHEN EXISTS (SELECT * FROM TransformPart WHERE PartID = CCPD.PART_NO) THEN ''
-			WHEN CCPD.PART_NO LIKE 'FRT%' THEN ''
+			WHEN (CCPD.PART_NO LIKE 'FRT%') OR (CCPD.PART_NO LIKE 'CRED%') OR (CCPD.PART_NO LIKE 'XCORE%') THEN ''
 			ELSE 'HISTORIC WICM PART'
 		END [OtherID],
 		LEFT(LTRIM(RTRIM(DESC_45)), 30) [Description],
-		CCPD.QTYORDERED [Quantity],
+		CASE
+			WHEN CCPD.QTYORDERED = CCPD.QTYRECVDTODT THEN QTYORDERED
+			ELSE NULL
+		END [Quantity],
 		CCPD.UNITCOST [UnitPrice],
 		'STOREROOM' [LocationID],
 		po.OrderedDt [OrderedDt],
@@ -81,32 +86,45 @@ BEGIN
 	WHERE CCPD.PART_NO NOT LIKE 'N%'
 	ORDER BY CCPD.CCP_NUMBER, CCPD.[LINENO]
 	
-	-- SourceWicm330POHeader
-	INSERT INTO [tmp].[PurchaseOrdersLineItems]
-	SELECT
-		po.PurchaseOrderID,
-		munis.[PO Line Number] [LineNumber],
-		'OPEN' [Status],
-		'NON-STOCK PART' [LineItemType],
-		'' [PartID],
-		NULL [PartSuffix],
-		'MUNIS PO' [OtherID],
-		ISNULL(LEFT(LTRIM(RTRIM(munis.[PO Detail Description])), 30), '') [Description],
-		ISNULL(munis.[Quantity], NULL) [Quantity],
-		ISNULL(munis.[Unit Price], NULL) [UnitPrice],
-		'STOREROOM' [LocationID],
-		NULL [OrderedDt],
-		NULL [ExpectedDeliveryDt],
-		NULL [SentToVendorDt],
-		po.PurchaseOrderID [VendorContractID],
-		ISNULL(LEFT(LTRIM(RTRIM(munis.[Unit of Measure])), 4), '') [UnitOfMeasure],
-		'' [AccountID]
-	FROM SourceWicm330POHeader POH
-		INNER JOIN TransformPurchaseOrders po ON POH.PONUMBER = po.PurchaseOrderID
-		INNER JOIN TransformMUNISPurchaseOrders munis ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT))))
-			AND munis.[Record Type] = 'Detail Line'
-	WHERE POH.PONUMBER LIKE '2016%'
-	ORDER BY POH.PONUMBER
+	---- SourceWicm330POHeader
+	--INSERT INTO [tmp].[PurchaseOrdersLineItems]
+	--SELECT
+	--	po.PurchaseOrderID,
+	--	munis.[PO Line Number] [LineNumber],
+	--	'OPEN' [Status],
+	--	'NON-STOCK PART' [LineItemType],
+	--	'' [PartID],
+	--	NULL [PartSuffix],
+	--	'MUNIS PO' [OtherID],
+	--	ISNULL(LEFT(LTRIM(RTRIM(munis.[PO Detail Description])), 30), '') [Description],
+	--	ISNULL(munis.[Quantity], NULL) [Quantity],
+	--	ISNULL(munis.[Unit Price], NULL) [UnitPrice],
+	--	'STOREROOM' [LocationID],
+	--	NULL [OrderedDt],
+	--	NULL [ExpectedDeliveryDt],
+	--	NULL [SentToVendorDt],
+	--	po.PurchaseOrderID [VendorContractID],
+	--	ISNULL(LEFT(LTRIM(RTRIM(munis.[Unit of Measure])), 4), '') [UnitOfMeasure],
+	--	'' [AccountID]
+	--FROM SourceWicm330POHeader POH
+	--	INNER JOIN TransformPurchaseOrders po ON POH.PONUMBER = po.PurchaseOrderID
+	--	INNER JOIN TransformMUNISPurchaseOrders munis ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(munis.[Purchase Order] AS INT))))
+	--		AND munis.[Record Type] = 'Detail Line'
+	--WHERE POH.PONUMBER LIKE '2016%'
+	--ORDER BY POH.PONUMBER
+	
+	-- Update Quantity where NULL
+	UPDATE [tmp].[PurchaseOrdersLineItems]
+	SET Quantity = 
+		CASE 
+			WHEN ccph.[STATUS] IN ('R', 'F') THEN ccpd.QTYRECVDTODT
+			WHEN ccph.[STATUS] IN ('A', 'L', 'P') and ccpd.QTYORDERED <> ccpd.QTYRECVDTODT
+				THEN ccpd.QTYORDERED
+		END
+	FROM [tmp].[PurchaseOrdersLineItems] LI
+		INNER JOIN SourceWicm305CcpDetail ccpd ON LI.PurchaseOrderID = ccpd.CCP_NUMBER
+		INNER JOIN SourceWicm300CcpHeader ccph ON LI.PurchaseOrderID = ccph.PONUMBER
+	WHERE Quantity IS NULL
 	
 	-- Update OrderedDt, ExpectedDeliveryDt, & SentToVendorDt
 	UPDATE [tmp].[PurchaseOrdersLineItems]

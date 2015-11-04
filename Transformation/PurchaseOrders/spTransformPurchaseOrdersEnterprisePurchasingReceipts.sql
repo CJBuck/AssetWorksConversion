@@ -2,6 +2,7 @@
 --	Created By:		Chris Buck
 --	Create Date:	09/03/2015
 --	Updates:
+--		CJB 11/04/2015 Added new exclusion logic; modified the population logic for VendorID.
 --	Description:	Creates/modifies the spTransformPurchaseOrdersEnterprisePurchasingReceipts
 --					stored procedure.  Populates the TransformPurchaseOrders table.
 --	=================================================================================================
@@ -35,24 +36,42 @@ BEGIN
 	SELECT DISTINCT
 		PO.[PurchaseOrderID],
 		1 [LineNumber],
-		'Y' [FullyReceiveAllLineItems],
+		'' [FullyReceiveAllLineItems],
 		NULL [ReceivedDt],
 		NULL [QuantityReceived]
 	FROM TransformPurchaseOrders PO
 		INNER JOIN TransformPurchaseOrdersLineItems oli ON PO.PurchaseOrderID = oli.PurchaseOrderID AND oli.LineNumber = 1
-
-	-- Update detail-specific data
+		
+	-- Update FullyReceiveAllLineItems
+	UPDATE [tmp].[PurchaseOrdersEnterprisePurchasingReceipts]
+	SET
+		FullyReceiveAllLineItems =
+			CASE
+				WHEN ccpd.QTYORDERED = ccpd.QTYRECVDTODT THEN 'Y'
+				WHEN ccph.[STATUS] IN ('R', 'F') THEN 'Y'
+				WHEN ccph.[STATUS] IN ('A', 'L', 'P') and ccpd.QTYORDERED <> ccpd.QTYRECVDTODT
+					THEN ''
+				ELSE ''
+			END
+	FROM [tmp].[PurchaseOrdersEnterprisePurchasingReceipts] tmp
+		INNER JOIN SourceWicm305CcpDetail ccpd ON tmp.PurchaseOrderID = ccpd.CCP_NUMBER
+		LEFT JOIN SourceWicm300CcpHeader ccph ON TMP.PurchaseOrderID = ccph.PONUMBER
+	WHERE
+		tmp.FullyReceiveAllLineItems = ''
+	
+	-- Update ReceivedDt & QuantityReceived
 	UPDATE [tmp].[PurchaseOrdersEnterprisePurchasingReceipts]
 	SET
 		[ReceivedDt] =
 			CASE
 				WHEN ISDATE(ccpd.DATERECVD) = 1 THEN
 					CONVERT(DATETIME, (ccpd.DATERECVD + ' 00:01'), 101)
-				ELSE NULL
+				ELSE DATEADD(DAY, 5, li.[OrderedDt])
 			END,
 		[QuantityReceived] = ISNULL(ccpd.QTYORDERED, 0.00)
 	FROM [tmp].[PurchaseOrdersEnterprisePurchasingReceipts] tmp
 		INNER JOIN SourceWicm305CcpDetail ccpd ON tmp.PurchaseOrderID = ccpd.CCP_NUMBER
+		INNER JOIN TransformPurchaseOrdersLineItems li ON tmp.PurchaseOrderID = li.PurchaseOrderID
 	WHERE
 		LTRIM(RTRIM(ccpd.[LINENO])) = '1'
 		

@@ -20,12 +20,23 @@ CREATE TABLE [dbo].[TargetPurchaseOrdersVendorContract](
 	[VendorContractID] [varchar](30) NOT NULL,
 	[Description] [varchar](60) NULL,
 	[VendorID] [varchar](15) NOT NULL,
+	[Fax] [varchar](30) NULL,
 	[BeginDate] [datetime] NOT NULL,
 	[EndDate] [datetime] NOT NULL,
 	[PurchasingLimit] [decimal](12,2) NOT NULL,
 	[NotificationPct] [decimal](5,2) NOT NULL,
+	[PartSalesTax] [char](1) NULL,
+	[PartShipping] [char](1) NULL,
+	[CommercialSalesTax] [char](1) NULL,
+	[AdjustmentMultiplier] [decimal](4,3) NULL,
+	[PerformPriceAdjustment] [char](1) NULL,
 	[Comment] [varchar](1000) NOT NULL,
+	[TermsDescPathAndFileName] [varchar](255) NULL,
+	[TermsDescription] [varchar](60) NULL,
+	[TermsDescriptionComments] [varchar](1000) NULL,
 	[ContractLines] [varchar](50) NOT NULL,
+	[Files] [varchar](50) NOT NULL,
+	[Attributes] [varchar](50) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
 GO

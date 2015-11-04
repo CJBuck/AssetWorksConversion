@@ -2,7 +2,7 @@
 --	Created By:		Chris Buck
 --	Create Date:	08/26/2015
 --	Updates:
---		CJB 11/02/2015 Added new exclusion logic.
+--		CJB 11/02/2015 Added new exclusion logic; modified the population logic for VendorID.
 --	Description:	Creates/modifies the spTransformPurchaseOrders stored procedure.  Populates
 --					the TransformPurchaseOrders table.
 --	=================================================================================================
@@ -47,7 +47,7 @@ BEGIN
 		(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [PurchaseOrderID],
 		'STOREROOM' [LocationID],
 		LTRIM(RTRIM(CCPH.JTEXT15)) [Description],
-		v.VendorID [VendorID],
+		v.MUNISVendorID [VendorID],
 		'OPEN' [Status],
 		'HISTORIC WICM CCP' [PurchaseTypeID],
 		'USD' [CurrencyID],
@@ -65,7 +65,7 @@ BEGIN
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
 		dbo.TransformPurchaseOrdesConcatComments(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [Comments]
 	FROM SourceWicm300CcpHeader CCPH
-		INNER JOIN TransformVendor v ON CCPH.VNUMBER = v.VendorID
+		INNER JOIN TransformVendorWicmToMunisLookup v ON CCPH.VNUMBER = v.WicmVendorNo
 		LEFT JOIN TransformWicmEINXwalk xwalk ON CCPH.BUYERID = xwalk.BuyerID
 	WHERE CCPH.[STATUS] <> 'X'
 		AND CCPH.[TYPE] <> 'W'
@@ -79,7 +79,7 @@ BEGIN
 		POH.PONUMBER [PurchaseOrderID],
 		'STOREROOM' [LocationID],
 		LEFT(LTRIM(RTRIM(POH.COMMENT)), 30) [Description],
-		v.VendorID [VendorID],
+		v.MUNISVendorID [VendorID],
 		'OPEN' [Status],
 		'BLANKET AMOUNT PO' [PurchaseTypeID],
 		'USD' [CurrencyID],
@@ -92,7 +92,7 @@ BEGIN
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
 		'' [Comments]
 	FROM SourceWicm330POHeader POH
-		INNER JOIN TransformVendor v ON POH.VENDORNUMBER = v.VendorID
+		INNER JOIN TransformVendorWicmToMunisLookup v ON POH.VENDORNUMBER = v.WicmVendorNo
 		LEFT JOIN TransformMUNISOpenRequisitions m ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(m.a_purch_order_no AS INT))))
 		LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
 			AND po.[Record Type] = 'Header'
