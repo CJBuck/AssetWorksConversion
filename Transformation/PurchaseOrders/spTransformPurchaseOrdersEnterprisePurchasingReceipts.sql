@@ -55,7 +55,7 @@ BEGIN
 			END
 	FROM [tmp].[PurchaseOrdersEnterprisePurchasingReceipts] tmp
 		INNER JOIN SourceWicm305CcpDetail ccpd ON tmp.PurchaseOrderID = ccpd.CCP_NUMBER
-		LEFT JOIN SourceWicm300CcpHeader ccph ON TMP.PurchaseOrderID = ccph.PONUMBER
+		LEFT JOIN SourceWicm300CcpHeader ccph ON TMP.PurchaseOrderID = (LTRIM(RTRIM(ccph.[TYPE])) + LTRIM(RTRIM(ccph.[SEQ-NUM])))
 	WHERE
 		tmp.FullyReceiveAllLineItems = ''
 	

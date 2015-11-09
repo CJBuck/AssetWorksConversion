@@ -2,6 +2,7 @@
 --	Created By:		Chris Buck
 --	Create Date:	09/04/2015
 --	Updates:
+--		CJB 11/05/2015 All new logic to separate the MUNIS and AssetWorks data.
 --	Description:	Creates/modifies the spTransformPurchaseOrdersVendorContract stored procedure.
 --					Populates the TransformPurchaseOrdersVendorContract table.
 --	=================================================================================================
@@ -31,7 +32,9 @@ BEGIN
 		[PurchasingLimit] [decimal](12,2) NULL,
 		[NotificationPct] [decimal](5,2) NULL,
 		[Comment] [varchar](1000) NULL,
-		[ContractLines] [varchar](50) NOT NULL
+		[ContractLines] [varchar](50) NOT NULL,
+		[Files] [varchar](50) NOT NULL,
+		[Attributes] [varchar](50) NOT NULL
 	)
 
 	-- SourceWicm330POHeader
@@ -39,19 +42,21 @@ BEGIN
 	SELECT DISTINCT
 		POH.PONUMBER [VendorContractID],
 		LEFT(LTRIM(RTRIM(POH.COMMENT)), 60) [Description],
-		v.VendorID [VendorID],
-		ISNULL(po.[Create Date], NULL) [BeginDate],	-- TBD: MUNIS
-		'6/30/2016' [EndDate],	-- TBD: MUNIS
+		v.MUNISVendorID [VendorID],
+		ISNULL(po.[Create Date], NULL) [BeginDate],
+		'6/30/2016' [EndDate],
 		(CONVERT(DECIMAL(12,2), TOTALAMOUNT) - CONVERT(DECIMAL(12,2), TOTALRELEASEDAMT)) [PurchasingLimit],
-		NULL [NotificationPct],
+		80.00 [NotificationPct],
 		'' [Comment],
-		'[12548:1;ContractLines;1:1]' [ContractLines]
+		'[12548:1;ContractLines;1:1]' [ContractLines],
+		'[13264:1;Files;1:1]' [Files],
+		'[9063:1;Attributes;1:1]' [Attributes]
 	FROM SourceWicm330POHeader POH
-		LEFT JOIN TransformVendor v ON POH.VENDORNUMBER = v.VendorID
-		LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
-			AND po.[Record Type] = 'Header'
+		INNER JOIN TransformVendorWicmToMunisLookup v ON POH.VENDORNUMBER = v.WicmVendorNo
+		LEFT JOIN TransformMUNISPurchaseOrders po
+			ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
+				AND po.[Record Type] = 'Header'
 	WHERE POH.PONUMBER LIKE '2016%'
-		and POH.PONUMBER IN (SELECT PurchaseOrderID FROM TransformPurchaseOrders)
 
 	-- Copy temp to TransformPurchaseOrdersVendorContract
 	INSERT INTO [dbo].[TransformPurchaseOrdersVendorContract]
@@ -60,12 +65,23 @@ BEGIN
 		tmp.VendorContractID,
 		tmp.[Description],
 		tmp.VendorID,
+		'' [Fax],
 		tmp.BeginDate,
 		tmp.EndDate,
 		tmp.PurchasingLimit,
 		tmp.NotificationPct,
+		'' [PartSalesTax],
+		'' [PartShipping],
+		'' [CommercialSalesTax],
+		NULL [AdjustmentMultiplier],
+		'' [PerformPriceAdjustment],
 		tmp.Comment,
+		'' [TermsDescPathAndFileName],
+		'' [TermsDescription],
+		'' [TermsDescriptionComments],
 		tmp.ContractLines,
+		tmp.Files,
+		tmp.Attributes,
 		GETDATE()
 	FROM [tmp].[PurchaseOrdersVendorContract] tmp
 END
