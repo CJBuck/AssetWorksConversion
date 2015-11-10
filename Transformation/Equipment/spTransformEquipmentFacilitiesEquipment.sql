@@ -2,7 +2,7 @@
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
 -- Update Date:
---		CJB 10/15/2016 Added new logic for writing to the TransformEquipmentIndividualPM
+--		CJB 10/15/2015 Added new logic for writing to the TransformEquipmentIndividualPM
 --		table for Condition Assessments (spec 6.2.1).
 -- Description: Creates/modifies the spTransformEquipmentFacilitiesEquipment
 --              stored procedure.

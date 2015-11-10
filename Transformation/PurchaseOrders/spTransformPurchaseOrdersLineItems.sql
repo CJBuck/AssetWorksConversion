@@ -123,7 +123,7 @@ BEGIN
 		END
 	FROM [tmp].[PurchaseOrdersLineItems] LI
 		INNER JOIN SourceWicm305CcpDetail ccpd ON LI.PurchaseOrderID = ccpd.CCP_NUMBER
-		INNER JOIN SourceWicm300CcpHeader ccph ON LI.PurchaseOrderID = ccph.PONUMBER
+		INNER JOIN SourceWicm300CcpHeader ccph ON LI.PurchaseOrderID = (LTRIM(RTRIM(ccph.[TYPE])) + LTRIM(RTRIM(ccph.[SEQ-NUM])))
 	WHERE Quantity IS NULL
 	
 	-- Update OrderedDt, ExpectedDeliveryDt, & SentToVendorDt

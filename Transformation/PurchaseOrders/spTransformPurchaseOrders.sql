@@ -73,30 +73,30 @@ BEGIN
 			SELECT DISTINCT CCP_NUMBER FROM SourceWicm305CcpDetail WHERE PART_NO NOT LIKE 'N%'
 			)
 		
-	-- SourceWicm330POHeader
-	INSERT INTO [tmp].[PurchaseOrders]
-	SELECT DISTINCT
-		POH.PONUMBER [PurchaseOrderID],
-		'STOREROOM' [LocationID],
-		LEFT(LTRIM(RTRIM(POH.COMMENT)), 30) [Description],
-		v.MUNISVendorID [VendorID],
-		'OPEN' [Status],
-		'BLANKET AMOUNT PO' [PurchaseTypeID],
-		'USD' [CurrencyID],
-		'' [AccountID],
-		ISNULL(po.[Create Date], NULL) [RequestedDt],
-		ISNULL(po.[Create Date], NULL) [OrderedDt],
-		ISNULL(po.[Create Date], NULL) [ExpectedDeliveryDt],
-		ISNULL(LEFT(LTRIM(RTRIM(m.rh_clerk_id)), 9), '') [OrderedByEmployeeID],
-		'[8874:1;LINES;1:1]' [LineItems],
-		'[8904:1;WO;1:1]' [RelatedWorkOrders],
-		'' [Comments]
-	FROM SourceWicm330POHeader POH
-		INNER JOIN TransformVendorWicmToMunisLookup v ON POH.VENDORNUMBER = v.WicmVendorNo
-		LEFT JOIN TransformMUNISOpenRequisitions m ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(m.a_purch_order_no AS INT))))
-		LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
-			AND po.[Record Type] = 'Header'
-	WHERE POH.PONUMBER LIKE '2016%'
+	---- SourceWicm330POHeader
+	--INSERT INTO [tmp].[PurchaseOrders]
+	--SELECT DISTINCT
+	--	POH.PONUMBER [PurchaseOrderID],
+	--	'STOREROOM' [LocationID],
+	--	LEFT(LTRIM(RTRIM(POH.COMMENT)), 30) [Description],
+	--	v.MUNISVendorID [VendorID],
+	--	'OPEN' [Status],
+	--	'BLANKET AMOUNT PO' [PurchaseTypeID],
+	--	'USD' [CurrencyID],
+	--	'' [AccountID],
+	--	ISNULL(po.[Create Date], NULL) [RequestedDt],
+	--	ISNULL(po.[Create Date], NULL) [OrderedDt],
+	--	ISNULL(po.[Create Date], NULL) [ExpectedDeliveryDt],
+	--	ISNULL(LEFT(LTRIM(RTRIM(m.rh_clerk_id)), 9), '') [OrderedByEmployeeID],
+	--	'[8874:1;LINES;1:1]' [LineItems],
+	--	'[8904:1;WO;1:1]' [RelatedWorkOrders],
+	--	'' [Comments]
+	--FROM SourceWicm330POHeader POH
+	--	INNER JOIN TransformVendorWicmToMunisLookup v ON POH.VENDORNUMBER = v.WicmVendorNo
+	--	LEFT JOIN TransformMUNISOpenRequisitions m ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(m.a_purch_order_no AS INT))))
+	--	LEFT JOIN TransformMUNISPurchaseOrders po ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
+	--		AND po.[Record Type] = 'Header'
+	--WHERE POH.PONUMBER LIKE '2016%'
 	
 	-- Copy temp to TransformPurchaseOrders
 	INSERT INTO [dbo].[TransformPurchaseOrders]
