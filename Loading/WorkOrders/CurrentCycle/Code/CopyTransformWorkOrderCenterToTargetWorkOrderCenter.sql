@@ -1,5 +1,11 @@
 INSERT INTO TargetWorkOrderCenter
-SELECT *
+SELECT
+	[Control], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber,
+	JobStatus, JobType, EquipmentID, Meter1, Meter2, PriorityID, PMService,
+	PMScheduled, RepairReasonID, OutOfServiceDt, InDt, DueDt, OpenedDt, FirstLaborDt,
+	ShowDowntimeBeginDt, FinishWorkOrder, FinishedDt, CloseWorkOrder, ClosedDt,
+	InService, InServiceDt, AccountID, WorkClass, WarrantyWork, Complaint, Cause, Correction,
+	Tasks, Labor, Parts, Commercial, GETDATE()
 FROM TransformWorkOrderCenter TWO
 WHERE
 	ISNULL(TWO.[Control], '') <> ''
