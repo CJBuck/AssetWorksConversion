@@ -1,6 +1,8 @@
 -- ===============================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
+--	Updates:
+--		CJB 11/17/2015 Added the exclusion of HYD_NO '00235'.
 -- Description: Creates/modifies the spTransformEquipmentHydrant stored procedure.
 -- ===============================================================================
 
@@ -230,11 +232,12 @@ BEGIN
 		'' [DisposalAuthority],
 		'' [DisposalComments]
 	FROM SourcePups201Hydrant H
-	LEFT JOIN TransformEquipmentPreferredPmShift p
-		ON	h.[GROUP#] = p.ShiftId
+		LEFT JOIN TransformEquipmentPreferredPmShift p
+			ON	h.[GROUP#] = p.ShiftId
 	WHERE
-		H.[STATUS] = 'A'
-		OR (H.[STATUS] = 'I' AND H.HYD_SEQ# = '00') -- fixed 10/19 per spec
+		(H.[STATUS] = 'A'
+		OR (H.[STATUS] = 'I' AND H.HYD_SEQ# = '00')) -- fixed 10/19 per spec
+		AND H.[HYD_NO] = '00235'
 
 	UPDATE tmp.Hydrants
 	SET
