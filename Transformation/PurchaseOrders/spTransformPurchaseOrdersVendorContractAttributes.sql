@@ -1,6 +1,9 @@
 --	=================================================================================================
 --	Created By:		Chris Buck
 --	Create Date:	11/06/2015
+--	Updates:
+--		CJB 11/19/2015 Fixed where clause to only include those VendorContractIDs that exist in the
+--			TransformPurchaseOrdersVendorContract table.
 --	Description:	Creates/modifies the spTransformPurchaseOrdersVendorContractAttributes stored
 --					procedure.  Populates the TransformPurchaseOrdersVendorContractAttributes table.
 --	=================================================================================================
@@ -62,6 +65,8 @@ BEGIN
 		'' [PathAndFileName]
 	FROM TransformMUNISPurchaseOrders MPO
 	WHERE MPO.[Record Type] = 'Detail Line'
+		AND LTRIM(RTRIM(CONVERT(VARCHAR, CAST(MPO.[Purchase Order] AS INT)))) LIKE '2016%'
+	ORDER BY LTRIM(RTRIM(CONVERT(VARCHAR, CAST(MPO.[Purchase Order] AS INT))))
 	
 	-- Copy temp to TransformPurchaseOrdersVendorContractAttributes
 	INSERT INTO [dbo].[TransformPurchaseOrdersVendorContractAttributes]
