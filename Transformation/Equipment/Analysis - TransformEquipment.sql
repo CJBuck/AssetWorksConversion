@@ -15,5 +15,6 @@ EXEC dbo.spTransformEquipmentSubsystemParts
 
 SELECT * FROM TransformEquipment
 SELECT * FROM TransformEquipmentLegacyXwalk
+SELECT * FROM TransformEquipmentProjectComponentRelationship
 SELECT * FROM EquipmentIDAutoCounter
 --

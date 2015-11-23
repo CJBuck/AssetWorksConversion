@@ -1,9 +1,10 @@
--- =================================================================================
+-- ==========================================================================================
 -- Created By : Chris Buck
 -- Create Date:	09/18/2015
+-- Update Date:
 -- Description: Creates/modifies the spWorkOrderCenterRequiredFieldsValidationReport
 --				stored procedure.
--- =================================================================================
+-- ==========================================================================================
 
 IF OBJECT_ID('spWorkOrderCenterRequiredFieldsValidationReport') IS NULL
     EXEC ('CREATE PROCEDURE dbo.spWorkOrderCenterRequiredFieldsValidationReport AS SELECT 1')

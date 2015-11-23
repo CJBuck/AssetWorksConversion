@@ -1,7 +1,10 @@
 -- ===============================================================================
--- Created By:	Chris Buck
--- Create Date:	02/09/2015
--- Description: Creates/modifies the spTransformEquipmentProject stored procedure.
+-- Created By:		Chris Buck
+-- Create Date:		02/09/2015
+-- Update Date:
+--					CJB 11/23/2015 - major re-write to include integration of
+--						Project Tracking function.
+-- Description:		Creates/modifies the spTransformEquipmentProject stored procedure.
 -- ===============================================================================
 
 IF OBJECT_ID('spTransformEquipmentProject') IS NULL
@@ -71,7 +74,7 @@ BEGIN
 	IF OBJECT_ID('tmp.StagingProjects') IS NOT NULL
 	DROP TABLE tmp.StagingProjects
 
-	CREATE TABLE tmp.StagingProjects(
+	CREATE TABLE tmp.StagingProjects (
 		[RowNum] [int] IDENTITY(1,1) NOT NULL,
 		[Object_ID] [varchar] (10) NOT NULL,
 		[Location] [varchar] (2) NULL,
@@ -123,7 +126,7 @@ BEGIN
 		[AccountIDUsageTickets] [varchar](10) NULL,
 		[EquipmentStatus] [varchar](10) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
-		UserStatus1 varchar(6) NULL,
+		UserStatus1 [varchar](6) NULL,
 		[ConditionRating] [varchar](20) NULL,
 		[StatusCodes] [varchar](6) NULL,
 		[WorkOrders] [char](1) NULL,
@@ -183,7 +186,14 @@ BEGIN
 		END [PMProgramType],
 		'' [AssetPhotoFilePath],
 		'' [AssetPhotoFileDescription],
-		1901 [ModelYear],
+		CASE
+			WHEN OP.LOCATION = '04' THEN
+				CASE
+					WHEN LEFT(OP.[OBJECT_ID], 1) IN ('0', '1') THEN ('20' + LEFT(OP.[OBJECT_ID], 2))
+					ELSE ('19' + LEFT(OP.[OBJECT_ID], 2))
+				END
+			ELSE '1901'
+		END [ModelYear],
 		'NA' [ManufacturerID],
 		'NA' [ModelID],
 		'NO METER' [MeterTypesClass],
@@ -195,11 +205,26 @@ BEGIN
 		NULL [LatestMeter2Reading],
 		NULL [MaxMeter1Value],
 		NULL [MaxMeter2Value],
-		'' [Maintenance],
-		'' [PMProgram],
-		'NOT APPLICABLE' [Standards],
-		'NOT APPLICABLE' [RentalRates],
-		'' [Resources],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'ADMIN WORK ORDER'
+			WHEN '05' THEN 'EQUIPMENT TYPE'
+		END [Maintenance],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'ADMIN WORK ORDER'
+			WHEN '05' THEN 'EQUIPMENT TYPE'
+		END [PMProgram],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'ADMIN WORK ORDER'
+			WHEN '05' THEN 'NOT APPLICABLE'
+		END [Standards],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'ADMIN WORK ORDER'
+			WHEN '05' THEN 'NOT APPLICABLE'
+		END [RentalRates],
+		CASE OP.LOCATION
+			WHEN '04' THEN 'ADMIN WORK ORDER'
+			WHEN '05' THEN 'EQUIPMENT TYPE'
+		END [Resources],
 		'' [AssetCategoryID],
 		'' [AssignedPM],
 		'' [AssignedRepair],
@@ -240,7 +265,7 @@ BEGIN
 		'N' [FuelTickets],
 		LTRIM(RTRIM(OP.BLDG_ADDR)) [Comments],
 		CASE OP.[LOCATION]
-			WHEN '04' THEN 'D4'
+			WHEN '04' THEN 'D8'
 			WHEN '05' THEN 'N3'
 			ELSE ''
 		END [DefaultWOPriorityID],
@@ -503,14 +528,6 @@ BEGIN
 			WHERE [OBJECT_ID] IN (SELECT [OBJECT_ID] FROM tmp.ObjectIDs)
 			) woa ON LTRIM(RTRIM(SP.[Object_ID])) = LTRIM(RTRIM(woa.[OBJECT_ID]))
 
-	-- 6/2/2015 Temporary while logic is resolved with the business units.
-	--     Just commented out for now.
-	--UPDATE tmp.StagingProjects
-	--SET
-	--	ActualInServiceDate = aisd.ActualInServiceDate
-	--FROM tmp.StagingProjects SP
-	--	INNER JOIN tmp.InSvcDate aisd ON SP.[Object_ID] = aisd.[OBJECT_ID]
-
 	IF OBJECT_ID('tmp.ProjectFinalResultSet') IS NOT NULL
 	DROP TABLE tmp.ProjectFinalResultSet
 		
@@ -534,14 +551,14 @@ BEGIN
 				SELECT
 					SP.[Control],
 					CASE
-						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
+						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('00000' + CAST(@NewID AS VARCHAR)), 5))
 						ELSE ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 					END [EquipmentID],
 					SP.[AssetType],
 					SP.[Description],
 					SP.[AssetNumber],
 					CASE
-						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
+						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('00000' + CAST(@NewID AS VARCHAR)), 5))
 						ELSE ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 					END [SerialNumber],
 					SP.[EquipmentType],
@@ -638,14 +655,14 @@ BEGIN
 				SELECT
 					SP.[Control],
 					CASE
-						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
+						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('00000' + CAST(@NewID AS VARCHAR)), 5))
 						ELSE ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 					END [EquipmentID],
 					SP.[AssetType],
 					SP.[Description],
 					SP.[AssetNumber],
 					CASE
-						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
+						WHEN op.LOCATION = '04' THEN ('PRJ' + RIGHT(('00000' + CAST(@NewID AS VARCHAR)), 5))
 						ELSE ('EQP' + RIGHT(('0000000' + CAST(@NewID AS VARCHAR)), 7))
 					END [SerialNumber],
 					SP.[EquipmentType],
@@ -744,10 +761,332 @@ BEGIN
 
 	-- CjB 6/2/15:  special circumstance
 	DELETE tmp.ProjectFinalResultSet WHERE AssetNumber = 'LCGR' AND StationLocation = ''
+	
+	-- 11/23/15: Project Tracking
+	IF OBJECT_ID('tmp.ProjectTracking') IS NOT NULL
+	DROP TABLE tmp.ProjectTracking
 
+	SELECT
+		SP.[Control],
+		pfrs.[EquipmentID],
+		SP.[AssetType],
+		SP.[Description],
+		SP.[AssetNumber],
+		pfrs.[EquipmentID] [SerialNumber],
+		SP.[EquipmentType],
+		SP.[PMProgramType],
+		SP.[AssetPhotoFilePath],
+		SP.[AssetPhotoFileDescription],
+		SP.[ModelYear],
+		SP.[ManufacturerID],
+		SP.[ModelID],
+		SP.[MeterTypesClass],
+		SP.[Meter1Type],
+		SP.[Meter2Type],
+		SP.[Meter1AtDelivery],
+		SP.[Meter2AtDelivery],
+		SP.[LatestMeter1Reading],
+		SP.[LatestMeter2Reading],
+		SP.[MaxMeter1Value],
+		SP.[MaxMeter2Value],
+		SP.[Maintenance],
+		SP.[PMProgram],
+		SP.[Standards],
+		SP.[RentalRates],
+		SP.[Resources],
+		SP.[AssetCategoryID],
+		SP.[AssignedPM],
+		SP.[AssignedRepair],
+		SP.[StoredLocation],
+		SP.[StationLocation],
+		SP.[Jurisdiction],
+		SP.[PreferredPMShift],
+		SP.[VehicleLocation],
+		'' [BuildingLocation],
+		SP.[OtherLocation],
+		SP.[DepartmentID],
+		SP.[DeptToNotifyForPM],
+		SP.[CompanyID],
+		SP.[AccountIDAssignmentWO],
+		SP.[AccountIDLaborPosting],
+		SP.[AccountIDPartIssues],
+		SP.[AccountIDCommercialWork],
+		SP.[AccountIDFuelTickets],
+		SP.[AccountIDUsageTickets],
+		SP.[EquipmentStatus],
+		SP.[LifeCycleStatusCodeID],
+		SP.UserStatus1,
+		SP.[ConditionRating],
+		SP.[StatusCodes],
+		SP.[WorkOrders],
+		SP.[UsageTickets],
+		SP.[FuelTickets],
+		SP.[Comments],
+		SP.[DefaultWOPriorityID],
+		SP.[ActualDeliveryDate],
+		SP.[ActualInServiceDate],
+		SP.[OriginalCost],
+		SP.[DepreciationMethod],
+		SP.[LifeMonths],
+		SP.[MonthsRemaining],
+		SP.[Ownership],
+		SP.[VendorID],
+		SP.[ExpirationDate],
+		SP.[Meter1Expiration],
+		SP.[Meter2Expiration],
+		SP.[Deductible],
+		SP.[WarrantyType],
+		SP.[Comments2],
+		SP.[EstimatedReplacementMonth],
+		SP.[EstimatedReplacementYear],
+		SP.[EstimatedReplacementCost],
+		SP.[Latitude],
+		SP.[Longitude],
+		SP.[NextPMServiceNumber],
+		SP.[NextPMDueDate],
+		SP.[IndividualPMService],
+		SP.[IndividualPMDateNextDue],
+		SP.[IndividualPMNumberOfTimeUnits],
+		SP.[IndividualPMTimeUnit],
+		SP.[PlannedRetirementDate],
+		SP.[RetirementDate],
+		SP.[DispositionDate],
+		SP.[GrossSalePrice],
+		SP.[DisposalReason],
+		SP.[DisposalMethod],
+		SP.[DisposalAuthority],
+		SP.[DisposalComments]
+	INTO tmp.ProjectTracking
+	FROM tmp.StagingProjects SP
+		INNER JOIN tmp.ProjectFinalResultSet pfrs on SP.[Object_ID] = pfrs.AssetNumber
+	WHERE
+		Location = '04'
+		AND [Object_ID] NOT LIKE '%-2'
+
+	INSERT 	INTO tmp.ProjectTracking
+	SELECT
+		SP.[Control],
+		(pfrs.[EquipmentID] + '-1')[EquipmentID],
+		SP.[AssetType],
+		SP.[Description],
+		SP.[AssetNumber],
+		(pfrs.[EquipmentID] + '-1') [SerialNumber],
+		SP.[EquipmentType],
+		SP.[PMProgramType],
+		SP.[AssetPhotoFilePath],
+		SP.[AssetPhotoFileDescription],
+		SP.[ModelYear],
+		SP.[ManufacturerID],
+		SP.[ModelID],
+		SP.[MeterTypesClass],
+		SP.[Meter1Type],
+		SP.[Meter2Type],
+		SP.[Meter1AtDelivery],
+		SP.[Meter2AtDelivery],
+		SP.[LatestMeter1Reading],
+		SP.[LatestMeter2Reading],
+		SP.[MaxMeter1Value],
+		SP.[MaxMeter2Value],
+		SP.[Maintenance],
+		SP.[PMProgram],
+		SP.[Standards],
+		SP.[RentalRates],
+		SP.[Resources],
+		SP.[AssetCategoryID],
+		SP.[AssignedPM],
+		SP.[AssignedRepair],
+		SP.[StoredLocation],
+		SP.[StationLocation],
+		SP.[Jurisdiction],
+		SP.[PreferredPMShift],
+		SP.[VehicleLocation],
+		'' [BuildingLocation],
+		SP.[OtherLocation],
+		SP.[DepartmentID],
+		SP.[DeptToNotifyForPM],
+		SP.[CompanyID],
+		SP.[AccountIDAssignmentWO],
+		SP.[AccountIDLaborPosting],
+		SP.[AccountIDPartIssues],
+		SP.[AccountIDCommercialWork],
+		SP.[AccountIDFuelTickets],
+		SP.[AccountIDUsageTickets],
+		SP.[EquipmentStatus],
+		SP.[LifeCycleStatusCodeID],
+		SP.UserStatus1,
+		SP.[ConditionRating],
+		SP.[StatusCodes],
+		SP.[WorkOrders],
+		SP.[UsageTickets],
+		SP.[FuelTickets],
+		SP.[Comments],
+		SP.[DefaultWOPriorityID],
+		SP.[ActualDeliveryDate],
+		SP.[ActualInServiceDate],
+		SP.[OriginalCost],
+		SP.[DepreciationMethod],
+		SP.[LifeMonths],
+		SP.[MonthsRemaining],
+		SP.[Ownership],
+		SP.[VendorID],
+		SP.[ExpirationDate],
+		SP.[Meter1Expiration],
+		SP.[Meter2Expiration],
+		SP.[Deductible],
+		SP.[WarrantyType],
+		SP.[Comments2],
+		SP.[EstimatedReplacementMonth],
+		SP.[EstimatedReplacementYear],
+		SP.[EstimatedReplacementCost],
+		SP.[Latitude],
+		SP.[Longitude],
+		SP.[NextPMServiceNumber],
+		SP.[NextPMDueDate],
+		SP.[IndividualPMService],
+		SP.[IndividualPMDateNextDue],
+		SP.[IndividualPMNumberOfTimeUnits],
+		SP.[IndividualPMTimeUnit],
+		SP.[PlannedRetirementDate],
+		SP.[RetirementDate],
+		SP.[DispositionDate],
+		SP.[GrossSalePrice],
+		SP.[DisposalReason],
+		SP.[DisposalMethod],
+		SP.[DisposalAuthority],
+		SP.[DisposalComments]
+	FROM tmp.StagingProjects SP
+		INNER JOIN tmp.ProjectFinalResultSet pfrs on SP.[Object_ID] = pfrs.AssetNumber
+	WHERE
+		Location = '04'
+		AND [Object_ID] NOT LIKE '%-2'
+	
+	INSERT 	INTO tmp.ProjectTracking
+	SELECT
+		SP.[Control],
+		(LEFT(pfrs.[EquipmentID], 8) + '-2') [EquipmentID],
+		SP.[AssetType],
+		SP.[Description],
+		SP.[AssetNumber],
+		(LEFT(pfrs.[EquipmentID], 8) + '-2') [SerialNumber],
+		SP.[EquipmentType],
+		SP.[PMProgramType],
+		SP.[AssetPhotoFilePath],
+		SP.[AssetPhotoFileDescription],
+		SP.[ModelYear],
+		SP.[ManufacturerID],
+		SP.[ModelID],
+		SP.[MeterTypesClass],
+		SP.[Meter1Type],
+		SP.[Meter2Type],
+		SP.[Meter1AtDelivery],
+		SP.[Meter2AtDelivery],
+		SP.[LatestMeter1Reading],
+		SP.[LatestMeter2Reading],
+		SP.[MaxMeter1Value],
+		SP.[MaxMeter2Value],
+		SP.[Maintenance],
+		SP.[PMProgram],
+		SP.[Standards],
+		SP.[RentalRates],
+		SP.[Resources],
+		SP.[AssetCategoryID],
+		SP.[AssignedPM],
+		SP.[AssignedRepair],
+		SP.[StoredLocation],
+		SP.[StationLocation],
+		SP.[Jurisdiction],
+		SP.[PreferredPMShift],
+		SP.[VehicleLocation],
+		'' [BuildingLocation],
+		SP.[OtherLocation],
+		SP.[DepartmentID],
+		SP.[DeptToNotifyForPM],
+		SP.[CompanyID],
+		SP.[AccountIDAssignmentWO],
+		SP.[AccountIDLaborPosting],
+		SP.[AccountIDPartIssues],
+		SP.[AccountIDCommercialWork],
+		SP.[AccountIDFuelTickets],
+		SP.[AccountIDUsageTickets],
+		SP.[EquipmentStatus],
+		SP.[LifeCycleStatusCodeID],
+		SP.UserStatus1,
+		SP.[ConditionRating],
+		SP.[StatusCodes],
+		SP.[WorkOrders],
+		SP.[UsageTickets],
+		SP.[FuelTickets],
+		SP.[Comments],
+		SP.[DefaultWOPriorityID],
+		SP.[ActualDeliveryDate],
+		SP.[ActualInServiceDate],
+		SP.[OriginalCost],
+		SP.[DepreciationMethod],
+		SP.[LifeMonths],
+		SP.[MonthsRemaining],
+		SP.[Ownership],
+		SP.[VendorID],
+		SP.[ExpirationDate],
+		SP.[Meter1Expiration],
+		SP.[Meter2Expiration],
+		SP.[Deductible],
+		SP.[WarrantyType],
+		SP.[Comments2],
+		SP.[EstimatedReplacementMonth],
+		SP.[EstimatedReplacementYear],
+		SP.[EstimatedReplacementCost],
+		SP.[Latitude],
+		SP.[Longitude],
+		SP.[NextPMServiceNumber],
+		SP.[NextPMDueDate],
+		SP.[IndividualPMService],
+		SP.[IndividualPMDateNextDue],
+		SP.[IndividualPMNumberOfTimeUnits],
+		SP.[IndividualPMTimeUnit],
+		SP.[PlannedRetirementDate],
+		SP.[RetirementDate],
+		SP.[DispositionDate],
+		SP.[GrossSalePrice],
+		SP.[DisposalReason],
+		SP.[DisposalMethod],
+		SP.[DisposalAuthority],
+		SP.[DisposalComments]
+	FROM tmp.StagingProjects SP
+		INNER JOIN tmp.ProjectFinalResultSet pfrs on LEFT(SP.[Object_ID], 7) = LEFT(pfrs.AssetNumber, 7)
+	WHERE
+		SP.Location = '04'
+		AND SP.[Object_ID] LIKE '%-2'
+		AND pfrs.AssetNumber NOT LIKE '%-2'
+	
+	-- Delete the '04' rows from ProjectFinalResultSet
+	DELETE tmp.ProjectFinalResultSet
+	WHERE EquipmentID IN (
+			SELECT pfrs.EquipmentID
+			FROM tmp.StagingProjects SP
+				INNER JOIN tmp.ProjectFinalResultSet pfrs on LEFT(SP.[Object_ID], 7) = LEFT(pfrs.AssetNumber, 7)
+			WHERE
+				SP.Location = '04'
+		)
+	-- End :: Project Tracking
+
+	-- Copy the tmp tables to TransformEquipment
 	INSERT INTO TransformEquipment
 	SELECT DISTINCT * FROM tmp.ProjectFinalResultSet
+	
+	INSERT INTO TransformEquipment
+	SELECT DISTINCT * FROM tmp.ProjectTracking
+	
+	-- Populate the TransformEquipmentProjectComponentRelationship table
+	TRUNCATE TABLE TransformEquipmentProjectComponentRelationship
+	INSERT INTO TransformEquipmentProjectComponentRelationship
+	SELECT
+		'[i]' [Control],
+		LEFT(tmp.EquipmentID, 8) [EquipmentID],
+		tmp.EquipmentID [ComponentID]
+	FROM tmp.ProjectTracking tmp
+	ORDER BY tmp.EquipmentID
 
+	-- Populate the crosswalk table.
 	INSERT INTO TransformEquipmentLegacyXwalk
 	SELECT
 		FRS.[EquipmentID],
@@ -801,21 +1140,3 @@ BEGIN
 	WHERE p.EquipmentId LIKE 'EQP%' -- limit to only records with source LOCATION = 5
 		AND l.SourceObjectID IS NOT NULL
 END
-
---SELECT *
---FROM SourceWicm210ObjectProject OP
---WHERE OP.[OBJECT_ID] = '00A0014'
-
---SELECT *
---FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending 
---WHERE WO_ALT1_OB_ID = '00A0014' --'00A0014'
-
---SELECT [OBJECT_ID], COUNT([OBJECT_ID]) [Count]
---FROM SourceWicm250WorkOrderHeaderAdmin
---GROUP BY [OBJECT_ID]
---HAVING COUNT([OBJECT_ID]) > 1
---ORDER BY (COUNT([OBJECT_ID])) DESC
-
---SELECT [OBJECT_ID], DEVELOPER
---FROM SourceWicm250WorkOrderHeaderAdmin
---WHERE [OBJECT_ID] = '09MW005   '
