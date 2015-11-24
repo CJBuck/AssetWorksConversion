@@ -1,7 +1,7 @@
 -- =================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
--- Breaking Updates:  
+-- Update Date:  
 --		05/22/2015 (Gerald Davis) - Added LocationId to TransformPartLocationBin all values set to 'STOREROOM'.
 --								  - Added truncation of loading tables to ensure procedure is idempotent
 --		06/01/2015 (Gerald Davis) - Remapped obsolete ProductCategoryIds(7536 -> 7530, 7542 -> 7541)
@@ -20,9 +20,9 @@ GO
 ALTER PROCEDURE dbo.spTransformPart
 AS
 BEGIN
--- =================================================================================================
--- Build dbo.TransformPart
--- =================================================================================================
+--	=================================================================================================
+--	Build dbo.TransformPart
+--	=================================================================================================
 	IF OBJECT_ID('tmp.Parts') IS NOT NULL
 		DROP TABLE tmp.Parts
 
@@ -49,7 +49,7 @@ BEGIN
 		ExcludeFromInvLists char (1) NULL
 	)
 
-	--load common values first
+	-- Load common values first
 	INSERT INTO tmp.Parts
 	(
 		PartId,
@@ -66,7 +66,7 @@ BEGIN
 	)
 	SELECT
 		dbo.Trim(PH.PART_NO) AS PartID,
-		0 AS PartSuffix,
+		NULL AS PartSuffix,
 		CASE WHEN PH.PART_CAT = '9560' THEN 'Y' ELSE 'N' END AS Tire,
 		'N' ControlledSubstance,
 		'N' ItemFabricatedWithoutCore,
@@ -88,8 +88,8 @@ BEGIN
 		LongDescription = dbo.TRIM(swph.PART_DESC),
 		VRMSCode = dbo.TRIM(swph.PART_GROUP)		
 	FROM tmp.Parts sp
-	INNER JOIN dbo.SourceWicm220PartsHeader swph
-		ON sp.PartId = dbo.TRIM(swph.PART_NO)
+		INNER JOIN dbo.SourceWicm220PartsHeader swph
+			ON sp.PartId = dbo.TRIM(swph.PART_NO)
 	WHERE LEN (sp.PartId) = 3
 
 	-- Updates from Shawns XLS (for non chemical parts).
@@ -102,15 +102,15 @@ BEGIN
 		LongDescription = xls.CurrentDescription,
 		VRMSCode = xls.[Group]
 	FROM tmp.Parts sp
-	INNER JOIN ShawnsXLS xls 
-		ON sp.PartID = xls.PartNo
+		INNER JOIN ShawnsXLS xls ON sp.PartID = xls.PartNo
 	WHERE LEN(sp.PartId) > 3  -- Check w/ S.  There is a single part w/ 3 digit Part
 	
 	-- Remap obsolete ProductCategoryID (see email 06/01/2015 "FW: Product Category 7536 and 7542")
 	UPDATE tmp.Parts
-	SET ProductCategoryID = CASE ProductCategoryId WHEN 7536 THEN 7530
-								 WHEN 7542 THEN 7541
-								 ELSE ProductCategoryID
+	SET ProductCategoryID = CASE ProductCategoryId
+								WHEN 7536 THEN 7530
+								WHEN 7542 THEN 7541
+								ELSE ProductCategoryID
 						    END
 
 	-- Update PartClassificationId for parts with fractional quantities (per spec update v2.0.9)
@@ -122,8 +122,8 @@ BEGIN
 		FROM dbo.Sourcewicm221partsdetail
 		WHERE QTY_ONHAND not like '%.000'
 	)
-		
-	-- Copy #StagingParts to TransformPart
+
+	-- Copy temp table to TransformPart
 	TRUNCATE TABLE TransformPart;
 	INSERT INTO TransformPart
 	SELECT * FROM tmp.Parts
@@ -219,7 +219,7 @@ IF OBJECT_ID('tmp.PartLocations') IS NOT NULL
 		ON xls.NewMfg = tpml.SourceValue
 	WHERE LEN(spl.PartId) > 3
 
-	-- Copy #StagingPartsLocation to TransformPartLocation
+	-- Copy #temp table to TransformPartLocation
 	TRUNCATE TABLE TransformPartLocation;
 	INSERT INTO dbo.TransformPartLocation
 	SELECT * FROM tmp.PartLocations;
