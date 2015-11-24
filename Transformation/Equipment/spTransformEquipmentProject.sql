@@ -1082,8 +1082,10 @@ BEGIN
 	SELECT
 		'[i]' [Control],
 		LEFT(tmp.EquipmentID, 8) [EquipmentID],
-		tmp.EquipmentID [ComponentID]
+		tmp.EquipmentID [ComponentID],
+		GETDATE()
 	FROM tmp.ProjectTracking tmp
+	WHERE LEFT(tmp.EquipmentID, 8) <> EquipmentID
 	ORDER BY tmp.EquipmentID
 
 	-- Populate the crosswalk table.
