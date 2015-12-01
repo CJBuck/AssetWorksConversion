@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[TargetWorkOrderCenterCommercial](
 	[Control] [varchar](10) NOT NULL,
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NOT NULL,
-	[WorkOrderNumber] [varchar](15) NULL,
+	[WorkOrderNumber] [varchar](15) NOT NULL,
 	[TaskID] [varchar](12) NOT NULL,
 	[WorkAccomplishedCode] [varchar](4) NOT NULL,
 	[Dt] [datetime] NOT NULL,
