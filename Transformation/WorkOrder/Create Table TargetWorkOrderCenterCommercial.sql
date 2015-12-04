@@ -25,8 +25,8 @@ CREATE TABLE [dbo].[TargetWorkOrderCenterCommercial](
 	[Dt] [datetime] NOT NULL,
 	[VendorID] [varchar](15) NOT NULL,
 	[LaborCost] [decimal](12,2) NOT NULL,
-	[PartsCost] [decimal](12,2) NOT NULL,
-	[MiscCost] [decimal](12,2) NOT NULL,
+	[PartsCost] [decimal](12,2) NULL,
+	[MiscCost] [decimal](12,2) NULL,
 	[Comments] [varchar](60) NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]

@@ -84,7 +84,7 @@ BEGIN
 		'D8' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		'PT' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -169,7 +169,7 @@ BEGIN
 		'D4' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		LTRIM(RTRIM(HP.[CLASS])) [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -258,7 +258,7 @@ BEGIN
 		'D4' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		LTRIM(RTRIM(HV.[CLASS])) [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -344,7 +344,7 @@ BEGIN
 		'D8' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		'PT' [RepairReasonID],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HA.WO_INDATE + ' ' + LEFT(HA.TIME_IN, 2) + ':' + SUBSTRING(HA.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -430,7 +430,7 @@ BEGIN
 		'D4' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		LTRIM(RTRIM(HP.[CLASS])) [RepairReasonID],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HP.WO_INDATE + ' ' + LEFT(HP.TIME_IN, 2) + ':' + SUBSTRING(HP.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
@@ -520,7 +520,7 @@ BEGIN
 		'D4' [PriorityID],
 		'' [PMService],
 		NULL [PMScheduled],
-		'NSR' [RepairReasonID],
+		LTRIM(RTRIM(HV.[CLASS])) [RepairReasonID],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [OutOfServiceDt],
 		CONVERT(DATETIME, (HV.WO_INDATE + ' ' + LEFT(HV.TIME_IN, 2) + ':' + SUBSTRING(HV.TIME_IN, 3, 2)), 101) [InDt],
 		CASE
