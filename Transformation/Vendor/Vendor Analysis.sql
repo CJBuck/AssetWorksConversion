@@ -89,3 +89,70 @@ from SourceWicm300CcpHeader CCPH
 	inner join TransformVendorWicmToMunisLookup tv ON ISNULL(CCPH.VNUMBER, '') = isnull(dbo.TRIM(WicmVendorNo), '')
 where CCPH.[TYPE] = 'R' and CCPH.PONUMBER like '2016%'
 
+
+
+-- Version II
+with WOs as (
+	select distinct
+		'Work Orders' [Source],
+		isnull(dbo.TRIM(DS.VENDOR_ID), '') [WICM Vendor ID],
+		COUNT(isnull(dbo.TRIM(DS.VENDOR_ID), '')) [Count],
+		MAX(CONVERT(VARCHAR(10), CAST(DS.TRANS_DATE AS DATE), 101)) [Last Used]	-- ISNULL((CONVERT(VARCHAR(10), CAST(DS.TRANS_DATE AS DATE), 101)), '')
+	from SourceWicm251WorkOrderDetailSublets DS
+	where DS.OPER_CODE <> ''
+		and isnull(dbo.TRIM(DS.VENDOR_ID), '') not in
+			( select distinct ISNULL(dbo.TRIM(MUNISVendorID), '') from TransformVendorWicmToMunisLookup )
+	group by isnull(dbo.TRIM(DS.VENDOR_ID), '')
+),
+POs as (
+	select distinct
+		'Purchase Orders' [Source],
+		isnull(dbo.TRIM(CCPH.VNUMBER), '') [WICM Vendor ID],
+		COUNT(isnull(dbo.TRIM(CCPH.VNUMBER), '')) [Count],
+		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used]
+	from SourceWicm300CcpHeader CCPH
+		WHERE CCPH.[STATUS] <> 'X'
+			AND CCPH.[TYPE] <> 'W'
+			AND (LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) IN (
+				SELECT DISTINCT CCP_NUMBER FROM SourceWicm305CcpDetail WHERE PART_NO NOT LIKE 'N%'
+				)
+			and isnull(dbo.TRIM(CCPH.VNUMBER), '') not in ( select distinct ISNULL(dbo.TRIM(WicmVendorNo), '') from TransformVendorWicmToMunisLookup )
+	group by isnull(dbo.TRIM(CCPH.VNUMBER), '')
+),
+VCs as (
+	select distinct
+		'Vendor Contracts' [Source],
+		isnull(dbo.trim(POH.VENDORNUMBER), '') [WICM Vendor ID],
+		COUNT(isnull(dbo.trim(POH.VENDORNUMBER), '')) [Count],
+		MAX(POH.LASTRELEASEDATE) [Last Used]
+		--MAX(CONVERT(VARCHAR(10), CAST(POH.LASTRELEASEDATE AS DATE), 101)) [Last Used]
+	from SourceWicm330POHeader POH
+	where POH.PONUMBER like '2016%'
+		and POH.VENDORNUMBER not in ( select distinct ISNULL(dbo.TRIM(WicmVendorNo), '') from TransformVendorWicmToMunisLookup )
+	group by isnull(dbo.trim(POH.VENDORNUMBER), '')
+),
+Reqs as (
+	select distinct
+		'Requisitions' [Source],
+		isnull(dbo.TRIM(CCPH.VNUMBER), '') [WICM Vendor ID],
+		COUNT(isnull(dbo.TRIM(CCPH.VNUMBER), '')) [Count],
+	--	MAX(CCPH.[ORDER-DATE]) [Last Used]
+		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used]
+	from SourceWicm300CcpHeader CCPH
+	where CCPH.[TYPE] = 'R' and CCPH.PONUMBER like '2016%'
+			and isnull(dbo.TRIM(CCPH.VNUMBER), '') not in ( select distinct ISNULL(dbo.TRIM(WicmVendorNo), '') from TransformVendorWicmToMunisLookup )
+	group by isnull(dbo.TRIM(CCPH.VNUMBER), '')
+),
+Consolidated as (
+	select * from WOs
+	union all
+	select * from POs
+	union all
+	select * from VCs
+	union all
+	select * from Reqs
+)
+select C.*, ISNULL(wv.VNAME, '') [VName], ISNULL(wv.TRADEASNAME, '') [TradeAsName]
+from Consolidated C
+	left join SourceWicm310Vendor wv on C.[WICM Vendor ID] = wv.VNUMBER
+order by [Count] desc, [WICM Vendor ID], [Last Used]
