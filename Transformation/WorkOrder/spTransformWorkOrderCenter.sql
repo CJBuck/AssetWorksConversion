@@ -5,6 +5,7 @@
 --			CJB 10/15/2015 - Added new column and logic for 'PMScheduled'.
 --			CJB 11/30/2015 - Modified the Location exclusion from
 --					SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair.
+--			CJB 12/11/2015 - Fixed the inclusion/exclusions for Distribution records.
 --	Description:	Creates/modifies the spTransformWorkOrderCenter stored procedure.  Populates
 --					the TransportWorkOrderCenter table.
 --	=================================================================================================
@@ -322,7 +323,7 @@ BEGIN
 		INNER JOIN TransformEquipmentLegacyXwalk xwalk ON HV.[OBJECT_ID] = xwalk.LegacyID
 			AND [Source] = 'SourceWicm210ObjectProject'
 	WHERE HV.[OBJECT_ID] NOT LIKE 'LV%'
-		AND HV.LOCATION <> '04' AND HV.OP_CODE1 <> '1000'
+		AND HV.LOCATION = '04' AND HV.OP_CODE1 <> '1000'
 
 	-- Distribution - NOT in TransformEquipmentLegacyXwalk
 	INSERT INTO [tmp].[WorkOrderCenter]
@@ -585,7 +586,7 @@ BEGIN
 		HV.[OBJECT_ID] NOT IN (SELECT LegacyID FROM TransformEquipmentLegacyXwalk WHERE [Source] = 'SourceWicm210ObjectProject')
 		AND HV.[OBJECT_ID] NOT LIKE 'LV%'
 		AND HV.[STATUS] = 'A'
-		AND HV.LOCATION <> '04'
+		AND HV.LOCATION = '04'
 		AND HV.OP_CODE1 <> '1000'
 
 	-- Distribution - Closed WOs
@@ -832,7 +833,7 @@ BEGIN
 	FROM SourceWicm250WorkOrderHeaderVehiclesNewSvcInstallRepair HV
 	WHERE
 		HV.WO_NUMBER NOT IN (SELECT WorkOrderNumber FROM [tmp].[WorkOrderCenter])
-		AND HV.LOCATION <> '04' AND HV.OP_CODE1 <> '1000'
+		AND (HV.LOCATION = '04' AND HV.OP_CODE1 <> '1000')
 		AND HV.[OBJECT_ID] NOT LIKE 'LV%'
 		AND HV.[STATUS] IN ('C', 'D', 'U', 'I')
 		AND (HV.WO_INDATE > '7/1/2015' OR HV.WO_OUTDATE > '7/1/2015')
