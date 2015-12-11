@@ -90,14 +90,14 @@ from SourceWicm300CcpHeader CCPH
 where CCPH.[TYPE] = 'R' and CCPH.PONUMBER like '2016%'
 
 
-
 -- Version II
 with WOs as (
 	select distinct
 		'Work Orders' [Source],
 		isnull(dbo.TRIM(DS.VENDOR_ID), '') [WICM Vendor ID],
 		COUNT(isnull(dbo.TRIM(DS.VENDOR_ID), '')) [Count],
-		MAX(CONVERT(VARCHAR(10), CAST(DS.TRANS_DATE AS DATE), 101)) [Last Used]	-- ISNULL((CONVERT(VARCHAR(10), CAST(DS.TRANS_DATE AS DATE), 101)), '')
+		MAX(CONVERT(VARCHAR(10), CAST(DS.TRANS_DATE AS DATE), 101)) [Last Used],
+		CAST(MAX(CAST(DS.SUBLET_COST AS DECIMAL(8,2))) AS VARCHAR) [Max Cost]
 	from SourceWicm251WorkOrderDetailSublets DS
 	where DS.OPER_CODE <> ''
 		and isnull(dbo.TRIM(DS.VENDOR_ID), '') not in
@@ -109,7 +109,8 @@ POs as (
 		'Purchase Orders' [Source],
 		isnull(dbo.TRIM(CCPH.VNUMBER), '') [WICM Vendor ID],
 		COUNT(isnull(dbo.TRIM(CCPH.VNUMBER), '')) [Count],
-		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used]
+		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used],
+		CAST(MAX(CAST(CCPH.BILLEDTOTAL AS DECIMAL(8,2))) AS VARCHAR) [Max Cost]
 	from SourceWicm300CcpHeader CCPH
 		WHERE CCPH.[STATUS] <> 'X'
 			AND CCPH.[TYPE] <> 'W'
@@ -124,8 +125,8 @@ VCs as (
 		'Vendor Contracts' [Source],
 		isnull(dbo.trim(POH.VENDORNUMBER), '') [WICM Vendor ID],
 		COUNT(isnull(dbo.trim(POH.VENDORNUMBER), '')) [Count],
-		MAX(POH.LASTRELEASEDATE) [Last Used]
-		--MAX(CONVERT(VARCHAR(10), CAST(POH.LASTRELEASEDATE AS DATE), 101)) [Last Used]
+		MAX(POH.LASTRELEASEDATE) [Last Used],
+		CAST(MAX(CAST(POH.TOTALAMOUNT AS DECIMAL(8,2))) AS VARCHAR) [Max Cost]
 	from SourceWicm330POHeader POH
 	where POH.PONUMBER like '2016%'
 		and POH.VENDORNUMBER not in ( select distinct ISNULL(dbo.TRIM(WicmVendorNo), '') from TransformVendorWicmToMunisLookup )
@@ -137,7 +138,8 @@ Reqs as (
 		isnull(dbo.TRIM(CCPH.VNUMBER), '') [WICM Vendor ID],
 		COUNT(isnull(dbo.TRIM(CCPH.VNUMBER), '')) [Count],
 	--	MAX(CCPH.[ORDER-DATE]) [Last Used]
-		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used]
+		MAX(CONVERT(VARCHAR(10), CAST(CCPH.[ORDER-DATE] AS DATE), 101)) [Last Used],
+		CAST(MAX(CAST(CCPH.BILLEDTOTAL AS DECIMAL(8,2))) AS VARCHAR) [Max Cost]
 	from SourceWicm300CcpHeader CCPH
 	where CCPH.[TYPE] = 'R' and CCPH.PONUMBER like '2016%'
 			and isnull(dbo.TRIM(CCPH.VNUMBER), '') not in ( select distinct ISNULL(dbo.TRIM(WicmVendorNo), '') from TransformVendorWicmToMunisLookup )
