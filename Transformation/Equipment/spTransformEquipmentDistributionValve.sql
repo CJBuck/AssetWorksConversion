@@ -1,11 +1,12 @@
--- =============================================================================
+-- ================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
 -- Description: Creates/modifies the spTransformEquipmentDistributionValve
 --              stored procedure.
--- Updated:		07/06/2015 Gerald Davis
---				Seperate out bypass valves as distinct entities
--- =============================================================================
+-- Updates:		
+--			GD 07/06/2015 - Seperate out bypass valves as distinct entities.
+--			CJB 12/15/2015 - Modified logic for EstimatedReplaceMonth and EstimatedReplacementYear.
+-- ================================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.
@@ -223,8 +224,14 @@ BEGIN
 		NULL [Deductible],			-- Open issue
 		'' [WarrantyType],			-- Open issue
 		'' [Comments2],
-		NULL [EstimatedReplacementMonth],
-		NULL [EstimatedReplacementYear],
+		CASE
+			WHEN ISDATE(SPV.SET_DATE) = 1 THEN DATEPART(MONTH, (DATEADD(MONTH, 1200, CAST(SPV.SET_DATE AS DATETIME))))
+			ELSE NULL
+		END [EstimatedReplacementMonth],
+		CASE
+			WHEN ISDATE(SPV.SET_DATE) = 1 THEN DATEPART(YEAR, (DATEADD(MONTH, 1200, CAST(SPV.SET_DATE AS DATETIME))))
+			ELSE NULL
+		END [EstimatedReplacementYear],
 		NULL [EstimatedReplacementCost],
 		'' [Latitude],
 		'' [Longitude],
@@ -341,10 +348,6 @@ BEGIN
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LEFT(LTRIM(RTRIM(spv.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
 				AND manid.[Source] LIKE '%Valves%'
-
-	-- 6/2/2015 Temporary while logic is resolved with the business units.
-	--UPDATE tmp.Valves SET ActualInServiceDate = NULL
-	-- 9/22/2015 Commented out as a workaround.
 
     -- Used in Bypass valves to ensure distinct EquipmentId
 	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves )

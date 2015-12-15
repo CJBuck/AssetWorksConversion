@@ -1,10 +1,11 @@
--- =============================================================================
+-- ================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
--- Update Date:
+-- Updates:
 --			CJB 09/29/2015 - Added support for 'Surplus Vehicles'
+--			CJB 12/15/2015 - Modified logic for EstimatedReplaceMonth and EstimatedReplacementYear.
 -- Description: Creates/modifies the TransformEquipmentVehicle stored procedure.
--- =============================================================================
+-- ================================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.
@@ -200,7 +201,7 @@ BEGIN
 		NULL [ActualInServiceDate],
 		ISNULL(OV.ACQ_COST, NULL) [OriginalCost],
 		'' [DepreciationMethod],	-- Open issue.
-		ISNULL(OV.LIFE_EXP, NULL) [LifeMonths],
+		NULL [LifeMonths],
 		NULL [MonthsRemaining],
 		'OWNED' [Ownership],
 		'' [VendorID],				-- Open issue
@@ -214,11 +215,11 @@ BEGIN
 		'' [WarrantyType],			-- Open issue
 		'' [Comments2],
 		CASE
-			WHEN ISDATE(OBSOL_DATE) = 1 THEN RIGHT('00' + CONVERT(NVARCHAR(2), DATEPART(MONTH, CAST(OBSOL_DATE AS DATETIME))), 2)
+			WHEN ISDATE(OV.ACQ_DATE) = 1 THEN DATEPART(MONTH, (DATEADD(MONTH, CAST(OV.LIFE_EXP AS INT), CAST(OV.ACQ_DATE AS DATETIME))))
 			ELSE NULL
 		END [EstimatedReplacementMonth],
 		CASE
-			WHEN ISDATE(OBSOL_DATE) = 1 THEN RIGHT('0000' + CONVERT(NVARCHAR(4), DATEPART(YEAR, CAST(OBSOL_DATE AS DATETIME))), 4)
+			WHEN ISDATE(OV.ACQ_DATE) = 1 THEN DATEPART(YEAR, (DATEADD(YEAR, CAST(OV.LIFE_EXP AS INT), CAST(OV.ACQ_DATE AS DATETIME))))
 			ELSE NULL
 		END [EstimatedReplacementYear],
 		NULL [EstimatedReplacementCost],
