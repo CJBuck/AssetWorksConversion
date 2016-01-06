@@ -127,9 +127,9 @@ CREATE TABLE [dbo].[TargetEquipment](
 	[StationLocation] [varchar](10) NOT NULL,
 	[Jurisdiction] [varchar] (2) NULL,
 	[PreferredPMShift] [varchar](10) NOT NULL,
-	[VehicleLocation] [varchar](20) NULL,		-- 2/18
-	[BuildingLocation] [varchar](20) NULL,		-- 2/18
-	[OtherLocation] [varchar](20) NULL,			-- 2/18
+	[VehicleLocation] [varchar](10) NULL,
+	[BuildingLocation] [varchar](10) NULL,
+	[OtherLocation] [varchar](10) NULL,
 	[DepartmentID] [varchar](10) NOT NULL,
 	[DeptToNotifyForPM] [varchar](10) NOT NULL,
 	[CompanyID] [varchar](10) NULL,
@@ -141,7 +141,7 @@ CREATE TABLE [dbo].[TargetEquipment](
 	[AccountIDUsageTickets] [varchar](10) NULL,
 	[EquipmentStatus] [varchar](10) NULL,		-- 2/18
 	[LifeCycleStatusCodeID] [varchar](2) NULL,
-	[UserStatus1] varchar(6) NULL,
+	[UserStatus1] [varchar](6) NULL,
 	[ConditionRating] [varchar](20) NULL,
 	[StatusCodes] [varchar](6) NULL,
 	[WorkOrders] [char](1) NOT NULL,

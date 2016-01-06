@@ -1,12 +1,13 @@
--- =====================================================================================
+-- ===============================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
 -- Update Date:
 --		CJB 10/15/2015 Added new logic for writing to the TransformEquipmentIndividualPM
---		table for Condition Assessments (spec 6.2.1).
+--					   table for Condition Assessments (spec 6.2.1).
+--		CJB 01/06/2016 Added population logic VehicleLocation, BuildingLocation, and OtherLocation
 -- Description: Creates/modifies the spTransformEquipmentFacilitiesEquipment
 --              stored procedure.
--- =====================================================================================
+-- ===============================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.
@@ -102,9 +103,9 @@ BEGIN
 		[StationLocation] [varchar](10) NULL,
 		[Jurisdiction] [varchar](2) NULL,
 		[PreferredPMShift] [varchar](10) NULL,
-		[VehicleLocation] [varchar](20) NULL,
-		[BuildingLocation] [varchar](20) NULL,
-		[OtherLocation] [varchar](20) NULL,
+		[VehicleLocation] [varchar](10) NULL,
+		[BuildingLocation] [varchar](10) NULL,
+		[OtherLocation] [varchar](10) NULL,
 		[DepartmentID] [varchar](10) NULL,
 		[DeptToNotifyForPM] [varchar](10) NULL,
 		[CompanyID] [varchar](10) NULL,
@@ -219,9 +220,9 @@ BEGIN
 		'' [StationLocation],
 		'' [Jurisdiction],
 		'FACMF58' [PreferredPMShift],
-		'' [VehicleLocation],
-		'' [BuildingLocation],
-		'' [OtherLocation],
+		LEFT(LTRIM(RTRIM(OE.VEH_EQU_ADDR)), 10) [VehicleLocation],
+		LTRIM(RTRIM(OE.[FLOOR])) [BuildingLocation],
+		LTRIM(RTRIM(OE.ROOM)) [OtherLocation],
 		CASE
 			WHEN LTRIM(RTRIM(OE.MAINT_SHOP)) = 'E' THEN '413011'
 			WHEN LTRIM(RTRIM(OE.MAINT_SHOP)) = 'EL' THEN '413011'
