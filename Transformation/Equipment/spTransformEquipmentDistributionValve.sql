@@ -1,12 +1,13 @@
--- ================================================================================================
+-- ====================================================================================================
 -- Created By:	Chris Buck
 -- Create Date:	01/30/2015
 -- Description: Creates/modifies the spTransformEquipmentDistributionValve
 --              stored procedure.
 -- Updates:		
 --			GD 07/06/2015 - Seperate out bypass valves as distinct entities.
---			CJB 12/15/2015 - Modified logic for EstimatedReplaceMonth and EstimatedReplacementYear.
--- ================================================================================================
+--			CJB 12/15/2015 - Modified logic for EstimatedReplacementMonth and EstimatedReplacementYear.
+--			CJB 01/06/2016 - Modified the logic for ManufacturerID & ModelID for Air Release Valves.
+-- ====================================================================================================
 
 -- In order to persist security settings if the SP already exists, we check if
 -- it exists and do an ALTER or a CREATE if it does not.
@@ -348,6 +349,17 @@ BEGIN
 		INNER JOIN TransformEquipmentManufacturer manid
 			ON LEFT(LTRIM(RTRIM(spv.VLV_MAKE)), 15) = LEFT(LTRIM(RTRIM(manid.[SourceValue])), 15)
 				AND manid.[Source] LIKE '%Valves%'
+				
+	-- CB 20160106: Air Release Valve Manufacturer/Model Update
+	UPDATE tmp.Valves
+	SET
+		ManufacturerID = arvmm.ManufacturerID,
+		ModelID = arvmm.ModelID
+	FROM tmp.Valves VLVS
+		INNER JOIN TransformARValveManufacturerModel arvmm ON VLVS.EquipmentID = arvmm.EquipmentID
+	WHERE
+		VLVS.EquipmentID LIKE 'ARV%'
+		AND VLVS.ManufacturerID IN ('', 'UNKNOWN')
 
     -- Used in Bypass valves to ensure distinct EquipmentId
 	DECLARE @MaxValve int = ( SELECT MAX(Valve_No) FROM tmp.Valves )
