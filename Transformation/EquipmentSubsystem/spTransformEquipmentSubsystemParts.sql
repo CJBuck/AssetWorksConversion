@@ -146,5 +146,16 @@ AS BEGIN
 		AND p.SubsystemID = v.SubsystemId
 		AND p.PropertyID = v.Property
 	WHERE NULLIF(dbo.TRIM(v.Value), '') IS NOT NULL
+
+	-- Handle special case for VLV-PROPERTIES & ARV-PROPERTIES
+	UPDATE s
+	SET s.Description = v.MAP_PAGE + ' ' + v.MAP_GRID
+	FROM [dbo].[TransformEquipmentSubsystemPartsProperty] s
+	INNER JOIN TransformEquipmentLegacyXwalk x
+		ON s.EquipmentID = x.EquipmentID
+	INNER JOIN SourcePups201Valve v
+		ON x.LegacyID = v.VALVE_NO
+	WHERE (SubsystemId = 'ARV-PROPERTIES' OR SubsystemId = 'VLV-PROPERTIES') AND PropertyId = 'INSPECTION GROUP'
+
 END
 
