@@ -20,7 +20,14 @@ AS
 BEGIN
 	--Prevent duplicates if SP is run multiple times
 	DELETE FROM TransformEquipment WHERE EquipmentId LIKE 'VLV%'
+	DELETE FROM TransformEquipment WHERE EquipmentId LIKE 'ARV%'
+	DELETE FROM TransformEquipment WHERE EquipmentId LIKE 'BLF%'
+
 	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'VLV%'
+	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'ARV%'
+	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'BLF%'
+
+
 
 	IF OBJECT_ID('tmp.Valves') IS NOT NULL
 		DROP TABLE tmp.Valves
@@ -259,7 +266,10 @@ BEGIN
 			(SPV.[REMARK2] LIKE '%proposed%') OR (SPV.[REMARK2] LIKE '%not yet installed%'))
 		-- Abandoned/Disposed Valves
 		OR (
-			SPV.[STATUS] IN ('H', 'D') AND SPV.[REPLACE_DATE] > '07/01/2015'
+				SPV.[STATUS] IN ('H', 'D') 
+				AND ISDATE(SPV.REPLACE_DATE) = 1
+				AND CONVERT(Date, SPV.REPLACE_DATE, 112) > '07/01/2015' 
+				--explicit cast needed to ensure exclusion due to formatting
 			)
 
 	-- EquipmentType
