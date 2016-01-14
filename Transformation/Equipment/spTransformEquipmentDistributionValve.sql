@@ -27,8 +27,6 @@ BEGIN
 	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'ARV%'
 	DELETE FROM TransformEquipmentLegacyXwalk WHERE EquipmentId LIKE 'BLF%'
 
-
-
 	IF OBJECT_ID('tmp.Valves') IS NOT NULL
 		DROP TABLE tmp.Valves
 
@@ -80,7 +78,7 @@ BEGIN
 		[AccountIDCommercialWork] [varchar](10) NULL,
 		[AccountIDFuelTickets] [varchar](10) NULL,
 		[AccountIDUsageTickets] [varchar](10) NULL,
-		[EquipmentStatus] [varchar](10) NULL,
+		[EquipmentStatus] [varchar](20) NULL,
 		[LifeCycleStatusCodeID] [varchar](2) NULL,
 		[UserStatus1] [varchar](6) NULL,
 		[ConditionRating] [varchar](20) NULL,
@@ -572,6 +570,110 @@ BEGIN
 					(s.[REMARK2] LIKE '%proposed%') OR (s.[REMARK2] LIKE '%not yet installed%'))
 		)
 	ORDER BY v.Valve_No --Required to ensure proper row_number for sequential EquipmentId
+	
+	-- Create placeholder records for retired/disposed Valves
+	INSERT INTO tmp.Valves
+	SELECT
+		CAST(n.Number AS VARCHAR(10)) AS [Valve_No],
+		'[i]' [Control],
+		'VLV' + RIGHT('0000000' + CAST(n.Number AS VARCHAR(10)), 7) [EquipmentID],
+		'STATIONARY' AS [AssetType],
+		'Retired / Disposed Valve' AS [Description],
+		'' AS [AssetNumber],
+		'VLV' + RIGHT('0000000' + CAST(n.Number AS VARCHAR(10)), 7) [SerialNumber],
+		'VALVE' [EquipmentType],
+		'NONE' [PMProgramType],
+		'' [AssetPhotoFilePath],
+		'' [AssetPhotoFileDescription],
+		1901 AS [ModelYear],
+		'UNKNOWN' [ManufacturerID],
+		'UNKNOWN' [ModelID],
+		'DMT' [MeterTypesClass],
+		'' [Meter1Type],
+		'' [Meter2Type],
+		NULL [Meter1AtDelivery],
+		NULL [Meter2AtDelivery],
+		NULL [LatestMeter1Reading],
+		NULL [LatestMeter2Reading],
+		NULL [MaxMeter1Value],
+		NULL [MaxMeter2Value],
+		'DNA' [Maintenance],
+		'DNA' AS [PMProgram],
+		'DNA' AS [Standards],
+		'DNA' AS [RentalRates],
+		'DNA' AS [Resources],
+		'VALVE' AssetCategoryID,
+		'D-HYD VAL' AssignedPM,
+		'D-REPAIR' AssignedRepair,
+		'CCOP' AS [StoredLocation],
+		'' AS [StationLocation],
+		'' [Jurisdiction],
+		'DAY' [PreferredPMShift],
+		'' [VehicleLocation],
+		'' [BuildingLocation],
+		'' [OtherLocation],
+		'413505' [DepartmentID],
+		'413505' [DeptToNotifyForPM],
+		'' [CompanyID],					-- Open issue
+		'' [AccountIDAssignmentWO],		-- Open issue
+		'' [AccountIDLaborPosting],		-- Open issue
+		'' [AccountIDPartIssues],		-- Open issue
+		'' [AccountIDCommercialWork],	-- Open issue
+		'' [AccountIDFuelTickets],		-- Open issue
+		'' [AccountIDUsageTickets],		-- Open issue
+		'OUT OF SERVICE' [EquipmentStatus],
+		'R' AS [LifeCycleStatusCodeID],
+		NULL [UserStatus1],
+		'' [ConditionRating],		-- Open issue
+		'' [StatusCodes],			-- Open issue
+		'N' [WorkOrders],
+		'N' [UsageTickets],
+		'N' [FuelTickets],
+		'' AS [Comments],
+		NULL AS [DefaultWOPriorityID],
+		NULL AS [ActualDeliveryDate],	-- Open issue
+		NULL AS [ActualInServiceDate],	-- Open issue:  some data not of DateTime datatype.
+		NULL [OriginalCost],		-- Open issue
+		'' [DepreciationMethod],	-- Open issue
+		NULL AS [LifeMonths],
+		NULL [MonthsRemaining],
+		NULL AS [Ownership],
+		NULL AS [VendorID],				-- Open issue
+		NULL AS [ExpirationDate],
+		NULL AS [Meter1Expiration],	-- Open issue
+		NULL AS [Meter2Expiration],	-- Open issue
+		NULL AS [Deductible],			-- Open issue
+		'' AS [WarrantyType],			-- Open issue
+		'' AS  [Comments2],
+		NULL AS [EstimatedReplacementMonth],
+		NULL AS [EstimatedReplacementYear],
+		NULL [EstimatedReplacementCost],
+		'' [Latitude],
+		'' [Longitude],
+		'' [NextPMServiceNumber],
+		NULL [NextPMDueDate],
+		'' [IndividualPMService],
+		'' [IndividualPMDateNextDue],
+		NULL [IndividualPMNumberOfTimeUnits],
+		'' [IndividualPMTimeUnit],
+		NULL [PlannedRetirementDate],
+		NULL [RetirementDate],
+		NULL [DispositionDate],
+		NULL [GrossSalePrice],
+		'' [DisposalReason],
+		'' [DisposalMethod],
+		'' [DisposalAuthority],
+		'' [DisposalComments]
+	FROM
+	( 
+		SELECT * FROM tmp.Valves
+		WHERE EquipmentID LIKE 'VLV%'
+	) AS s
+	RIGHT JOIN tmp.Numbers n
+		ON CAST(VALVE_NO as INTEGER) = n.Number
+	WHERE VALVE_NO IS NULL
+	AND n.Number <= (SELECT MAX(CAST(VALVE_NO as INTEGER)) FROM tmp.Valves)
+	ORDER BY n.Number;
 
 	-- Move data from the temp table to TransformEquipment.
 	INSERT INTO TransformEquipment
@@ -676,4 +778,5 @@ BEGIN
 		'VALVE_NO' [LegacyIDSource],
 		v.Valve_No [LegacyID]
 	FROM tmp.Valves v
+	WHERE Description != 'Retired / Disposed Valve'
 END
