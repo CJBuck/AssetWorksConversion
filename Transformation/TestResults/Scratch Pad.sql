@@ -61,5 +61,55 @@ exec dbo.spTransformTestResults
 
 select * from tmp.TestResults
 select * from tmp.TestResultsDetails
+--delete tmp.TestResultsDetails
 
 select * from SourceWicm251WorkOrderDetailMaterialEstimates where WO_NUMBER = '601099'
+
+select WO_NUMBER, OBJ_TYPE_1, ACT_COST_1, OBJ_TYPE_2, ACT_COST_2 
+from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] where ACT_COST_1 <> '0' and ACT_COST_2 <> '0'
+
+select WO_NUMBER, OBJ_TYPE_1, ACT_COST_1, OBJ_TYPE_2, ACT_COST_2,
+	(CONVERT(decimal, act_cost_1) + CONVERT(decimal, act_cost_2)) [Sum]
+from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] where WO_NUMBER = '602166'
+
+SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1Contd where WO_NUMBER = '601099'
+
+;with Cost1 as (
+	select WO_NUMBER, OBJ_TYPE_1 [Obj_Type], isnull(ACT_COST_1, 0.00) [Act_Cost]
+	from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+	where WO_NUMBER = '602166' and OBJ_TYPE_1 = 'WPO'
+),
+Cost2 as (
+	select WO_NUMBER, OBJ_TYPE_2 [Obj_Type], isnull(ACT_COST_2, 0.00) [Act_Cost]
+	from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+	where WO_NUMBER = '602166' and OBJ_TYPE_2 = 'WPO'
+),
+Cost3 as (
+	select WO_NUMBER, OBJ_TYPE_3 [Obj_Type], ACT_COST_3 [Act_Cost]
+	from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+	where WO_NUMBER = '602166' and OBJ_TYPE_3 = 'WPO'
+),
+Cost4 as (
+	select WO_NUMBER, OBJ_TYPE_4 [Obj_Type], ACT_COST_4 [Act_Cost]
+	from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+	where WO_NUMBER = '602166' and OBJ_TYPE_4 = 'WPO'
+),
+Cost5 as (
+	select WO_NUMBER, OBJ_TYPE_5 [Obj_Type], ACT_COST_5 [Act_Cost]
+	from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
+	where WO_NUMBER = '602166' and OBJ_TYPE_5 = 'WPO'
+),
+SubTotal as (
+	select WO_NUMBER, CAST(Act_Cost as decimal) [Act_Cost] from Cost1
+	union all
+	select WO_NUMBER, CAST(Act_Cost as decimal) [Act_Cost] from Cost2
+	union all
+	select WO_NUMBER, CAST(Act_Cost as decimal) [Act_Cost] from Cost3
+	union all
+	select WO_NUMBER, CAST(Act_Cost as decimal) [Act_Cost] from Cost4
+	union all
+	select WO_NUMBER, CAST(Act_Cost as decimal) [Act_Cost] from Cost5
+)
+select SUM(Act_Cost), '', ''
+from SubTotal
+group by WO_NUMBER

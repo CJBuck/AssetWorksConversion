@@ -22,6 +22,7 @@ SELECT * FROM SourceWicm230TableLookupAssetType
 SELECT * FROM SourceWicm230TableLookupEmployeeRates
 SELECT * FROM SourceWicm230TableLookupLocation
 SELECT * FROM SourceWicm230TableLookupMaintenanceSchedules
+SELECT * FROM SourceWicm230TableLookupOperationCodes
 SELECT * FROM SourceWicm230TableLookupPartCategory
 SELECT * FROM SourceWicm230TableLookupScheduleCycle
 SELECT * FROM SourceWicm230TableLookupToolIDs

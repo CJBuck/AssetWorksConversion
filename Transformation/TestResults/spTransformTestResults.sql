@@ -14,9 +14,17 @@ ALTER PROCEDURE dbo.spTransformTestResults
 AS
 
 BEGIN
+	DECLARE @Findings TABLE (
+		QualVal		VARCHAR(30),
+		CommentsVal	VARCHAR(60),
+		NumVal		VARCHAR(20)
+	)
+	
 	DECLARE
 		@WOCRowNum		INT,
 		@WOCObjectID	VARCHAR(25),
+		
+		@DetailsVal		VARCHAR(60),
 		-- Table TransformTestResults variables
 		@TestID			VARCHAR(9),
 		@EquipmentID	VARCHAR(20),
@@ -290,29 +298,50 @@ BEGIN
 	BEGIN
 	
 		-- Start
-		SET @QualFinding = dbo.ufnGetTestResultsValue(@WOCObjectID, @TestElementID)
+		INSERT INTO @Findings
+		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
 		
 		-- Insert to tmp.TestResults
-		INSERT INTO tmp.TestResults
-		([Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
-		 [WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [TestResults])
+		INSERT INTO tmp.TestResults (
+			[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
+			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [TestResults]
+		)
 		VALUES (
 			@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
 			@WOLocationID, @WOYear, @WONumber,
 			@Status, '[1829:1;RESULTS;1:1]'
 		)
 
-		-- Insert to tmp.TestResultsDetails
-		INSERT INTO tmp.TestResultsDetails
-		([Object_ID], [TestID], TestElementID, NotPerformed, [Result], DetectionThreshold, AllowableMinimum, AllowableMaximum,
-		 UnitOfMeasure, NumericFound, NumericValueAfterAdjustment, QualitativeFinding, Comments, ConditionRating, Symptom
-		 )
-		VALUES (
-			@WOCObjectID, @TestID, @TestElementID, '', '', '', '', '', '', '0.0', '', @QualFinding, '', '', ''
-		)
+		DECLARE DetailsCursor CURSOR FOR
+			SELECT * FROM @Findings
+			
+		OPEN DetailsCursor
+		FETCH NEXT FROM DetailsCursor
+		INTO @QualFinding, @Comments, @NumFound
+		
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			-- Insert to tmp.TestResultsDetails
+			INSERT INTO tmp.TestResultsDetails (
+				[Object_ID], [TestID], TestElementID, NotPerformed, [Result], DetectionThreshold, AllowableMinimum, AllowableMaximum,
+				UnitOfMeasure, NumericFound, NumericValueAfterAdjustment, QualitativeFinding, Comments, ConditionRating, Symptom
+			 )
+			VALUES (
+				@WOCObjectID, @TestID, @TestElementID, '', '', '', '', '', '', @NumFound, '', @QualFinding, @Comments, '', ''
+			)
+
+			FETCH NEXT FROM DetailsCursor
+			INTO @QualFinding, @Comments, @NumFound
+		END
+		CLOSE DetailsCursor;
+		DEALLOCATE DetailsCursor;
 	
 		-- Increment the TestID
 		SET @TestID = @TestID + 1
+		
+		-- Null out @Findings
+		DELETE @Findings
+		
 		-- Grab the next row
 		FETCH NEXT FROM MainCursor
 		INTO @WOCRowNum, @WOCObjectID, @TestElementID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID,
