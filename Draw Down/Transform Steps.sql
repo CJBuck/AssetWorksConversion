@@ -1,0 +1,71 @@
+-- Equipment
+TRUNCATE TABLE TransformEquipment
+TRUNCATE TABLE TransformEquipmentIndividualPM
+TRUNCATE TABLE TransformEquipmentLegacyXwalk
+TRUNCATE TABLE EquipmentIDAutoCounter
+
+EXEC dbo.spTransformEquipmentDistributionValve
+EXEC dbo.spTransformEquipmentFacilitiesEquipment
+EXEC dbo.spTransformEquipmentVehicle
+EXEC dbo.spTransformEquipmentProject
+EXEC dbo.spTransformEquipmentHydrant
+EXEC dbo.spTransformAssetHeirarchy
+EXEC dbo.spTransformEquipmentSubsystem
+EXEC dbo.spTransformEquipmentSubsystemParts
+
+-- Components
+TRUNCATE TABLE TransformComponent
+TRUNCATE TABLE TransformComponentLegacyXwalk
+
+EXEC spTransformComponent
+
+-- Parts
+TRUNCATE TABLE TransformPart
+TRUNCATE TABLE TransformPartLocation
+TRUNCATE TABLE TransformPartAdjustment
+TRUNCATE TABLE TransformPartLocationBin
+
+EXEC dbo.spTransformPart
+
+-- Work Orders
+TRUNCATE TABLE TransformWorkOrderCenter
+TRUNCATE TABLE TransformWorkOrderCenterTasks
+TRUNCATE TABLE TransformWorkOrderCenterLabor
+TRUNCATE TABLE TransformWorkOrderCenterParts
+TRUNCATE TABLE TransformWorkOrderCenterCommercial
+TRUNCATE TABLE TransformWorkOrderCenterStandardJobs
+
+EXEC spTransformWorkOrderCenter
+EXEC spTransformWorkOrderCenterTasks
+EXEC spTransformWorkOrderCenterLabor
+EXEC spTransformWorkOrderCenterParts
+EXEC spTransformWorkOrderCenterCommercial
+EXEC spTransformWorkOrderCenterStandardJobs
+
+-- Purchase Orders
+TRUNCATE TABLE TransformPurchaseOrders
+TRUNCATE TABLE TransformPurchaseOrdersLineItems
+TRUNCATE TABLE TransformPurchaseOrdersEnterprisePurchasingReceipts
+TRUNCATE TABLE TransformPurchaseOrdersVendorContract
+TRUNCATE TABLE TransformPurchaseOrdersVendorContractLineItems
+TRUNCATE TABLE TransformPurchaseOrdersVendorContractAttributes
+
+EXEC spTransformPurchaseOrders
+EXEC spTransformPurchaseOrdersLineItems
+EXEC spTransformPurchaseOrdersEnterprisePurchasingReceipts
+EXEC spTransformPurchaseOrdersVendorContract
+EXEC spTransformPurchaseOrdersVendorContractLineItems
+EXEC spTransformPurchaseOrdersVendorContractAttributes
+
+-- Requisitions
+TRUNCATE TABLE TransformRequisitions
+TRUNCATE TABLE TransformRequisitionsLineItems
+TRUNCATE TABLE TransformRequisitionsRelatedWorkOrders
+TRUNCATE TABLE TransformRequisitionsAttributes
+
+EXEC spTransformRequisitions
+EXEC spTransformRequisitionsLineItems
+--EXEC spTransformRequisitionsRelatedWorkOrders		-- Not in use.
+EXEC spTransformRequisitionsAttributes
+
+-- Project Tracking (TestResults) :: in progress
