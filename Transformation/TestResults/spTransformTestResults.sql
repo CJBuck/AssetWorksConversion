@@ -286,7 +286,7 @@ BEGIN
 			RowNum, [Object_ID], Lkup_TestElementID, EquipmentID, LkUp_TestTypeID, OpenedDt [TestDate], OpenedDt [DueDate], 'D-ADMIN' [TestLocationID],
 			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status]
 		FROM [tmp].TestResultsComboWorkTbl
-		WHERE [Object_ID] = '01D0099'
+		--WHERE [Object_ID] = '07A0099-2'
 
 	OPEN MainCursor
 	FETCH NEXT FROM MainCursor
@@ -296,7 +296,8 @@ BEGIN
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-	
+		--SELECT @TestElementID	-- Debug
+		
 		-- Start
 		INSERT INTO @Findings
 		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)

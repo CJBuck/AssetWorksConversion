@@ -175,14 +175,10 @@ BEGIN
 	IF @TestElementID = 'PRJ-FLUSH-17'
 		BEGIN
 			SELECT @ReturnVal = (
-				CAST(Point_Chk_01 AS VARCHAR) + ',' + CAST(Point_Chk_02 AS VARCHAR) + ',' +
-				CAST(Point_Chk_03 AS VARCHAR) + ',' + CAST(Point_Chk_04 AS VARCHAR) + ',' +
-				CAST(Point_Chk_05 AS VARCHAR) + ',' + CAST(Point_Chk_06 AS VARCHAR) + ',' +
-				CAST(Point_Chk_07 AS VARCHAR) + ',' + CAST(Point_Chk_08 AS VARCHAR) + ',' +
-				CAST(Point_Chk_09 AS VARCHAR) + ',' + CAST(Point_Chk_10 AS VARCHAR) + ',' +
-				CAST(Point_Chk_11 AS VARCHAR) + ',' + CAST(Point_Chk_12 AS VARCHAR) + ',' +
-				CAST(Point_Chk_13 AS VARCHAR) + ',' + CAST(Point_Chk_14 AS VARCHAR) + ',' +
-				CAST(Point_Chk_15 AS VARCHAR) + ',' + CAST(Point_Chk_16 AS VARCHAR)
+				Point_Chk_01 + ',' + Point_Chk_02 + ',' + Point_Chk_03 + ',' + Point_Chk_04 + ',' + Point_Chk_05 + ',' +
+				Point_Chk_06 + ',' + Point_Chk_07 + ',' + Point_Chk_08 + ',' + Point_Chk_09 + ',' + Point_Chk_10 + ',' +
+				Point_Chk_11 + ',' + Point_Chk_12 + ',' + Point_Chk_13 + ',' + Point_Chk_14 + ',' + Point_Chk_15 + ',' +
+				Point_Chk_16
 				)
 			FROM (
 				SELECT IFP.WO_NUMBER,

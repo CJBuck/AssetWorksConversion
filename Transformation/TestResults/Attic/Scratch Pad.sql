@@ -32,7 +32,6 @@ where CHARINDEX('D%', [OBJECT_ID]) > 0 or [OBJECT_ID] = 'All'
 EXEC spTransformTestResults
 
 select * from [tmp].TestResultsComboWorkTbl
-where [Object_ID] = '07A0099-2'
 
 select distinct [Test Element ID] 
 from TransformTestResultsMappingLookup where [Source Table] = '250WorkOrderHeaderAdmin'
@@ -54,22 +53,17 @@ where [Object_ID] = '01D0099'
 
 select *
 from [tmp].TestResultsComboWorkTbl
-where [Object_ID] = '07A0099-2'
+where [Object_ID] = '01D0099'
 
-select * from [dbo].[ufnGetTestResultsValue]('00A0007', 'PRJ-073')
+select dbo.ufnGetTestResultsValue('01D0099', 'PRJ-002')
 
 exec dbo.spTransformTestResults
 
 select * from tmp.TestResults
 select * from tmp.TestResultsDetails
-select distinct [Object_ID] from tmp.TestResultsDetails order by [Object_ID] desc
-select distinct [Object_ID] from tmp.TestResults order by [Object_ID]
-
 --delete tmp.TestResultsDetails
 
-select * from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending where WO_NUMBER = '601099'
-select distinct POINT_ChK_16 from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
-select * from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending where isnull(POINT_CHK_16, '') <> ''
+select * from SourceWicm251WorkOrderDetailMaterialEstimates where WO_NUMBER = '601099'
 
 select WO_NUMBER, OBJ_TYPE_1, ACT_COST_1, OBJ_TYPE_2, ACT_COST_2 
 from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] where ACT_COST_1 <> '0' and ACT_COST_2 <> '0'

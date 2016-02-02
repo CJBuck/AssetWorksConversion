@@ -14,23 +14,44 @@ ALTER PROCEDURE dbo.spTransformTestResults
 AS
 
 BEGIN
-	DECLARE 
+	DECLARE @Findings TABLE (
+		QualVal		VARCHAR(30),
+		CommentsVal	VARCHAR(60),
+		NumVal		VARCHAR(20)
+	)
+	
+	DECLARE
 		@WOCRowNum		INT,
 		@WOCObjectID	VARCHAR(25),
+		
+		@DetailsVal		VARCHAR(60),
 		-- Table TransformTestResults variables
 		@TestID			VARCHAR(9),
 		@EquipmentID	VARCHAR(20),
 		@TestTypeID		VARCHAR(20),
 		@TestDate		DATETIME,
 		@DueDate		DATETIME,
+		@TestLocationID	VARCHAR(10),
+		@EmployeeID		VARCHAR(9),
 		@WOLocationID	VARCHAR(10),
 		@WOYear			INT,
 		@WONumber		VARCHAR(15),
+		@Status			VARCHAR(6),
+		@TestResults	VARCHAR(25),
 		-- Table TransformTestResultsDetails variables
 		@TestElementID	VARCHAR(20),
+		@NotPerformed	CHAR(1),
+		@Result			VARCHAR(5),
+		@DetThreshold	VARCHAR(12),
+		@AllowableMin	VARCHAR(12),
+		@AllowableMax	VARCHAR(12),
+		@UnitOfMeasure	VARCHAR(10),
 		@NumFound		VARCHAR(20),
+		@NumValAfterAdj	VARCHAR(20),
 		@QualFinding	VARCHAR(30),
-		@Comments		VARCHAR(60)
+		@Comments		VARCHAR(60),
+		@CondRating		VARCHAR(20),
+		@Symptom		VARCHAR(20)
 
 	IF OBJECT_ID('tmp.TestResults') IS NOT NULL
 	DROP TABLE tmp.TestResults
@@ -180,6 +201,9 @@ BEGIN
 	WHERE WOC.RepairReasonID = 'PT'
 
 	-- Set up the cursor
+	---- This cursor will cycle through all the rows in [tmp].[WOC] and make an insert into 
+	---- [tmp].TestResultsComboWorkTbl with all the tests from TransformTestResultsMappingLookup
+	---- that match the flavor/pattern of OBJECT_ID.
 	DECLARE WOC_Cursor CURSOR FOR SELECT RowNum, [Object_ID] FROM [tmp].[WOC]
 
 	OPEN WOC_Cursor
@@ -251,5 +275,83 @@ BEGIN
 	CLOSE WOC_Cursor;
 	DEALLOCATE WOC_Cursor;
 	
+	-- Set up the next cursor
+	---- This cursor will cycle through all the rows in [tmp].[WOC] and make an insert into 
+	---- [tmp].TestResultsComboWorkTbl with all the tests from TransformTestResultsMappingLookup
+	---- that match the flavor/pattern of OBJECT_ID.
+	SET @TestID = 1000		-- Want TestIDs starting at 1000
+
+	DECLARE MainCursor CURSOR FOR
+		SELECT
+			RowNum, [Object_ID], Lkup_TestElementID, EquipmentID, LkUp_TestTypeID, OpenedDt [TestDate], OpenedDt [DueDate], 'D-ADMIN' [TestLocationID],
+			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status]
+		FROM [tmp].TestResultsComboWorkTbl
+		WHERE [Object_ID] = '07A0099-2'
+
+	OPEN MainCursor
+	FETCH NEXT FROM MainCursor
+	INTO @WOCRowNum, @WOCObjectID, @TestElementID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID,
+		@EmployeeID, @WOLocationID,
+		@WOYear, @WONumber, @Status
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SELECT @TestElementID	-- Debug
+		
+		-- Start
+		INSERT INTO @Findings
+		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
+		
+		-- Insert to tmp.TestResults
+		INSERT INTO tmp.TestResults (
+			[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
+			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [TestResults]
+		)
+		VALUES (
+			@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
+			@WOLocationID, @WOYear, @WONumber,
+			@Status, '[1829:1;RESULTS;1:1]'
+		)
+
+		DECLARE DetailsCursor CURSOR FOR
+			SELECT * FROM @Findings
+			
+		OPEN DetailsCursor
+		FETCH NEXT FROM DetailsCursor
+		INTO @QualFinding, @Comments, @NumFound
+		
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			-- Insert to tmp.TestResultsDetails
+			INSERT INTO tmp.TestResultsDetails (
+				[Object_ID], [TestID], TestElementID, NotPerformed, [Result], DetectionThreshold, AllowableMinimum, AllowableMaximum,
+				UnitOfMeasure, NumericFound, NumericValueAfterAdjustment, QualitativeFinding, Comments, ConditionRating, Symptom
+			 )
+			VALUES (
+				@WOCObjectID, @TestID, @TestElementID, '', '', '', '', '', '', @NumFound, '', @QualFinding, @Comments, '', ''
+			)
+
+			FETCH NEXT FROM DetailsCursor
+			INTO @QualFinding, @Comments, @NumFound
+		END
+		CLOSE DetailsCursor;
+		DEALLOCATE DetailsCursor;
+	
+		-- Increment the TestID
+		SET @TestID = @TestID + 1
+		
+		-- Null out @Findings
+		DELETE @Findings
+		
+		-- Grab the next row
+		FETCH NEXT FROM MainCursor
+		INTO @WOCRowNum, @WOCObjectID, @TestElementID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID,
+			@EmployeeID, @WOLocationID,
+			@WOYear, @WONumber, @Status
+	END
+
+	-- Clean up cursor MainCursor
+	CLOSE MainCursor;
+	DEALLOCATE MainCursor;
 
 END
