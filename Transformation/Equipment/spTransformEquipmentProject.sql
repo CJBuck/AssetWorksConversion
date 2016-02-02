@@ -1,11 +1,13 @@
--- ===============================================================================
+-- ===================================================================================
 -- Created By:		Chris Buck
 -- Create Date:		02/09/2015
 -- Update Date:
 --					CJB 11/23/2015 - major re-write to include integration of
 --						Project Tracking function.
+--					CJB 02/02/2016 - corrected an issue with tmp.ProjectTracking not
+--						writing to TransformEquipmentLegacyXwalk
 -- Description:		Creates/modifies the spTransformEquipmentProject stored procedure.
--- ===============================================================================
+-- ===================================================================================
 
 IF OBJECT_ID('spTransformEquipmentProject') IS NULL
     EXEC ('CREATE PROCEDURE dbo.spTransformEquipmentProject AS SELECT 1')
@@ -1096,6 +1098,14 @@ BEGIN
 		'OBJECT_ID' [LegacyIDSource],
 		FRS.AssetNumber [LegacyID]
 	FROM tmp.ProjectFinalResultSet FRS
+	
+	INSERT INTO TransformEquipmentLegacyXwalk
+	SELECT
+		PJ.EquipmentID,
+		'SourceWicm210ObjectProject' [Source],
+		'OBJECT_ID' [LegacyIDSource],
+		PJ.AssetNumber [LegacyID]
+	FROM tmp.ProjectTracking PJ
 
 	-- PM Records applied against entire equipment class
 	INSERT INTO TransformEquipmentIndividualPM
