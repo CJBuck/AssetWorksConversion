@@ -17,7 +17,8 @@ BEGIN
 	DECLARE @Findings TABLE (
 		QualVal		VARCHAR(30),
 		CommentsVal	VARCHAR(60),
-		NumVal		VARCHAR(20)
+		NumVal		VARCHAR(20),
+		NewNote		VARCHAR(2000)
 	)
 	
 	DECLARE
@@ -36,7 +37,8 @@ BEGIN
 		@WOLocationID	VARCHAR(10),
 		@WOYear			INT,
 		@WONumber		VARCHAR(15),
-		@Status			VARCHAR(6),
+		@Status			VARCHAR(16),
+		@NewNote		VARCHAR(2000),
 		@TestResults	VARCHAR(25),
 		-- Table TransformTestResultsDetails variables
 		@TestElementID	VARCHAR(20),
@@ -49,6 +51,7 @@ BEGIN
 		@NumFound		VARCHAR(20),
 		@NumValAfterAdj	VARCHAR(20),
 		@QualFinding	VARCHAR(30),
+		@PrelimAgmtNotes VARCHAR(2000),
 		@Comments		VARCHAR(60),
 		@CondRating		VARCHAR(20),
 		@Symptom		VARCHAR(20)
@@ -69,7 +72,8 @@ BEGIN
 		[WorkLocationID] [VARCHAR](10) NULL,
 		[WorkOrderYear] [INT] NULL,
 		[WorkOrderNumber] [VARCHAR](15) NULL,
-		[Status] [VARCHAR](6) NULL,
+		[Status] [VARCHAR](16) NULL,
+		[NewNote] [VARCHAR](2000) NULL,
 		[TestResults] [VARCHAR](25) NULL
 	)
 
@@ -284,7 +288,7 @@ BEGIN
 	DECLARE MainCursor CURSOR FOR
 		SELECT
 			RowNum, [Object_ID], Lkup_TestElementID, EquipmentID, LkUp_TestTypeID, OpenedDt [TestDate], OpenedDt [DueDate], 'D-ADMIN' [TestLocationID],
-			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status]
+			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status], '' [NewNote]
 		FROM [tmp].TestResultsComboWorkTbl
 		--WHERE [Object_ID] = '07A0099-2'
 
@@ -292,7 +296,7 @@ BEGIN
 	FETCH NEXT FROM MainCursor
 	INTO @WOCRowNum, @WOCObjectID, @TestElementID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID,
 		@EmployeeID, @WOLocationID,
-		@WOYear, @WONumber, @Status
+		@WOYear, @WONumber, @Status, @NewNote
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -305,12 +309,12 @@ BEGIN
 		-- Insert to tmp.TestResults
 		INSERT INTO tmp.TestResults (
 			[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
-			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [TestResults]
+			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [NewNote], [TestResults]
 		)
 		VALUES (
 			@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
 			@WOLocationID, @WOYear, @WONumber,
-			@Status, '[1829:1;RESULTS;1:1]'
+			@Status, @NewNote, '[1829:1;RESULTS;1:1]'
 		)
 
 		DECLARE DetailsCursor CURSOR FOR
@@ -318,10 +322,18 @@ BEGIN
 			
 		OPEN DetailsCursor
 		FETCH NEXT FROM DetailsCursor
-		INTO @QualFinding, @Comments, @NumFound
+		INTO @QualFinding, @Comments, @NumFound, @PrelimAgmtNotes
 		
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
+			-- A new note was returned so update tmp.TestResults
+			IF @PrelimAgmtNotes <> ''
+			BEGIN
+				UPDATE tmp.TestResults
+				SET NewNote = @PrelimAgmtNotes
+				WHERE TestID = @TestID
+			END
+		
 			-- Insert to tmp.TestResultsDetails
 			INSERT INTO tmp.TestResultsDetails (
 				[Object_ID], [TestID], TestElementID, NotPerformed, [Result], DetectionThreshold, AllowableMinimum, AllowableMaximum,
@@ -332,7 +344,7 @@ BEGIN
 			)
 
 			FETCH NEXT FROM DetailsCursor
-			INTO @QualFinding, @Comments, @NumFound
+			INTO @QualFinding, @Comments, @NumFound, @PrelimAgmtNotes
 		END
 		CLOSE DetailsCursor;
 		DEALLOCATE DetailsCursor;
@@ -347,11 +359,51 @@ BEGIN
 		FETCH NEXT FROM MainCursor
 		INTO @WOCRowNum, @WOCObjectID, @TestElementID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID,
 			@EmployeeID, @WOLocationID,
-			@WOYear, @WONumber, @Status
+			@WOYear, @WONumber, @Status, @NewNote
 	END
 
 	-- Clean up cursor MainCursor
 	CLOSE MainCursor;
 	DEALLOCATE MainCursor;
+	
+	-- Copy temp table to transform tables
+	INSERT INTO TransformTestResults
+	SELECT
+		'[I]',
+		T.TestID,
+		T.EquipmentID,
+		T.TestTypeID,
+		T.TestDate,
+		T.DueDate,
+		T.TestLocationID,
+		T.EmployeeID,
+		T.WorkLocationID,
+		T.WorkOrderYear,
+		T.WorkOrderNumber,
+		T.[Status],
+		T.NewNote,
+		T.TestResults,
+		GETDATE()
+	FROM tmp.TestResults T
+	
+	INSERT INTO TransformTestResultsDetails
+	SELECT
+		'[I]',
+		TRD.TestID,
+		TRD.TestElementID,
+		TRD.NotPerformed,
+		TRD.Result,
+		TRD.DetectionThreshold,
+		TRD.AllowableMinimum,
+		TRD.AllowableMaximum,
+		TRD.UnitOfMeasure,
+		TRD.NumericFound,
+		TRD.NumericValueAfterAdjustment,
+		TRD.QualitativeFinding,
+		TRD.Comments,
+		TRD.ConditionRating,
+		TRD.Symptom,
+		GETDATE()
+	FROM tmp.TestResultsDetails TRD
 
 END

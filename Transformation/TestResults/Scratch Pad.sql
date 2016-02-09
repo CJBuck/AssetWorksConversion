@@ -1,7 +1,7 @@
 --
 select *
-from TransformWorkOrderCenterStandardJobs
-where WorkOrderNumber = '601099'
+from SourceWicm210ObjectProject
+where [OBJECT_ID] like '16%'
 
 select * from SourceWicm250WorkOrderHeaderAdmin
 where WO_NUMBER = '601099'
@@ -51,10 +51,14 @@ select distinct LkUp_SourceColumnMappedToQualitativeField
 from [tmp].TestResultsComboWorkTbl
 where [Object_ID] = '01D0099'
 	and LkUp_SourceTable = '250WorkOrderHeaderAdmin'
+	
+select distinct [Object_ID] from TransformWorkOrderCenter
+where RepairReasonID = 'PT'
+order by [Object_ID] desc
 
-select *
-from [tmp].TestResultsComboWorkTbl
-where [Object_ID] = '07A0099-2'
+select distinct [Object_ID]
+from [tmp].TestResultsComboWorkTbl order by [Object_ID] desc
+where [Object_ID] = '16A0023'
 
 select * from [dbo].[ufnGetTestResultsValue]('00A0007', 'PRJ-073')
 
@@ -64,6 +68,8 @@ select * from tmp.TestResults
 select * from tmp.TestResultsDetails
 select distinct [Object_ID] from tmp.TestResultsDetails order by [Object_ID] desc
 select distinct [Object_ID] from tmp.TestResults order by [Object_ID]
+
+select * from TransformTestResultsPrelimAgreement
 
 --delete tmp.TestResultsDetails
 

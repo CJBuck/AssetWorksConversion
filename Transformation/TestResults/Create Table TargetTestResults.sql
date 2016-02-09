@@ -30,7 +30,8 @@ CREATE TABLE [dbo].[TargetTestResults](
 	[WorkOrderLocationID] [varchar](10) NOT NULL,
 	[WorkOrderYear] [int] NOT NULL,
 	[WorkOrderNumber] [varchar](15) NOT NULL,
-	[Status] [varchar](6) NOT NULL,
+	[Status] [varchar](16) NOT NULL,
+	[NewNote] [varchar](2000) NULL,
 	[TestResults] [varchar](25) NOT NULL,
 	[CreateDt] [datetime] NOT NULL
 ) ON [PRIMARY]
