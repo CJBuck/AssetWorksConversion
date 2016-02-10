@@ -24,6 +24,7 @@ BEGIN
 	DECLARE
 		@WOCRowNum		INT,
 		@WOCObjectID	VARCHAR(25),
+		@PrevTestTypeID	VARCHAR(20),
 		
 		@DetailsVal		VARCHAR(60),
 		-- Table TransformTestResults variables
@@ -284,13 +285,14 @@ BEGIN
 	---- [tmp].TestResultsComboWorkTbl with all the tests from TransformTestResultsMappingLookup
 	---- that match the flavor/pattern of OBJECT_ID.
 	SET @TestID = 1000		-- Want TestIDs starting at 1000
+	SET @PrevTestTypeID = ''
 
 	DECLARE MainCursor CURSOR FOR
 		SELECT
 			RowNum, [Object_ID], Lkup_TestElementID, EquipmentID, LkUp_TestTypeID, OpenedDt [TestDate], OpenedDt [DueDate], 'D-ADMIN' [TestLocationID],
 			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status], '' [NewNote]
 		FROM [tmp].TestResultsComboWorkTbl
-		--WHERE [Object_ID] = '07A0099-2'
+		ORDER BY EquipmentID, LkUp_TestTypeID
 
 	OPEN MainCursor
 	FETCH NEXT FROM MainCursor
@@ -300,22 +302,29 @@ BEGIN
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		--SELECT @TestElementID	-- Debug
 		
 		-- Start
 		INSERT INTO @Findings
 		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
 		
-		-- Insert to tmp.TestResults
-		INSERT INTO tmp.TestResults (
-			[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
-			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [NewNote], [TestResults]
-		)
-		VALUES (
-			@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
-			@WOLocationID, @WOYear, @WONumber,
-			@Status, @NewNote, '[1829:1;RESULTS;1:1]'
-		)
+		IF @TestTypeID <> @PrevTestTypeID
+			BEGIN
+			SET @PrevTestTypeID = @TestTypeID
+	
+			-- Increment the TestID
+			SET @TestID = @TestID + 1
+
+			-- Insert to tmp.TestResults
+			INSERT INTO tmp.TestResults (
+				[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
+				[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [NewNote], [TestResults]
+			)
+			VALUES (
+				@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
+				@WOLocationID, @WOYear, @WONumber,
+				@Status, @NewNote, '[1829:1;RESULTS;1:1]'
+			)
+		END
 
 		DECLARE DetailsCursor CURSOR FOR
 			SELECT * FROM @Findings
@@ -350,7 +359,7 @@ BEGIN
 		DEALLOCATE DetailsCursor;
 	
 		-- Increment the TestID
-		SET @TestID = @TestID + 1
+--		SET @TestID = @TestID + 1
 		
 		-- Null out @Findings
 		DELETE @Findings
