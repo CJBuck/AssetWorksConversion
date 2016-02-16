@@ -1,87 +1,25 @@
 --
-select *
-from SourceWicm210ObjectProject
-where [OBJECT_ID] like '16%'
+select * from TransformTestResults
+where WorkOrderNumber = '601027'
 
-select * from SourceWicm250WorkOrderHeaderAdmin
-where WO_NUMBER = '601099'
+select * from TransformTestResultsDetails
+where TestID in (select TestID from TransformTestResults
+where WorkOrderNumber = '601027')
+order by TestElementID
 
-select * from TransformWorkOrderCenter
-where --RepairReasonID = 'PT' 
-	[OBJECT_ID] = '01D0099'
-order by [Object_ID]
+select * 
+from TransformWorkOrderCenter
+where WorkOrderNumber = '601027' and RepairReasonID = 'PT'
 
-select [OBJECT_ID], WO_NUMBER, JURISDICTION, WO_INDATE, TIME_IN
-from SourceWicm250WorkOrderHeaderAdmin
-where WO_NUMBER = '601099'
+select TCO.*
+from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] TCO
+	inner join TransformWorkOrderCenter woc on TCO.WO_NUMBER = woc.WorkOrderNumber
+where TCO.HYD_RECS_ST <> '' and woc.RepairReasonID = 'PT'
 
-select * from TransformEquipmentLegacyXwalk order by LegacyID where LegacyID = '01D0099'
-select * from TransformComponentLegacyXwalk where LegacyID = '01D0099'
+SELECT CAST([dbo].[ufnTransformTestResultsSummaryCosts](@FindBy, 'PRJ-FLUSH-17') AS VARCHAR), '', '', ''
 
-select *
-from Staging_TransformTestResultsMappingLookup --where [Logic] is not null
-where [OBJECT_ID] <> 'All'
-	and [OBJECT_ID] like '%or like%'
-	
-select *
-from Staging_TransformTestResultsMappingLookup
-where CHARINDEX('D%', [OBJECT_ID]) > 0 or [OBJECT_ID] = 'All'
+SELECT[dbo].[ufnTransformTestResultsSummaryCosts]('601032','PRJ-FLUSH-17')
 
+SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
+WHERE WO_NUMBER = '601032'
 
--- Mock Up
-EXEC spTransformTestResults
-
-select * from [tmp].TestResultsComboWorkTbl
-where [Object_ID] = '07A0099-2'
-
-select distinct [Test Element ID] 
-from TransformTestResultsMappingLookup where [Source Table] = '250WorkOrderHeaderAdmin'
---where [Test Element ID] = 'EST-BO-01'
-
-select
-	[Test Element ID], [Source Column mapped to Qualitative Field],
-	[Source Column mapped to Comments Field], [Source Column mapped to Numeric Field]
-from TransformTestResultsMappingLookup where [Source Table] = '250WorkOrderHeaderAdmin'
-
-select distinct LkUp_SourceTable
-from [tmp].TestResultsComboWorkTbl
---where [Object_ID] = '01D0099'
-
-select distinct LkUp_SourceColumnMappedToQualitativeField
-from [tmp].TestResultsComboWorkTbl
-where [Object_ID] = '01D0099'
-	and LkUp_SourceTable = '250WorkOrderHeaderAdmin'
-	
-select distinct [Object_ID] from TransformWorkOrderCenter
-where RepairReasonID = 'PT'
-order by [Object_ID] desc
-
-select distinct [Object_ID]
-from [tmp].TestResultsComboWorkTbl order by [Object_ID] desc
-where [Object_ID] = '16A0023'
-
-select * from [dbo].[ufnGetTestResultsValue]('00A0007', 'PRJ-073')
-
-exec dbo.spTransformTestResults
-
-select * from tmp.TestResults
-select * from tmp.TestResultsDetails
-select distinct [Object_ID] from tmp.TestResultsDetails order by [Object_ID] desc
-select distinct [Object_ID] from tmp.TestResults order by [Object_ID]
-
-select * from TransformTestResultsPrelimAgreement
-
---delete tmp.TestResultsDetails
-
-select * from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending where WO_NUMBER = '601099'
-select distinct POINT_ChK_16 from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
-select * from SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending where isnull(POINT_CHK_16, '') <> ''
-
-select WO_NUMBER, OBJ_TYPE_1, ACT_COST_1, OBJ_TYPE_2, ACT_COST_2 
-from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] where ACT_COST_1 <> '0' and ACT_COST_2 <> '0'
-
-select WO_NUMBER, OBJ_TYPE_1, ACT_COST_1, OBJ_TYPE_2, ACT_COST_2,
-	(CONVERT(decimal, act_cost_1) + CONVERT(decimal, act_cost_2)) [Sum]
-from [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2] where WO_NUMBER = '602166'
-
-SELECT * FROM SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1Contd where WO_NUMBER = '601099'

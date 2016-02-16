@@ -9,6 +9,7 @@ BEGIN
 	DECLARE
 		@WOCRowNum		INT,
 		@WOCObjectID	VARCHAR(25),
+		@PrevTestTypeID	VARCHAR(20),
 		
 		@DetailsVal		VARCHAR(60),
 		-- Table TransformTestResults variables
@@ -182,7 +183,7 @@ BEGIN
 		[SourceColumnMappedToNumericField] [nvarchar](255) NULL,
 		[Logic] [nvarchar](255) NULL
 	)
-BEGIN TRY	
+	
 	-- Start
 	INSERT INTO [tmp].[WOC]
 	SELECT *
@@ -269,13 +270,14 @@ BEGIN TRY
 	---- [tmp].TestResultsComboWorkTbl with all the tests from TransformTestResultsMappingLookup
 	---- that match the flavor/pattern of OBJECT_ID.
 	SET @TestID = 1000		-- Want TestIDs starting at 1000
+	SET @PrevTestTypeID = ''
 
 	DECLARE MainCursor CURSOR FOR
 		SELECT
 			RowNum, [Object_ID], Lkup_TestElementID, EquipmentID, LkUp_TestTypeID, OpenedDt [TestDate], OpenedDt [DueDate], 'D-ADMIN' [TestLocationID],
 			'LEGACY001' [EmployeeID], WorkOrderLocationID, WorkOrderYear, WorkOrderNumber, 'PERFORMED' [Status], '' [NewNote]
 		FROM [tmp].TestResultsComboWorkTbl
-		--WHERE [Object_ID] = '07A0099-2'
+		ORDER BY EquipmentID, LkUp_TestTypeID
 
 	OPEN MainCursor
 	FETCH NEXT FROM MainCursor
@@ -285,22 +287,46 @@ BEGIN TRY
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		--SELECT @TestElementID	-- Debug
 		
 		-- Start
-		INSERT INTO @Findings
-		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
+		-- Send OBJECT_ID to function
+		SELECT (@WONumber + ', ' + @TestElementID)
+		IF @TestElementID IN ('PRJ-002', 'PRJ-003', 'PRJ-004', 'PRJ-005', 'PRJ-008', 'PRJ-009', 'PRJ-010', 'PRJ-011', 
+			'PRJ-012', 'PRJ-013', 'PRJ-014', 'PRJ-018', 'PRJ-019', 'PRJ-020', 'PRJ-021', 'PRJ-022', 
+			'PRJ-023', 'PRJ-025', 'PRJ-026', 'PRJ-034', 'PRJ-035', 'PRJ-036', 'PRJ-037', 'PRJ-038', 'PRJ-039', 
+			'PRJ-040', 'PRJ-041', 'PRJ-042', 'PRJ-043', 'PRJ-044', 'PRJ-048', 'PRJ-051')
+			BEGIN
+				INSERT INTO @Findings
+				SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
+			END
+		-- Send WorkOrderNumber to function
+		IF @TestElementID NOT IN ('PRJ-002', 'PRJ-003', 'PRJ-004', 'PRJ-005', 'PRJ-008', 'PRJ-009', 'PRJ-010', 'PRJ-011', 
+			'PRJ-012', 'PRJ-013', 'PRJ-014', 'PRJ-018', 'PRJ-019', 'PRJ-020', 'PRJ-021', 'PRJ-022', 
+			'PRJ-023', 'PRJ-025', 'PRJ-026', 'PRJ-034', 'PRJ-035', 'PRJ-036', 'PRJ-037', 'PRJ-038', 'PRJ-039', 
+			'PRJ-040', 'PRJ-041', 'PRJ-042', 'PRJ-043', 'PRJ-044', 'PRJ-048', 'PRJ-051')
+			BEGIN
+				INSERT INTO @Findings
+				SELECT * FROM [ufnGetTestResultsValue](@WONumber, @TestElementID)
+			END
 		
-		-- Insert to tmp.TestResults
-		INSERT INTO tmp.TestResults (
-			[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
-			[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [NewNote], [TestResults]
-		)
-		VALUES (
-			@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
-			@WOLocationID, @WOYear, @WONumber,
-			@Status, @NewNote, '[1829:1;RESULTS;1:1]'
-		)
+		IF @TestTypeID <> @PrevTestTypeID
+			BEGIN
+			SET @PrevTestTypeID = @TestTypeID
+	
+			-- Increment the TestID
+			SET @TestID = @TestID + 1
+
+			-- Insert to tmp.TestResults
+			INSERT INTO tmp.TestResults (
+				[Object_ID], [TestID], [EquipmentID], [TestTypeID], [TestDate], [DueDate], [TestLocationID], [EmployeeID],
+				[WorkLocationID], [WorkOrderYear], [WorkOrderNumber], [Status], [NewNote], [TestResults]
+			)
+			VALUES (
+				@WOCObjectID, @TestID, @EquipmentID, @TestTypeID, @TestDate, @DueDate, @TestLocationID, @EmployeeID, 
+				@WOLocationID, @WOYear, @WONumber,
+				@Status, @NewNote, '[1829:1;RESULTS;1:1]'
+			)
+		END
 
 		DECLARE DetailsCursor CURSOR FOR
 			SELECT * FROM @Findings
@@ -334,9 +360,6 @@ BEGIN TRY
 		CLOSE DetailsCursor;
 		DEALLOCATE DetailsCursor;
 	
-		-- Increment the TestID
-		SET @TestID = @TestID + 1
-		
 		-- Null out @Findings
 		DELETE @Findings
 		
@@ -350,11 +373,6 @@ BEGIN TRY
 	-- Clean up cursor MainCursor
 	CLOSE MainCursor;
 	DEALLOCATE MainCursor;
-END TRY
-
-BEGIN CATCH
-	SELECT ERROR_NUMBER() [ErrorNumber], ERROR_MESSAGE() [Error Message], ERROR_LINE() [Error Line]
-END CATCH;
 	
 	-- Copy temp table to transform tables
 	INSERT INTO TransformTestResults

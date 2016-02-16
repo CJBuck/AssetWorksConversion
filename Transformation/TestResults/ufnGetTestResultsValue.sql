@@ -934,7 +934,7 @@ BEGIN
 	IF @TestElementID = 'PRJ-083'
 		BEGIN
 			INSERT INTO @retTestResult ( QualVal, CommentsVal, NumVal, NewNote )
-			SELECT [MNT_BOND_DT], [MNT_BOND_ST], [MNT_BOND_ST], ''
+			SELECT [MNT_BOND_DT], [MNT_BOND_ST], [MNT_BOND_AMT], ''
 			FROM [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
 			WHERE [WO_NUMBER] = @FindBy;
 		END
@@ -948,7 +948,7 @@ BEGIN
 	IF @TestElementID = 'PRJ-085'
 		BEGIN
 			INSERT INTO @retTestResult ( QualVal, CommentsVal, NumVal, NewNote )
-			SELECT [COST_STMT_DT], [COST_STMT_ST], [COST_STMT_ST], ''
+			SELECT [COST_STMT_DT], [COST_STMT_ST], [COST_STM_AMT], ''
 			FROM [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1-2]
 			WHERE [WO_NUMBER] = @FindBy;
 		END
@@ -983,7 +983,7 @@ BEGIN
 	IF @TestElementID = 'PRJ-090'
 		BEGIN
 			INSERT INTO @retTestResult ( QualVal, CommentsVal, NumVal, NewNote )
-			SELECT [MNT_BOND_DT], [MNT_BOND_ST], [MNT_BOND_ST], ''
+			SELECT [MNT_BOND_DT], [MNT_BOND_ST], [MNT_BOND_AMT], ''
 			FROM [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1Contd]
 			WHERE [WO_NUMBER] = @FindBy;
 		END
@@ -997,7 +997,7 @@ BEGIN
 	IF @TestElementID = 'PRJ-092'
 		BEGIN
 			INSERT INTO @retTestResult ( QualVal, CommentsVal, NumVal, NewNote )
-			SELECT [COST_STMT_DT], [COST_STMT_ST], '', ''
+			SELECT [COST_STMT_DT], [COST_STMT_ST], [COST_STM_AMT], ''
 			FROM [SourceWicm253WorkOrderExtensionAdminWOMatlEstimatesPressureTestCloseOut1Contd]
 			WHERE [WO_NUMBER] = @FindBy;
 		END

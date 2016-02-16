@@ -196,7 +196,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_01,
 					CASE
 						WHEN EXISTS (
@@ -208,7 +208,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_02,
 					CASE
 						WHEN EXISTS (
@@ -220,7 +220,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_03,
 					CASE
 						WHEN EXISTS (
@@ -232,7 +232,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_04,
 					CASE
 						WHEN EXISTS (
@@ -244,7 +244,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_05,
 					CASE
 						WHEN EXISTS (
@@ -256,7 +256,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_06,
 					CASE
 						WHEN EXISTS (
@@ -268,7 +268,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_07,
 					CASE
 						WHEN EXISTS (
@@ -280,7 +280,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_08,
 					CASE
 						WHEN EXISTS (
@@ -292,7 +292,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_09,
 					CASE
 						WHEN EXISTS (
@@ -304,7 +304,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_10,
 					CASE
 						WHEN EXISTS (
@@ -316,7 +316,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_11,
 					CASE
 						WHEN EXISTS (
@@ -328,7 +328,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_12,
 					CASE
 						WHEN EXISTS (
@@ -340,7 +340,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_13,
 					CASE
 						WHEN EXISTS (
@@ -352,7 +352,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_14,
 					CASE
 						WHEN EXISTS (
@@ -364,7 +364,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_15,
 					CASE
 						WHEN EXISTS (
@@ -376,7 +376,7 @@ BEGIN
 								FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending
 								WHERE WO_NUMBER = @WONumber
 							)
-							ELSE 0.00
+							ELSE '0.00'
 					END AS Point_Chk_16
 				FROM SourceWicm253WorkOrderExtensionAdminWOInspectionFlushingPending IFP
 				WHERE WO_NUMBER = @WONumber

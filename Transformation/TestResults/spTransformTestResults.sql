@@ -304,8 +304,24 @@ BEGIN
 	BEGIN
 		
 		-- Start
-		INSERT INTO @Findings
-		SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
+		-- Send OBJECT_ID to function
+		IF @TestElementID IN ('PRJ-002', 'PRJ-003', 'PRJ-004', 'PRJ-005', 'PRJ-008', 'PRJ-009', 'PRJ-010', 'PRJ-011', 
+			'PRJ-012', 'PRJ-013', 'PRJ-014', 'PRJ-018', 'PRJ-019', 'PRJ-020', 'PRJ-021', 'PRJ-022', 
+			'PRJ-023', 'PRJ-025', 'PRJ-026', 'PRJ-034', 'PRJ-035', 'PRJ-036', 'PRJ-037', 'PRJ-038', 'PRJ-039', 
+			'PRJ-040', 'PRJ-041', 'PRJ-042', 'PRJ-043', 'PRJ-044', 'PRJ-048', 'PRJ-051')
+			BEGIN
+				INSERT INTO @Findings
+				SELECT * FROM [ufnGetTestResultsValue](@WOCObjectID, @TestElementID)
+			END
+		-- Send WorkOrderNumber to function
+		IF @TestElementID NOT IN ('PRJ-002', 'PRJ-003', 'PRJ-004', 'PRJ-005', 'PRJ-008', 'PRJ-009', 'PRJ-010', 'PRJ-011', 
+			'PRJ-012', 'PRJ-013', 'PRJ-014', 'PRJ-018', 'PRJ-019', 'PRJ-020', 'PRJ-021', 'PRJ-022', 
+			'PRJ-023', 'PRJ-025', 'PRJ-026', 'PRJ-034', 'PRJ-035', 'PRJ-036', 'PRJ-037', 'PRJ-038', 'PRJ-039', 
+			'PRJ-040', 'PRJ-041', 'PRJ-042', 'PRJ-043', 'PRJ-044', 'PRJ-048', 'PRJ-051')
+			BEGIN
+				INSERT INTO @Findings
+				SELECT * FROM [ufnGetTestResultsValue](@WONumber, @TestElementID)
+			END
 		
 		IF @TestTypeID <> @PrevTestTypeID
 			BEGIN
@@ -358,9 +374,6 @@ BEGIN
 		CLOSE DetailsCursor;
 		DEALLOCATE DetailsCursor;
 	
-		-- Increment the TestID
---		SET @TestID = @TestID + 1
-		
 		-- Null out @Findings
 		DELETE @Findings
 		
