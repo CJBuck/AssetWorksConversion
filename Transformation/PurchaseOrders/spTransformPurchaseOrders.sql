@@ -47,7 +47,7 @@ BEGIN
 		(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [PurchaseOrderID],
 		'STOREROOM' [LocationID],
 		LTRIM(RTRIM(CCPH.JTEXT15)) [Description],
-		v.MUNISVendorID [VendorID],
+		v.TargetVendorID [VendorID],
 		'OPEN' [Status],
 		'HISTORIC WICM CCP' [PurchaseTypeID],
 		'USD' [CurrencyID],
@@ -65,14 +65,14 @@ BEGIN
 		'[8904:1;WO;1:1]' [RelatedWorkOrders],
 		dbo.TransformPurchaseOrdesConcatComments(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [Comments]
 	FROM SourceWicm300CcpHeader CCPH
-		INNER JOIN TransformVendorWicmToMunisLookup v ON CCPH.VNUMBER = v.WicmVendorNo
+		INNER JOIN TransformVendorSourceToTargetLookup v ON CCPH.VNUMBER = v.WICMVendorNumber
 		LEFT JOIN TransformWicmEINXwalk xwalk ON CCPH.BUYERID = xwalk.BuyerID
 	WHERE CCPH.[STATUS] <> 'X'
 		AND CCPH.[TYPE] <> 'W'
 		AND (LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) IN (
 			SELECT DISTINCT CCP_NUMBER FROM SourceWicm305CcpDetail WHERE PART_NO NOT LIKE 'N%'
 			)
-		
+
 	---- SourceWicm330POHeader
 	--INSERT INTO [tmp].[PurchaseOrders]
 	--SELECT DISTINCT

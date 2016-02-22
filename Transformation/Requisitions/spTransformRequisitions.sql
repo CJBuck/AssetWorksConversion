@@ -50,8 +50,8 @@ BEGIN
 		'STOREROOM' [LocationID],
 		LTRIM(RTRIM(CCPH.JTEXT15)) [Description],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN ''
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.TargetVendorID, '') = '' THEN ''
+			ELSE tv.TargetVendorID
 		END [VendorID],
 		'OPEN' [Status],
 		'RELEASE' [PurchaseTypeID],
@@ -73,7 +73,7 @@ BEGIN
 		'[8904:1;ATTRIBUTES;1:1]' [Attributes],
 		dbo.TransformPurchaseOrdesConcatComments(LTRIM(RTRIM(CCPH.[TYPE])) + LTRIM(RTRIM(CCPH.[SEQ-NUM]))) [Comments]
 	FROM SourceWicm300CcpHeader CCPH
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON CCPH.VNUMBER = tv.WicmVendorNo
+		LEFT JOIN TransformVendorSourceToTargetLookup tv ON CCPH.VNUMBER = tv.WICMVendorNumber
 		LEFT JOIN TransformWicmEINXwalk xwalk ON CCPH.BUYERID = xwalk.BuyerID
 	WHERE CCPH.[TYPE] = 'R'
 		AND CCPH.PONUMBER like '2016%'

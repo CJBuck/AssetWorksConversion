@@ -42,7 +42,7 @@ BEGIN
 	SELECT DISTINCT
 		POH.PONUMBER [VendorContractID],
 		LEFT(LTRIM(RTRIM(POH.COMMENT)), 60) [Description],
-		v.MUNISVendorID [VendorID],
+		v.TargetVendorID [VendorID],
 		ISNULL(po.[Create Date], NULL) [BeginDate],
 		'6/30/2016' [EndDate],
 		(CONVERT(DECIMAL(12,2), TOTALAMOUNT) - CONVERT(DECIMAL(12,2), TOTALRELEASEDAMT)) [PurchasingLimit],
@@ -52,7 +52,7 @@ BEGIN
 		'[13264:1;Files;1:1]' [Files],
 		'[9063:1;Attributes;1:1]' [Attributes]
 	FROM SourceWicm330POHeader POH
-		INNER JOIN TransformVendorWicmToMunisLookup v ON POH.VENDORNUMBER = v.WicmVendorNo
+		INNER JOIN TransformVendorSourceToTargetLookup v ON POH.VENDORNUMBER = v.WICMVendorNumber
 		LEFT JOIN TransformMUNISPurchaseOrders po
 			ON POH.PONUMBER = LTRIM(RTRIM(CONVERT(VARCHAR, CAST(po.[Purchase Order] AS INT))))
 				AND po.[Record Type] = 'Header'
