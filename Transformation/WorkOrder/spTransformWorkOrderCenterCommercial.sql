@@ -48,8 +48,8 @@ BEGIN
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN 'HISTORIC VENDOR'
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.VDR_NUM, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VDR_NUM
 		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
@@ -61,7 +61,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON DS.VENDOR_ID = tv.WicmVendorNo
+		LEFT JOIN TransformVendorMUNISExtractComplete tv ON DS.VENDOR_ID = tv.VDR_NUM
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERPROJECTS
@@ -74,8 +74,8 @@ BEGIN
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN 'HISTORIC VENDOR'
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.VDR_NUM, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VDR_NUM
 		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
@@ -87,7 +87,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON DS.VENDOR_ID = tv.WicmVendorNo
+		LEFT JOIN TransformVendorMUNISExtractComplete tv ON DS.VENDOR_ID = tv.VDR_NUM
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '04'
@@ -100,8 +100,8 @@ BEGIN
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN 'HISTORIC VENDOR'
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.VDR_NUM, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VDR_NUM
 		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
@@ -113,7 +113,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderDistOpCode doc ON DS.OPER_CODE = doc.OpCode
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON DS.VENDOR_ID = tv.WicmVendorNo
+		LEFT JOIN TransformVendorMUNISExtractComplete tv ON DS.VENDOR_ID = tv.VDR_NUM
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '04'
 		AND hv.OP_CODE1 <> '1000'
@@ -134,8 +134,8 @@ BEGIN
 		hp.WO_STAGE [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN 'HISTORIC VENDOR'
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.VDR_NUM, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VDR_NUM
 		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],		-- TBD
@@ -146,7 +146,7 @@ BEGIN
 			AND DS.LOCATION = hp.LOCATION
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON DS.VENDOR_ID = tv.WicmVendorNo
+		LEFT JOIN TransformVendorMUNISExtractComplete tv ON DS.VENDOR_ID = tv.VDR_NUM
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 
 	-- WORKORDERVEHICLESNEWSVCINSTALLREPAIR: Location = '01'
@@ -159,8 +159,8 @@ BEGIN
 		END [WorkAccomplishedCode],
 		DS.DATE_BACK [Dt],
 		CASE
-			WHEN ISNULL(tv.MUNISVendorID, '') = '' THEN 'HISTORIC VENDOR'
-			ELSE tv.MUNISVendorID
+			WHEN ISNULL(tv.VDR_NUM, '') = '' THEN 'HISTORIC VENDOR'
+			ELSE tv.VDR_NUM
 		END [VendorID],
 		CONVERT(DECIMAL(12,2), DS.SUBLET_COST) [LaborCost],
 		NULL [PartsCost],				-- TBD
@@ -172,7 +172,7 @@ BEGIN
 		INNER JOIN TransformWorkOrderCenter woc ON DS.WO_NUMBER = woc.WorkOrderNumber
 			AND DS.LOCATION = woc.Location
 		INNER JOIN TransformWorkOrderGSOpCode gsoc ON DS.OPER_CODE = gsoc.OpCode
-		LEFT JOIN TransformVendorWicmToMunisLookup tv ON DS.VENDOR_ID = tv.WicmVendorNo	
+		LEFT JOIN TransformVendorMUNISExtractComplete tv ON DS.VENDOR_ID = tv.VDR_NUM	
 	WHERE ISNULL(DS.OPER_CODE, '') <> ''
 		AND hv.LOCATION = '01'
 	

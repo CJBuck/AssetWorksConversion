@@ -47,7 +47,7 @@ CREATE TABLE [dbo].[TransformVendor](
 	[PartsRepairAndRebuild] [char](1) NULL,
 	[Fuel] [char](1) NULL,
 	[Testing] [char](1) NULL,
-	[CurrencyID] [char](1) NOT NULL,
+	[CurrencyID] [varchar](3) NOT NULL,
 	[MinimumOrderValInVendorCurrency] [decimal](22,2),
 	[Contacts] [varchar](25) NOT NULL,
 	[SupportsAllLocations] [char](1) NULL,
