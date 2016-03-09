@@ -68,4 +68,14 @@ EXEC spTransformRequisitionsLineItems
 --EXEC spTransformRequisitionsRelatedWorkOrders		-- Not in use.
 EXEC spTransformRequisitionsAttributes
 
--- Project Tracking (TestResults) :: in progress
+-- Tools
+TRUNCATE TABLE TransformToolsUsageTicket
+TRUNCATE TABLE TransformToolsTickets
+
+EXEC spTransformTools
+
+-- Project Tracking (TestResults)
+TRUNCATE TABLE TransformTestResults
+TRUNCATE TABLE TransformTestResultsDetails
+
+EXEC spTransformTestResults
